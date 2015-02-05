@@ -4,8 +4,8 @@
 ### ===========================================================================
 #DEFINED
 #Folder
-build/
-tool/
+build/*
+tool/*
 
 # For C files
 # Object files
