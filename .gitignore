@@ -4,10 +4,9 @@
 ### ===========================================================================
 #DEFINED
 #Folder
-build/*
-tool/*
-build\DoorSensor_SM6011
-!\build\zigbee-pro-brg-stack-cortexm3-iar-em3588-em3xx-debug
+build/
+tool/
+
 
 # For C files
 # Object files
@@ -22,7 +21,7 @@ build\DoorSensor_SM6011
 
 # Libraries
 # *.lib
-# *.a
+*.a
 # *.la
 # *.lo
 
