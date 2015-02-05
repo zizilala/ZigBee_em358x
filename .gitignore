@@ -4,7 +4,7 @@
 ### ===========================================================================
 #DEFINED
 #Folder
-build/
+build/*.a
 tool/
 
 
@@ -21,7 +21,7 @@ tool/
 
 # Libraries
 # *.lib
-*.a
+# *.a
 # *.la
 # *.lo
 
@@ -53,4 +53,3 @@ tool/
 ### gitignore 產生器: http://www.hksilicon.com/kb/articles/540471/gitignoregitignoreio
 ### 
 ### ===========================================================================
-
