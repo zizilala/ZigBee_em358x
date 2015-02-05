@@ -6,6 +6,8 @@
 #Folder
 build/*
 tool/*
+build\DoorSensor_SM6011
+!\build\zigbee-pro-brg-stack-cortexm3-iar-em3588-em3xx-debug
 
 # For C files
 # Object files
