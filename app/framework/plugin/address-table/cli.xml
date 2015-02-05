@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<cli>
+  <group id="plugin-address-table" name="Plugin Commands: Address Table">
+    <description>This plugin provides a set of APIs and CLI commands for managing the address table</description>
+  </group>
+  <command cli="plugin address-table add" functionName="emberAfPluginAddressTableAddCommand" group="plugin-address-table">
+    <description>
+      Add an entry to the address table.
+    </description>
+    <arg name="entry" type="IEEE_ADDRESS" description="Entry to be added." />
+  </command>
+  <command cli="plugin address-table remove" functionName="emberAfPluginAddressTableRemoveCommand" group="plugin-address-table">
+    <description>
+      Remove an entry from the address table.
+    </description>
+    <arg name="entry" type="IEEE_ADDRESS" description="Entry to be removed." />
+  </command>
+  <command cli="plugin address-table lookup" functionName="emberAfPluginAddressTableLookupCommand" group="plugin-address-table">
+    <description>
+      Lookup an entry in the address table.
+    </description>
+    <arg name="entry" type="IEEE_ADDRESS" description="Entry to be looked up." />
+  </command>
+</cli>

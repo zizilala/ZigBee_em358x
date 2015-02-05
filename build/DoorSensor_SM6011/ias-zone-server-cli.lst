@@ -1,0 +1,232 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:56 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ia #
+#                    s-zone-server\ias-zone-server-cli.c                      #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ia #
+#                    s-zone-server\ias-zone-server-cli.c -D                   #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"ias-zone-server-cli.c\"" -lC        #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ia #
+#                    s-zone-server\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\b #
+#                    uilder\DoorSensor_SM6011\ -I                             #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ias-zone-server-cli.lst                                 #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ias-zone-server-cli.o                                   #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ias-zone-server\ias-zone-server-cli.c
+      1          #include "af.h"
+      2          #include "app/util/serial/command-interpreter2.h"
+      3          #include "ias-zone-server.h"
+      4          
+      5          //-----------------------------------------------------------------------------
+      6          // Globals
+      7          
+      8          static void infoCommand(void);
+      9          static void changeStatusCommand(void);
+     10          
+     11          static const char* changeStatusArguments[] = {
+     12            "new-status",
+     13            "time-since-occurred-seconds",
+     14            NULL,
+     15          };
+     16          
+     17          #ifndef EMBER_AF_GENERATE_CLI
+     18          EmberCommandEntry emberAfPluginIasZoneServerCommands[] = {
+     19            emberCommandEntryAction("info", infoCommand, "", "Print IAS Zone information"),
+     20            emberCommandEntryActionWithDetails("change-status", 
+     21                                               changeStatusCommand, 
+     22                                               "vu", 
+     23                                               "Change the current Zone Status",
+     24                                               changeStatusArguments),
+     25            emberCommandEntryTerminator(),
+     26          };
+     27          #endif // EMBER_AF_GENERATE_CLI
+     28          
+     29          typedef struct {
+     30            int16u zoneType;
+     31            const char* zoneTypeString;
+     32          } ZoneTypeToStringMap;
+     33          
+     34          static ZoneTypeToStringMap zoneTypeToStringMap[] = {
+     35            { 0x0000, "Standard CIE" },
+     36            { 0x000d, "Motion Sensor" },
+     37            { 0x0015, "Contact Switch" },
+     38            { 0x0028, "Fire Sensor" },
+     39            { 0x002a, "Water Sensor" },
+     40            { 0x002b, "Gas Sensor" },
+     41            { 0x002c, "Peersonal Emergency Device" },
+     42            { 0x002d, "Vibration / Movement Sensor" },
+     43            { 0x010f, "Remote Control" },
+     44            { 0x0115, "Key Fob" },
+     45            { 0x021d, "Keypad" },
+     46            { 0x0225, "Standard Warning Device" },
+     47            { 0xFFFF, NULL } // terminator
+     48          };
+     49          
+     50          #define RESERVED_END 0x7FFF
+     51          #define MANUFACTURER_SPECIFIC_START 0x8000
+     52          #define MANUFACTURER_SPECIFIC_END   0xFFFE
+     53          
+     54          static const char manufacturerSpecificString[] = "Manufacturer Specific";
+     55          static const char invalidZoneTypeString[] = "Invalid";
+     56          static const char reservedString[] = "Reserved";
+     57          
+     58          static const char notEnrolledString[] = "NOT Enrolled";
+     59          static const char enrolledString[] = "Enrolled";
+     60          static const char unknownZoneStateString[] = "Unknown";
+     61          
+     62          //-----------------------------------------------------------------------------
+     63          // Functions
+     64          
+     65          static const char* getZoneTypeString(int16u type)
+     66          {
+     67            int16u i = 0;
+     68            while (zoneTypeToStringMap[i].zoneTypeString != NULL) {
+     69              if (zoneTypeToStringMap[i].zoneType == type)
+     70              return zoneTypeToStringMap[i].zoneTypeString;
+     71              i++;
+     72            }
+     73          
+     74            if (type <= RESERVED_END) {
+     75              return reservedString;
+     76            }
+     77          
+     78            if (type >= MANUFACTURER_SPECIFIC_START
+     79                && type <= MANUFACTURER_SPECIFIC_END) {
+     80              return manufacturerSpecificString;
+     81            }
+     82          
+     83            return invalidZoneTypeString;
+     84          }
+     85          
+     86          static const char* getZoneStateString(int8u zoneState)
+     87          {
+     88            switch (zoneState) {
+     89              case EMBER_ZCL_IAS_ZONE_STATE_ENROLLED:
+     90                return enrolledString;
+     91              case EMBER_ZCL_IAS_ZONE_STATE_NOT_ENROLLED:
+     92                return notEnrolledString;
+     93            }
+     94            return unknownZoneStateString;
+     95          }
+     96          
+     97          static void getAttributes(int8u*  returnCieAddress, 
+     98                                    int16u* returnZoneStatus,
+     99                                    int16u* returnZoneType,
+    100                                    int8u*  returnZoneState)
+    101          {
+    102            EMBER_TEST_ASSERT(emAfGetIasZoneServerEndpoint() != UNKNOWN_ENDPOINT);
+    103          
+    104            emberAfReadServerAttribute(emAfGetIasZoneServerEndpoint(),
+    105                                       ZCL_IAS_ZONE_CLUSTER_ID,
+    106                                       ZCL_IAS_CIE_ADDRESS_ATTRIBUTE_ID,
+    107                                       returnCieAddress,
+    108                                       EUI64_SIZE);
+    109          
+    110            emberAfReadServerAttribute(emAfGetIasZoneServerEndpoint(),
+    111                                       ZCL_IAS_ZONE_CLUSTER_ID,
+    112                                       ZCL_ZONE_STATUS_ATTRIBUTE_ID,
+    113                                       (int8u*)returnZoneStatus,
+    114                                       2);   // int16u size  
+    115          
+    116            emberAfReadServerAttribute(emAfGetIasZoneServerEndpoint(),
+    117                                       ZCL_IAS_ZONE_CLUSTER_ID,
+    118                                       ZCL_ZONE_TYPE_ATTRIBUTE_ID,
+    119                                       (int8u*)returnZoneType,
+    120                                       2);  // int16u size   
+    121          
+    122            emberAfReadServerAttribute(emAfGetIasZoneServerEndpoint(),
+    123                                       ZCL_IAS_ZONE_CLUSTER_ID,
+    124                                       ZCL_ZONE_STATE_ATTRIBUTE_ID,
+    125                                       (int8u*)returnZoneState,
+    126                                       1);  // int8u size
+    127          
+    128          }
+    129          
+    130          static void infoCommand(void)
+                             ^
+Warning[Pe177]: function "infoCommand" was declared but never referenced
+    131          {
+    132            int8u cieAddress[EUI64_SIZE];
+    133            int16u zoneStatus;
+    134            int16u zoneType;
+    135            int8u zoneState;
+    136            getAttributes(cieAddress,
+    137                          &zoneStatus,
+    138                          &zoneType,
+    139                          &zoneState);
+    140            emberAfIasZoneClusterPrint("CIE Address: ");
+    141            emberAfPrintBigEndianEui64(cieAddress);
+    142            emberAfIasZoneClusterPrintln("");
+    143            emberAfIasZoneClusterPrintln("Zone Type:   0x%2X (%p)", 
+    144                                         zoneType, 
+    145                                         getZoneTypeString(zoneType));
+    146            emberAfIasZoneClusterPrintln("Zone State:  0x%X   (%p)",
+    147                                         zoneState,
+    148                                         getZoneStateString(zoneState));
+    149            emberAfIasZoneClusterPrintln("Zone Status: 0x%2X", 
+    150                                         zoneStatus);
+    151            emberAfIasZoneClusterPrintln("Zone ID:     0x%2X", 
+    152                                         emberAfPluginIasZoneServerGetZoneId());
+    153          }
+    154          
+    155          static void changeStatusCommand(void)
+                             ^
+Warning[Pe177]: function "changeStatusCommand" was declared but never
+          referenced
+
+  static const char* changeStatusArguments[] = {
+                     ^
+"C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ias-zone-server\ias-zone-server-cli.c",11  Warning[Pe177]: 
+          variable "changeStatusArguments" was declared but never referenced
+    156          {
+    157            int16u newStatus = (int16u)emberUnsignedCommandArgument(0);
+    158            int8u  timeSinceOccurredSeconds = (int8u)emberUnsignedCommandArgument(1);
+    159            emberAfPluginIasZoneServerUpdateZoneStatus(newStatus,
+    160                                                       timeSinceOccurredSeconds << 2);
+    161          }
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: 3

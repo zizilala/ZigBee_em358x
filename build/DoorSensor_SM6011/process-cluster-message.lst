@@ -1,0 +1,246 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:07 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\proc #
+#                    ess-cluster-message.c                                    #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\proc #
+#                    ess-cluster-message.c -D "GENERATED_TOKEN_HEADER=\"app/b #
+#                    uilder/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\""   #
+#                    -D "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D           #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"process-cluster-message.c\"" -lC    #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\ -I  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \process-cluster-message.lst                             #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \process-cluster-message.o                               #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\process-cluster-message.c
+      1          // *******************************************************************
+      2          // * process-cluster-message.c
+      3          // *
+      4          // * This file contains a function that processes cluster-specific
+      5          // * ZCL message.
+      6          // *
+      7          // * Copyright 2007 by Ember Corporation. All rights reserved.              *80*
+      8          // *******************************************************************
+      9          
+     10          
+     11          // this file contains all the common includes for clusters in the zcl-util
+     12          #include "common.h"
+     13          
+     14          // for pulling in defines dealing with EITHER server or client
+     15          #include "af-main.h"
+     16          
+     17          // the EM260 host needs to include the config file
+     18          #ifdef EZSP_HOST
+     19            #include "config.h"
+     20          #endif
+     21          
+     22          //------------------------------------------------------------------------------
+     23          // Forward Declarations
+     24          
+     25          static boolean parseOtaServerIncomingMessage(EmberAfClusterCommand* cmd);
+     26          static boolean parseOtaClientIncomingMessage(EmberAfClusterCommand* cmd);
+     27          EmberAfStatus emberAfClusterSpecificCommandParse(EmberAfClusterCommand *cmd);
+     28          
+     29          //------------------------------------------------------------------------------
+     30          
+
+   \                                 In section .text, align 2, keep-with-next
+     31          boolean emAfProcessClusterSpecificCommand(EmberAfClusterCommand *cmd)
+     32          {
+   \                     emAfProcessClusterSpecificCommand:
+   \   00000000   0xB51C             PUSH     {R2-R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     33            EmberAfStatus status;
+     34          
+     35            // if we are disabled then we can only respond to read or write commands
+     36            // or identify cluster (see device enabled attr of basic cluster)
+     37            if (!emberAfIsDeviceEnabled(cmd->apsFrame->destinationEndpoint)
+     38                && cmd->apsFrame->clusterId != ZCL_IDENTIFY_CLUSTER_ID) {
+   \   00000004   0x6820             LDR      R0,[R4, #+0]
+   \   00000006   0x7940             LDRB     R0,[R0, #+5]
+   \   00000008   0x.... 0x....      BL       emberAfIsDeviceEnabled
+   \   0000000C   0xB980             CBNZ.N   R0,??emAfProcessClusterSpecificCommand_0
+   \   0000000E   0x6820             LDR      R0,[R4, #+0]
+   \   00000010   0x8841             LDRH     R1,[R0, #+2]
+   \   00000012   0x2903             CMP      R1,#+3
+   \   00000014   0xD00C             BEQ.N    ??emAfProcessClusterSpecificCommand_0
+     39              emberAfCorePrintln("%pd, dropping ep 0x%x clus 0x%2x cmd 0x%x",
+     40                                 "disable",
+     41                                 cmd->apsFrame->destinationEndpoint,
+     42                                 cmd->apsFrame->clusterId,
+     43                                 cmd->commandId);
+   \   00000016   0x7CE2             LDRB     R2,[R4, #+19]
+   \   00000018   0x9201             STR      R2,[SP, #+4]
+   \   0000001A   0x9100             STR      R1,[SP, #+0]
+   \   0000001C   0x7943             LDRB     R3,[R0, #+5]
+   \   0000001E   0x.... 0x....      ADR.W    R2,`?<Constant "disable">`
+   \   00000022   0x.... 0x....      ADR.W    R1,`?<Constant "%pd, dropping ep 0x%x...">`
+   \   00000026   0x2001             MOVS     R0,#+1
+   \   00000028   0x.... 0x....      BL       emberAfPrintln
+     44              emberAfSendDefaultResponse(cmd, EMBER_ZCL_STATUS_FAILURE);
+   \   0000002C   0x2101             MOVS     R1,#+1
+   \   0000002E   0xE004             B.N      ??emAfProcessClusterSpecificCommand_1
+     45              return TRUE;
+     46            }
+     47          
+     48          #ifdef ZCL_USING_KEY_ESTABLISHMENT_CLUSTER_CLIENT
+     49            if (cmd->apsFrame->clusterId == ZCL_KEY_ESTABLISHMENT_CLUSTER_ID
+     50                && cmd->direction == ZCL_DIRECTION_SERVER_TO_CLIENT
+     51                && emberAfKeyEstablishmentClusterClientCommandReceivedCallback(cmd)) {
+     52              return TRUE;
+     53            }
+     54          #endif
+     55          #ifdef ZCL_USING_KEY_ESTABLISHMENT_CLUSTER_SERVER
+     56            if (cmd->apsFrame->clusterId == ZCL_KEY_ESTABLISHMENT_CLUSTER_ID
+     57                && cmd->direction == ZCL_DIRECTION_CLIENT_TO_SERVER
+     58                && emberAfKeyEstablishmentClusterServerCommandReceivedCallback(cmd)) {
+     59              return TRUE;
+     60            }
+     61          #endif
+     62          
+     63            if (parseOtaServerIncomingMessage(cmd)) {
+     64              return TRUE;
+     65            } else if (parseOtaClientIncomingMessage(cmd)) {
+     66              return TRUE;
+     67            }
+     68          
+     69            // Pass the command to the generated command parser for processing
+     70            status = emberAfClusterSpecificCommandParse(cmd);
+   \                     ??emAfProcessClusterSpecificCommand_0:
+   \   00000030   0x4620             MOV      R0,R4
+   \   00000032   0x.... 0x....      BL       emberAfClusterSpecificCommandParse
+     71            if (status != EMBER_ZCL_STATUS_SUCCESS) {
+   \   00000036   0xB118             CBZ.N    R0,??emAfProcessClusterSpecificCommand_2
+     72              emberAfSendDefaultResponse(cmd, status);
+   \   00000038   0x4601             MOV      R1,R0
+   \                     ??emAfProcessClusterSpecificCommand_1:
+   \   0000003A   0x4620             MOV      R0,R4
+   \   0000003C   0x.... 0x....      BL       emberAfSendDefaultResponse
+     73            }
+     74          
+     75            return TRUE;
+   \                     ??emAfProcessClusterSpecificCommand_2:
+   \   00000040   0x2001             MOVS     R0,#+1
+   \   00000042   0xBD16             POP      {R1,R2,R4,PC}    ;; return
+     76          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%pd, dropping ep 0x%x...">`:
+   \   00000000   0x25 0x70          DC8 "%pd, dropping ep 0x%x clus 0x%2x cmd 0x%x"
+   \              0x64 0x2C    
+   \              0x20 0x64    
+   \              0x72 0x6F    
+   \              0x70 0x70    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x65 0x70    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x20    
+   \              0x63 0x6C    
+   \              0x75 0x73    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x32 0x78    
+   \              0x20 0x63    
+   \              0x6D 0x64    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x00    
+   \   0000002A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "disable">`:
+   \   00000000   0x64 0x69          DC8 "disable"
+   \              0x73 0x61    
+   \              0x62 0x6C    
+   \              0x65 0x00    
+     77          
+     78          static boolean parseOtaServerIncomingMessage(EmberAfClusterCommand* cmd)
+     79          {
+     80          #if defined(EMBER_CALLBACK_OTA_SERVER_INCOMING_MESSAGE_RAW)
+     81            if (cmd->apsFrame->clusterId == ZCL_OTA_BOOTLOAD_CLUSTER_ID
+     82                && cmd->direction == ZCL_DIRECTION_CLIENT_TO_SERVER) {
+     83              emberAfOtaServerIncomingMessageRawCallback(cmd);
+     84              return TRUE;
+     85            }
+     86          #endif
+     87          
+     88            return FALSE;
+     89          }
+     90          
+     91          static boolean parseOtaClientIncomingMessage(EmberAfClusterCommand* cmd)
+     92          {
+     93          #if defined(EMBER_CALLBACK_OTA_CLIENT_INCOMING_MESSAGE_RAW)
+     94            if (cmd->apsFrame->clusterId == ZCL_OTA_BOOTLOAD_CLUSTER_ID
+     95                && cmd->direction == ZCL_DIRECTION_SERVER_TO_CLIENT) {
+     96              emberAfOtaClientIncomingMessageRawCallback(cmd);
+     97              return TRUE;
+     98            }
+     99          #endif
+    100          
+    101            return FALSE;
+    102          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       16  emAfProcessClusterSpecificCommand
+             16 -> emberAfClusterSpecificCommandParse
+             16 -> emberAfIsDeviceEnabled
+             16 -> emberAfPrintln
+             16 -> emberAfSendDefaultResponse
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      44  ?<Constant "%pd, dropping ep 0x%x...">
+       8  ?<Constant "disable">
+      68  emAfProcessClusterSpecificCommand
+
+ 
+ 120 bytes in section .text
+ 
+ 120 bytes of CODE memory
+
+Errors: none
+Warnings: none

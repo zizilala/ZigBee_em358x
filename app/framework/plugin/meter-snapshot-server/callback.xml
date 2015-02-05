@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<callback prefix="emberAf" postfix="Callback">
+  <function id="METER_SNAPSHOT_SERVER_SCHEDULE_SNAPSHOT" name="Schedule Snapshot" returnType="void">
+    <description>
+      This function is called by the Meter Snapshot server plugin whenever a ScheduleSnapshot command is received. A plugin implementing backhaul functionality for the snapshot mechanism should proceed to schedule the snapshot as required.
+    </description>
+    <arg name="srcEndpoint"      type="int8u"        />
+    <arg name="dstEndpoint"      type="int8u"        />
+    <arg name="dest"             type="EmberNodeId"  />
+    <arg name="snapshotPayload"  type="int8u*"      />
+    <arg name="responsePayload"  type="int8u*"      />
+    <codeForStub />
+  </function>
+  <function id="METER_SNAPSHOT_SERVER_TAKE_SNAPSHOT" name="Take Snapshot" returnType="int32u">
+    <description>
+      This function is called by the Meter Snapshot server plugin whenever a TakeSnapshot command is received. A plugin implementing backhaul functionality for the snapshot mechanism should proceed to manually take a snapshot as required. If for some reason the snapshot could not be taken, this should be reflected in the snapshotConfirmation argument.
+    </description>
+    <arg name="endpoint"             type="int8u" />
+    <arg name="snapshotCause"        type="int32u" />
+    <arg name="snapshotConfirmation" type="int8u*" />
+    <codeForStub>
+      return 0;
+    </codeForStub>
+  </function>
+  <function id="METER_SNAPSHOT_SERVER_GET_SNAPSHOT" name="Get Snapshot" returnType="void">
+    <description>
+      This function is called by the Meter Snapshot server plugin whenever a GetSnapshot command is received. A plugin implementing backhaul functionality for the snapshot mechanism should proceed to retrieve the snapshot and send a PublishSnapshot command to the requesting client.
+    </description>
+    <arg name="srcEndpoint"      type="int8u"        />
+    <arg name="dstEndpoint"      type="int8u"        />
+    <arg name="dest"             type="EmberNodeId"  />
+    <arg name="snapshotCriteria" type="int8u*"      />
+    <codeForStub />
+  </function>
+</callback>

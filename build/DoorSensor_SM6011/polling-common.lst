@@ -1,0 +1,308 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:05 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\polling-common.c                        #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\polling-common.c -D                     #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"polling-common.c\"" -lC             #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\ap #
+#                    p\builder\DoorSensor_SM6011\ -I                          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \polling-common.lst                                      #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \polling-common.o                                        #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\end-device-support\polling-common.c
+      1          // Copyright 2013 Silicon Laboratories, Inc.
+      2          
+      3          #include "app/framework/include/af.h"
+      4          #include "app/framework/plugin/end-device-support/end-device-support.h"
+      5          
+      6          // The polling task is not used on the host.
+      7          #ifdef EZSP_HOST
+      8            #define ADD_POLLING_TASK()
+      9            #define REMOVE_POLLING_TASK()
+     10          #else
+     11            #define ADD_POLLING_TASK()    emberAfAddToCurrentAppTasks(EMBER_AF_LAST_POLL_GOT_DATA)
+     12            #define REMOVE_POLLING_TASK() emberAfRemoveFromCurrentAppTasks(EMBER_AF_LAST_POLL_GOT_DATA)
+     13          #endif
+     14          
+
+   \                                 In section .bss, align 4
+     15          EmAfPollingState emAfPollingStates[EMBER_SUPPORTED_NETWORKS];
+   \                     emAfPollingStates:
+   \   00000000                      DS8 8
+     16          
+     17          // This function is called when a poll completes and explains what happend with
+     18          // the poll.  If the number of sequential data polls not ACKed by the parent
+     19          // exceeds the threshold, we will try to find a new parent.
+
+   \                                 In section .text, align 2, keep-with-next
+     20          void emAfPollCompleteHandler(EmberStatus status, int8u limit)
+     21          {
+   \                     emAfPollCompleteHandler:
+   \   00000000   0xB5F8             PUSH     {R3-R7,LR}
+   \   00000002   0x4606             MOV      R6,R0
+   \   00000004   0x460C             MOV      R4,R1
+     22            EmAfPollingState *state;
+     23            int8u networkIndex;
+     24          
+     25            emberAfPushCallbackNetworkIndex();
+   \   00000006   0x.... 0x....      BL       emberAfPushCallbackNetworkIndex
+     26            networkIndex = emberGetCurrentNetwork();
+   \   0000000A   0x.... 0x....      BL       emberGetCurrentNetwork
+   \   0000000E   0x4607             MOV      R7,R0
+     27            state = &emAfPollingStates[networkIndex];
+   \   00000010   0x....             LDR.N    R0,??DataTable4
+   \   00000012   0xEB00 0x05C7      ADD      R5,R0,R7, LSL #+3
+     28          
+     29            if (emAfEnablePollCompletedCallback) {
+   \   00000016   0x....             LDR.N    R0,??DataTable4_1
+   \   00000018   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001A   0xB110             CBZ.N    R0,??emAfPollCompleteHandler_0
+     30              emberAfPluginEndDeviceSupportPollCompletedCallback(status);
+   \   0000001C   0x4630             MOV      R0,R6
+   \   0000001E   0x.... 0x....      BL       emberAfPluginEndDeviceSupportPollCompletedCallback
+     31            }
+     32          
+     33            switch (status) {
+   \                     ??emAfPollCompleteHandler_0:
+   \   00000022   0x0030             MOVS     R0,R6
+   \   00000024   0xD006             BEQ.N    ??emAfPollCompleteHandler_1
+   \   00000026   0x2E31             CMP      R6,#+49
+   \   00000028   0xD00B             BEQ.N    ??emAfPollCompleteHandler_2
+   \   0000002A   0x2E40             CMP      R6,#+64
+   \   0000002C   0xD01F             BEQ.N    ??emAfPollCompleteHandler_3
+   \   0000002E   0x2E66             CMP      R6,#+102
+   \   00000030   0xD013             BEQ.N    ??emAfPollCompleteHandler_4
+   \   00000032   0xE02B             B.N      ??emAfPollCompleteHandler_5
+     34            case EMBER_SUCCESS:
+     35              ADD_POLLING_TASK();
+   \                     ??emAfPollCompleteHandler_1:
+   \   00000034   0x2002             MOVS     R0,#+2
+   \   00000036   0x.... 0x....      BL       emberAfAddToCurrentAppTasksCallback
+     36              emberAfDebugPrintln("poll nwk %d: got data", networkIndex);
+   \   0000003A   0x463A             MOV      R2,R7
+   \   0000003C   0x.... 0x....      ADR.W    R1,`?<Constant "poll nwk %d: got data">`
+   \   00000040   0xE005             B.N      ??emAfPollCompleteHandler_6
+     37              state->numPollsFailing = 0;
+     38              break;
+     39            case EMBER_MAC_NO_DATA:
+     40              REMOVE_POLLING_TASK();
+   \                     ??emAfPollCompleteHandler_2:
+   \   00000042   0x2002             MOVS     R0,#+2
+   \   00000044   0x.... 0x....      BL       emberAfRemoveFromCurrentAppTasksCallback
+     41              emberAfDebugPrintln("poll nwk %d: no data", networkIndex);
+   \   00000048   0x463A             MOV      R2,R7
+   \   0000004A   0x.... 0x....      ADR.W    R1,`?<Constant "poll nwk %d: no data">`
+   \                     ??emAfPollCompleteHandler_6:
+   \   0000004E   0x2002             MOVS     R0,#+2
+   \   00000050   0x.... 0x....      BL       emberAfPrintln
+     42              state->numPollsFailing = 0;
+   \   00000054   0x2000             MOVS     R0,#+0
+   \   00000056   0x7128             STRB     R0,[R5, #+4]
+     43              break;
+   \   00000058   0xE01F             B.N      ??emAfPollCompleteHandler_7
+     44            case EMBER_DELIVERY_FAILED:
+     45              // This means the air was busy, which we don't count as a failure.
+     46              REMOVE_POLLING_TASK();
+   \                     ??emAfPollCompleteHandler_4:
+   \   0000005A   0x2002             MOVS     R0,#+2
+   \   0000005C   0x.... 0x....      BL       emberAfRemoveFromCurrentAppTasksCallback
+     47              emberAfDebugPrintln("poll nwk %d: delivery failed", networkIndex);
+   \   00000060   0x463A             MOV      R2,R7
+   \   00000062   0x.... 0x....      ADR.W    R1,`?<Constant "poll nwk %d: delivery...">`
+   \   00000066   0x2002             MOVS     R0,#+2
+   \   00000068   0x.... 0x....      BL       emberAfPrintln
+     48              break;
+   \   0000006C   0xE015             B.N      ??emAfPollCompleteHandler_7
+     49            case EMBER_MAC_NO_ACK_RECEIVED:
+     50              // If we are performing key establishment, we can ignore this since the
+     51              // parent could go away for long periods of time while doing ECC processes.
+     52              if (emberAfPerformingKeyEstablishment()) {
+   \                     ??emAfPollCompleteHandler_3:
+   \   0000006E   0x.... 0x....      BL       emberAfPerformingKeyEstablishmentCallback
+   \   00000072   0xB990             CBNZ.N   R0,??emAfPollCompleteHandler_7
+     53                break;
+     54              }
+     55              // Count failures until we hit the limit, then we try a rejoin. If rejoin
+     56              // fails, it will trigger a move.
+     57              state->numPollsFailing++;
+   \   00000074   0x7928             LDRB     R0,[R5, #+4]
+   \   00000076   0x1C40             ADDS     R0,R0,#+1
+   \   00000078   0x7128             STRB     R0,[R5, #+4]
+     58              if (limit <= state->numPollsFailing) {
+   \   0000007A   0xB2C0             UXTB     R0,R0
+   \   0000007C   0x42A0             CMP      R0,R4
+   \   0000007E   0xBF28             IT       CS 
+   \   00000080   0x.... 0x....      BLCS     emberAfStartMoveCallback
+     59                emberAfStartMoveCallback();
+     60              }
+     61              REMOVE_POLLING_TASK();
+   \   00000084   0x2002             MOVS     R0,#+2
+   \   00000086   0x.... 0x....      BL       emberAfRemoveFromCurrentAppTasksCallback
+     62              break;
+   \   0000008A   0xE006             B.N      ??emAfPollCompleteHandler_7
+     63            default:
+     64              emberAfDebugPrintln("poll nwk %d: 0x%x", networkIndex, status);
+   \                     ??emAfPollCompleteHandler_5:
+   \   0000008C   0x4633             MOV      R3,R6
+   \   0000008E   0x463A             MOV      R2,R7
+   \   00000090   0x.... 0x....      ADR.W    R1,`?<Constant "poll nwk %d: 0x%x">`
+   \   00000094   0x2002             MOVS     R0,#+2
+   \   00000096   0x.... 0x....      BL       emberAfPrintln
+     65            }
+     66          
+     67            emberAfPopNetworkIndex();
+   \                     ??emAfPollCompleteHandler_7:
+   \   0000009A   0xE8BD 0x40F1      POP      {R0,R4-R7,LR}
+   \   0000009E   0x.... 0x....      B.W      emberAfPopNetworkIndex
+     68          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable4:
+   \   00000000   0x........         DC32     emAfPollingStates
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable4_1:
+   \   00000000   0x........         DC32     emAfEnablePollCompletedCallback
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "poll nwk %d: got data">`:
+   \   00000000   0x70 0x6F          DC8 "poll nwk %d: got data"
+   \              0x6C 0x6C    
+   \              0x20 0x6E    
+   \              0x77 0x6B    
+   \              0x20 0x25    
+   \              0x64 0x3A    
+   \              0x20 0x67    
+   \              0x6F 0x74    
+   \              0x20 0x64    
+   \              0x61 0x74    
+   \              0x61 0x00    
+   \   00000016   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "poll nwk %d: no data">`:
+   \   00000000   0x70 0x6F          DC8 "poll nwk %d: no data"
+   \              0x6C 0x6C    
+   \              0x20 0x6E    
+   \              0x77 0x6B    
+   \              0x20 0x25    
+   \              0x64 0x3A    
+   \              0x20 0x6E    
+   \              0x6F 0x20    
+   \              0x64 0x61    
+   \              0x74 0x61    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "poll nwk %d: delivery...">`:
+   \   00000000   0x70 0x6F          DC8 "poll nwk %d: delivery failed"
+   \              0x6C 0x6C    
+   \              0x20 0x6E    
+   \              0x77 0x6B    
+   \              0x20 0x25    
+   \              0x64 0x3A    
+   \              0x20 0x64    
+   \              0x65 0x6C    
+   \              0x69 0x76    
+   \              0x65 0x72    
+   \              0x79 0x20    
+   \              0x66 0x61    
+   \              0x69 0x6C    
+   \              0x65 0x64    
+   \              0x00         
+   \   0000001D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "poll nwk %d: 0x%x">`:
+   \   00000000   0x70 0x6F          DC8 "poll nwk %d: 0x%x"
+   \              0x6C 0x6C    
+   \              0x20 0x6E    
+   \              0x77 0x6B    
+   \              0x20 0x25    
+   \              0x64 0x3A    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       24  emAfPollCompleteHandler
+             24 -> emberAfAddToCurrentAppTasksCallback
+             24 -> emberAfPerformingKeyEstablishmentCallback
+             24 -> emberAfPluginEndDeviceSupportPollCompletedCallback
+              0 -> emberAfPopNetworkIndex
+             24 -> emberAfPrintln
+             24 -> emberAfPushCallbackNetworkIndex
+             24 -> emberAfRemoveFromCurrentAppTasksCallback
+             24 -> emberAfStartMoveCallback
+             24 -> emberGetCurrentNetwork
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  ?<Constant "poll nwk %d: 0x%x">
+      32  ?<Constant "poll nwk %d: delivery...">
+      24  ?<Constant "poll nwk %d: got data">
+      24  ?<Constant "poll nwk %d: no data">
+       4  ??DataTable4
+       4  ??DataTable4_1
+     162  emAfPollCompleteHandler
+       8  emAfPollingStates
+
+ 
+   8 bytes in section .bss
+ 270 bytes in section .text
+ 
+ 270 bytes of CODE memory
+   8 bytes of DATA memory
+
+Errors: none
+Warnings: none

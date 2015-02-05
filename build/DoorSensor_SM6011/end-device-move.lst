@@ -1,0 +1,412 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:50 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\end-device-move.c                       #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\end-device-move.c -D                    #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"end-device-move.c\"" -lC            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\ap #
+#                    p\builder\DoorSensor_SM6011\ -I                          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \end-device-move.lst                                     #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \end-device-move.o                                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\end-device-support\end-device-move.c
+      1          // *****************************************************************************
+      2          // * end-device-move.c
+      3          // *
+      4          // * Code common to SOC and host to handle moving (i.e. rejoining) to a new
+      5          // * parent device.
+      6          // *
+      7          // * Copyright 2012 by Ember Corporation. All rights reserved.              *80*
+      8          // *****************************************************************************
+      9          
+     10          #include "app/framework/include/af.h"
+     11          
+     12          // *****************************************************************************
+     13          // Globals
+     14          
+     15          extern EmberEventControl emberAfPluginEndDeviceSupportMoveNetworkEventControls[];
+     16          
+     17          typedef struct {
+     18            int8u moveAttempts;
+     19            int16u totalMoveAttempts;
+     20          } State;
+
+   \                                 In section .bss, align 4
+     21          static State states[EMBER_SUPPORTED_NETWORKS];
+   \                     states:
+   \   00000000                      DS8 4
+     22          
+     23          #define NEVER_STOP_ATTEMPTING_REJOIN 0xFF
+     24          #define MOVE_DELAY_QS (10 * 4)
+     25          
+     26          // *****************************************************************************
+     27          // Functions
+     28          
+
+   \                                 In section .text, align 2, keep-with-next
+     29          void emAfScheduleMoveEvent(void)
+     30          {
+   \                     emAfScheduleMoveEvent:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     31            int8u networkIndex = emberGetCurrentNetwork();
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+     32            State *state = &states[networkIndex];
+   \   00000006   0x....             LDR.N    R1,??DataTable7
+   \   00000008   0xEB01 0x0480      ADD      R4,R1,R0, LSL #+2
+     33          
+     34            if (EMBER_AF_REJOIN_ATTEMPTS_MAX == NEVER_STOP_ATTEMPTING_REJOIN
+     35                || state->moveAttempts < EMBER_AF_REJOIN_ATTEMPTS_MAX) {
+   \   0000000C   0x7821             LDRB     R1,[R4, #+0]
+   \   0000000E   0x460B             MOV      R3,R1
+   \   00000010   0x2903             CMP      R1,#+3
+   \   00000012   0x4602             MOV      R2,R0
+   \   00000014   0xD20E             BCS.N    ??emAfScheduleMoveEvent_0
+     36              emberAfAppPrintln("Schedule move nwk %d: %d",
+     37                                networkIndex,
+     38                                state->moveAttempts);
+   \   00000016   0x.... 0x....      ADR.W    R1,`?<Constant "Schedule move nwk %d: %d">`
+   \   0000001A   0x2004             MOVS     R0,#+4
+   \   0000001C   0x.... 0x....      BL       emberAfPrintln
+     39              emberAfNetworkEventControlSetDelayQS(emberAfPluginEndDeviceSupportMoveNetworkEventControls,
+     40                                                   (state->moveAttempts == 0
+     41                                                    ? 0
+     42                                                    : MOVE_DELAY_QS));
+   \   00000020   0x7820             LDRB     R0,[R4, #+0]
+   \   00000022   0x2800             CMP      R0,#+0
+   \   00000024   0xBF0C             ITE      EQ 
+   \   00000026   0x2100             MOVEQ    R1,#+0
+   \   00000028   0x2128             MOVNE    R1,#+40
+   \   0000002A   0x....             LDR.N    R0,??DataTable7_1
+   \   0000002C   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000030   0x.... 0x....      B.W      emberAfNetworkEventControlSetDelayQS
+     43            } else {
+     44              emberAfAppPrintln("Max move limit reached nwk %d: %d",
+     45                                networkIndex,
+     46                                state->moveAttempts);
+   \                     ??emAfScheduleMoveEvent_0:
+   \   00000034   0x.... 0x....      ADR.W    R1,`?<Constant "Max move limit reache...">`
+   \   00000038   0x2004             MOVS     R0,#+4
+   \   0000003A   0x.... 0x....      BL       emberAfPrintln
+     47              emberAfStopMoveCallback();
+   \   0000003E   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000042   0x....             B.N      emberAfStopMoveCallback
+     48            }
+     49          }
+     50          
+
+   \                                 In section .text, align 2, keep-with-next
+     51          boolean emberAfMoveInProgressCallback(void)
+     52          {
+     53            return emberAfNetworkEventControlGetActive(emberAfPluginEndDeviceSupportMoveNetworkEventControls);
+   \                     emberAfMoveInProgressCallback:
+   \   00000000   0x....             LDR.N    R0,??DataTable7_1
+   \   00000002   0x.... 0x....      B.W      emberAfNetworkEventControlGetActive
+     54          }
+     55          
+
+   \                                 In section .text, align 2, keep-with-next
+     56          boolean emberAfStartMoveCallback(void)
+     57          {
+   \                     emberAfStartMoveCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     58            if (!emberAfMoveInProgressCallback()) {
+   \   00000002   0x....             LDR.N    R0,??DataTable7_1
+   \   00000004   0x.... 0x....      BL       emberAfNetworkEventControlGetActive
+   \   00000008   0xB918             CBNZ.N   R0,??emberAfStartMoveCallback_0
+     59              emAfScheduleMoveEvent();
+   \   0000000A   0x.... 0x....      BL       emAfScheduleMoveEvent
+     60              return TRUE;
+   \   0000000E   0x2001             MOVS     R0,#+1
+   \   00000010   0xBD02             POP      {R1,PC}
+     61            }
+     62            return FALSE;
+   \                     ??emberAfStartMoveCallback_0:
+   \   00000012   0x2000             MOVS     R0,#+0
+   \   00000014   0xBD02             POP      {R1,PC}          ;; return
+     63          }
+     64          
+
+   \                                 In section .text, align 2, keep-with-next
+     65          void emberAfStopMoveCallback(void)
+     66          {
+   \                     emberAfStopMoveCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     67            int8u networkIndex = emberGetCurrentNetwork();
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+     68            states[networkIndex].moveAttempts = 0;
+   \   00000006   0x....             LDR.N    R1,??DataTable7
+   \   00000008   0x2200             MOVS     R2,#+0
+   \   0000000A   0xF801 0x2020      STRB     R2,[R1, R0, LSL #+2]
+     69            emberEventControlSetInactive(emberAfPluginEndDeviceSupportMoveNetworkEventControls[networkIndex]);
+   \   0000000E   0x....             LDR.N    R1,??DataTable7_1
+   \   00000010   0xF801 0x2030      STRB     R2,[R1, R0, LSL #+3]
+     70          }
+   \   00000014   0xBD01             POP      {R0,PC}          ;; return
+     71          
+
+   \                                 In section .text, align 2, keep-with-next
+     72          void emberAfPluginEndDeviceSupportMoveNetworkEventHandler(void)
+     73          {
+   \                     emberAfPluginEndDeviceSupportMoveNetworkEventHandler:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0xB082             SUB      SP,SP,#+8
+     74            int8u networkIndex = emberGetCurrentNetwork();
+   \   00000004   0x.... 0x....      BL       emberGetCurrentNetwork
+   \   00000008   0x4604             MOV      R4,R0
+     75            State *state = &states[networkIndex];
+   \   0000000A   0x....             LDR.N    R0,??DataTable7
+   \   0000000C   0xEB00 0x0584      ADD      R5,R0,R4, LSL #+2
+     76            EmberStatus status;
+     77            boolean secure = (state->moveAttempts == 0);
+   \   00000010   0x7828             LDRB     R0,[R5, #+0]
+   \   00000012   0x2800             CMP      R0,#+0
+   \   00000014   0xBF07             ITTEE    EQ 
+   \   00000016   0x2001             MOVEQ    R0,#+1
+   \   00000018   0x2100             MOVEQ    R1,#+0
+   \   0000001A   0x2000             MOVNE    R0,#+0
+   \   0000001C   0x....             LDRNE.N  R1,??DataTable7_2  ;; 0x7fff800
+     78            int32u channels = (state->moveAttempts == 0
+     79                               ? 0 // current channel
+     80                               : EMBER_ALL_802_15_4_CHANNELS_MASK);
+     81            status = emberFindAndRejoinNetworkWithReason(secure, 
+     82                                                         channels,
+     83                                                         EMBER_AF_REJOIN_DUE_TO_END_DEVICE_MOVE);
+   \   0000001E   0x22A0             MOVS     R2,#+160
+   \   00000020   0x.... 0x....      BL       emberFindAndRejoinNetworkWithReason
+   \   00000024   0x4606             MOV      R6,R0
+     84            emberAfDebugPrintln("Move attempt %d nwk %d: 0x%x",
+     85                                state->moveAttempts,
+     86                                networkIndex,
+     87                                status);
+   \   00000026   0x9600             STR      R6,[SP, #+0]
+   \   00000028   0x4623             MOV      R3,R4
+   \   0000002A   0x782A             LDRB     R2,[R5, #+0]
+   \   0000002C   0x.... 0x....      ADR.W    R1,`?<Constant "Move attempt %d nwk %...">`
+   \   00000030   0x2002             MOVS     R0,#+2
+   \   00000032   0x.... 0x....      BL       emberAfPrintln
+     88            if (status == EMBER_SUCCESS) {
+   \   00000036   0xB92E             CBNZ.N   R6,??emberAfPluginEndDeviceSupportMoveNetworkEvent_0
+     89              state->moveAttempts++;
+   \   00000038   0x7828             LDRB     R0,[R5, #+0]
+   \   0000003A   0x1C40             ADDS     R0,R0,#+1
+   \   0000003C   0x7028             STRB     R0,[R5, #+0]
+     90              state->totalMoveAttempts++;
+   \   0000003E   0x8868             LDRH     R0,[R5, #+2]
+   \   00000040   0x1C40             ADDS     R0,R0,#+1
+   \   00000042   0x8068             STRH     R0,[R5, #+2]
+     91            }
+     92            emAfScheduleMoveEvent();
+   \                     ??emberAfPluginEndDeviceSupportMoveNetworkEvent_0:
+   \   00000044   0xE8BD 0x4073      POP      {R0,R1,R4-R6,LR}
+   \   00000048   0x....             B.N      emAfScheduleMoveEvent
+     93          }
+     94          
+
+   \                                 In section .text, align 2, keep-with-next
+     95          void emberAfPluginEndDeviceSupportStackStatusCallback(EmberStatus status)
+     96          {
+     97            if (status == EMBER_NETWORK_UP) {
+   \                     emberAfPluginEndDeviceSupportStackStatusCallback:
+   \   00000000   0x2890             CMP      R0,#+144
+   \   00000002   0xBF08             IT       EQ 
+   \   00000004   0x.... 0x....      BEQ.W    emberAfStopMoveCallback
+     98              emberAfStopMoveCallback();
+     99              return;
+    100            }
+    101          
+    102            if (status == EMBER_NETWORK_DOWN || status == EMBER_MOVE_FAILED) {
+   \   00000008   0xB580             PUSH     {R7,LR}
+   \   0000000A   0x2891             CMP      R0,#+145
+   \   0000000C   0xBF18             IT       NE 
+   \   0000000E   0x2896             CMPNE    R0,#+150
+   \   00000010   0xD110             BNE.N    ??emberAfPluginEndDeviceSupportStackStatusCallb_0
+    103              if (!emberStackIsPerformingRejoin()) {
+   \   00000012   0x.... 0x....      BL       emberStackIsPerformingRejoin
+   \   00000016   0xB968             CBNZ.N   R0,??emberAfPluginEndDeviceSupportStackStatusCallb_0
+    104                EmberNetworkStatus state = emberAfNetworkState();
+   \   00000018   0x.... 0x....      BL       emberAfNetworkState
+    105                if (state == EMBER_JOINED_NETWORK_NO_PARENT) {
+   \   0000001C   0x2803             CMP      R0,#+3
+   \   0000001E   0xBF04             ITT      EQ 
+   \   00000020   0xE8BD 0x4001      POPEQ    {R0,LR}
+   \   00000024   0x.... 0x....      BEQ.W    emberAfStartMoveCallback
+    106                  emberAfStartMoveCallback();
+    107                } else if (state == EMBER_NO_NETWORK) {
+   \   00000028   0x2800             CMP      R0,#+0
+   \   0000002A   0xBF04             ITT      EQ 
+   \   0000002C   0xE8BD 0x4001      POPEQ    {R0,LR}
+   \   00000030   0x.... 0x....      BEQ.W    emberAfStopMoveCallback
+   \                     ??emberAfPluginEndDeviceSupportStackStatusCallb_0:
+   \   00000034   0xBD01             POP      {R0,PC}          ;; return
+    108                  emberAfStopMoveCallback();
+    109                }
+    110              }
+    111            }
+    112          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7:
+   \   00000000   0x........         DC32     states
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_1:
+   \   00000000   0x........         DC32     emberAfPluginEndDeviceSupportMoveNetworkEventControls
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_2:
+   \   00000000   0x07FFF800         DC32     0x7fff800
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Schedule move nwk %d: %d">`:
+   \   00000000   0x53 0x63          DC8 "Schedule move nwk %d: %d"
+   \              0x68 0x65    
+   \              0x64 0x75    
+   \              0x6C 0x65    
+   \              0x20 0x6D    
+   \              0x6F 0x76    
+   \              0x65 0x20    
+   \              0x6E 0x77    
+   \              0x6B 0x20    
+   \              0x25 0x64    
+   \              0x3A 0x20    
+   \              0x25 0x64    
+   \              0x00         
+   \   00000019   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Max move limit reache...">`:
+   \   00000000   0x4D 0x61          DC8 "Max move limit reached nwk %d: %d"
+   \              0x78 0x20    
+   \              0x6D 0x6F    
+   \              0x76 0x65    
+   \              0x20 0x6C    
+   \              0x69 0x6D    
+   \              0x69 0x74    
+   \              0x20 0x72    
+   \              0x65 0x61    
+   \              0x63 0x68    
+   \              0x65 0x64    
+   \              0x20 0x6E    
+   \              0x77 0x6B    
+   \              0x20 0x25    
+   \              0x64 0x3A    
+   \              0x20 0x25    
+   \              0x64 0x00    
+   \   00000022   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Move attempt %d nwk %...">`:
+   \   00000000   0x4D 0x6F          DC8 "Move attempt %d nwk %d: 0x%x"
+   \              0x76 0x65    
+   \              0x20 0x61    
+   \              0x74 0x74    
+   \              0x65 0x6D    
+   \              0x70 0x74    
+   \              0x20 0x25    
+   \              0x64 0x20    
+   \              0x6E 0x77    
+   \              0x6B 0x20    
+   \              0x25 0x64    
+   \              0x3A 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x00         
+   \   0000001D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emAfScheduleMoveEvent
+              0 -> emberAfNetworkEventControlSetDelayQS
+              8 -> emberAfPrintln
+              0 -> emberAfStopMoveCallback
+              8 -> emberGetCurrentNetwork
+        0  emberAfMoveInProgressCallback
+              0 -> emberAfNetworkEventControlGetActive
+       24  emberAfPluginEndDeviceSupportMoveNetworkEventHandler
+              0 -> emAfScheduleMoveEvent
+             24 -> emberAfPrintln
+             24 -> emberFindAndRejoinNetworkWithReason
+             24 -> emberGetCurrentNetwork
+        8  emberAfPluginEndDeviceSupportStackStatusCallback
+              8 -> emberAfNetworkState
+              8 -> emberAfStartMoveCallback
+              8 -> emberAfStopMoveCallback
+              8 -> emberStackIsPerformingRejoin
+        8  emberAfStartMoveCallback
+              8 -> emAfScheduleMoveEvent
+              8 -> emberAfNetworkEventControlGetActive
+        8  emberAfStopMoveCallback
+              8 -> emberGetCurrentNetwork
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      36  ?<Constant "Max move limit reache...">
+      32  ?<Constant "Move attempt %d nwk %...">
+      28  ?<Constant "Schedule move nwk %d: %d">
+       4  ??DataTable7
+       4  ??DataTable7_1
+       4  ??DataTable7_2
+      68  emAfScheduleMoveEvent
+       6  emberAfMoveInProgressCallback
+      74  emberAfPluginEndDeviceSupportMoveNetworkEventHandler
+      54  emberAfPluginEndDeviceSupportStackStatusCallback
+      22  emberAfStartMoveCallback
+      22  emberAfStopMoveCallback
+       4  states
+
+ 
+   4 bytes in section .bss
+ 354 bytes in section .text
+ 
+ 354 bytes of CODE memory
+   4 bytes of DATA memory
+
+Errors: none
+Warnings: none

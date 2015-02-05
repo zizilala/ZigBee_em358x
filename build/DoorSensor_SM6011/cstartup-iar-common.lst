@@ -1,0 +1,772 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:21 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\csta #
+#                    rtup-iar-common.c                                        #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\csta #
+#                    rtup-iar-common.c -D "GENERATED_TOKEN_HEADER=\"app/build #
+#                    er/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D    #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"cstartup-iar-common.c\"" -lC        #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\ -I  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \cstartup-iar-common.lst                                 #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \cstartup-iar-common.o                                   #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\cstartup-iar-common.c
+      1          //=============================================================================
+      2          // FILE
+      3          //   cstartup.c - Startup and low-level utility code for Ember's Cortex based
+      4          //                SOCs when using the IAR toolchain.
+      5          //
+      6          // DESCRIPTION
+      7          //   This file defines the basic information needed to go from reset up to
+      8          //   the main() found in C code.
+      9          //
+     10          //   Copyright 2013 Silicon Laboratories, Inc.                             *80*
+     11          //=============================================================================
+     12          
+     13          #include PLATFORM_HEADER
+     14          #include "hal/micro/cortexm3/diagnostic.h"
+     15          #include "hal/micro/cortexm3/mpu.h"
+     16          #include "hal/micro/micro.h"
+     17          #include "hal/micro/cortexm3/memmap.h"
+     18          #include "hal/micro/cortexm3/cstartup-iar-common.h"
+     19          #include "hal/micro/cortexm3/internal-storage.h"
+     20          
+     21          #include "stack/include/ember-types.h"
+     22          #include "hal/micro/bootloader-interface.h"
+     23          
+     24          // Pull in the SOFTWARE_VERSION and EMBER_BUILD_NUMBER from the stack
+     25          #include "stack/config/config.h"
+     26          
+     27          // Define the CUSTOMER_APPLICATION_VERSION if it wasn't set
+     28          #ifndef CUSTOMER_APPLICATION_VERSION
+     29            #define CUSTOMER_APPLICATION_VERSION 0
+     30          #endif
+     31          // Define the CUSTOMER_BOOTLOADER_VERSION if it wasn't set
+     32          #ifndef CUSTOMER_BOOTLOADER_VERSION
+     33            #define CUSTOMER_BOOTLOADER_VERSION 0
+     34          #endif
+     35          
+     36          // Verify the various bootloader options that may be specified.  Use of some
+     37          //   options is now deprecated and will be removed in a future release.
+     38          // On the 35x platform, the use of these options is only important to specify
+     39          //   the size of the bootloader, rather than the bootloader type.
+     40          // By default, the lack of any option will indicate an 8k bootloader size
+     41          // The NULL_BTL option indicates no bootloader is used.
+     42          #ifdef APP_BTL
+     43            #pragma message("The APP_BTL build option is deprecated.  Removing this option will build for any 8k bootloader type.")
+     44          #endif
+     45          #ifdef SERIAL_UART_BTL
+     46            #pragma message("The SERIAL_UART_BTL build option is deprecated.  Removing this option will build for any 8k bootloader type.")
+     47          #endif
+     48          #ifdef SERIAL_OTA_BTL
+     49            #pragma message("The SERIAL_UART_OTA build option is deprecated.  Removing this option will build for any 8k bootloader type.")
+     50          #endif
+     51          #ifdef NULL_BTL
+     52            // Fully supported, no error
+     53          #endif
+     54          #ifdef SMALL_BTL
+     55            #error SMALL_BTL is not supported
+     56          #endif
+     57          
+     58          
+     59          //=============================================================================
+     60          // Define the size of the call stack and define a block of memory for it.
+     61          //
+     62          // Place the cstack area in a segment named CSTACK.  This segment is
+     63          // defined soley for the purpose of placing the stack.  Since this area
+     64          // is manually placed, it cannot be part of the normal data initialization
+     65          // and therefore must be declared '__no_init'.  Refer to reset handler for the
+     66          //initialization code and iar-cfg-common.icf for segment placement in memory.
+     67          //
+     68          // halResetInfo, used to store crash information and bootloader parameters, is
+     69          // overlayed on top of the base of this segment so it can be overwritten by the
+     70          // call stack.
+     71          // This assumes that the stack will not go that deep between reset and
+     72          // use of the crash or the bootloader data.
+     73          //=============================================================================
+     74          #ifndef CSTACK_SIZE
+     75            #if (! defined(EMBER_STACK_IP))
+     76              // Pro Stack
+     77          
+     78              // Right now we define the stack size to be for the worst case scenario,
+     79              // ECC.  The ECC 163k1 library  and the ECC 283k1 Library both use the stack 
+     80              // for calculations. Empirically I have seen it use as much as 1900 bytes 
+     81              // for the 'key bit generate' operation.
+     82              // So we add a 25% buffer: 1900 * 1.25 = 2375
+     83              #define CSTACK_SIZE  (600)  // *4 = 2400 bytes
+     84          
+     85            #else
+     86              // IP Stack
+     87              #define CSTACK_SIZE (950) // *4 = 3800 bytes
+     88            #endif // !EMBER_STACK_IP
+     89          #endif
+
+   \                                 In section CSTACK, align 4, root
+     90          __root __no_init int32u cstackMemory[CSTACK_SIZE] @ __CSTACK__;
+   \                     cstackMemory:
+   \   00000000                      DS8 2400
+     91          
+     92          #ifndef HTOL_EM3XX
+     93            // Create an array to hold space for the guard region. Do not actually use this
+     94            // array in code as we will move the guard region around programatically. This
+     95            // is only here so that the linker takes into account the size of the guard
+     96            // region when configuring the RAM.
+     97            #pragma data_alignment=HEAP_GUARD_REGION_SIZE_BYTES
+
+   \                                 In section GUARD_REGION, align 32, root
+     98            __root __no_init int8u guardRegionPlaceHolder[HEAP_GUARD_REGION_SIZE_BYTES] @ __GUARD_REGION__;
+   \                     guardRegionPlaceHolder:
+   \   00000000                      DS8 32
+     99          #endif
+    100          
+    101          // Reset cause and crash info live in a special RAM segment that is
+    102          // not modified during startup.  This segment is overlayed on top of the
+    103          // bottom of the cstack.
+
+   \                                 In section RESETINFO, align 4, root
+    104          __root __no_init HalResetInfoType halResetInfo @ __RESETINFO__;
+   \                     halResetInfo:
+   \   00000000                      DS8 152
+    105          
+    106          // If space is needed in the flash for data storage like for the local storage
+    107          // bootloader then create an array here to hold a place for this data.
+    108          #if INTERNAL_STORAGE_SIZE_B > 0
+    109            // Define the storage region as an uninitialized array in the
+    110            // __INTERNAL_STORAGE__ region which the linker knows how to place.
+
+   \                                 In section INTERNAL_STORAGE, align 4, root
+    111            VAR_AT_SEGMENT(__root __no_init int8u internalStorage[INTERNAL_STORAGE_SIZE_B], __INTERNAL_STORAGE__);
+   \                     internalStorage:
+   \   00000000                      DS8 251904
+    112          #endif
+    113          
+    114          //=============================================================================
+    115          // Declare the address tables which will always live at well known addresses
+    116          //=============================================================================
+
+   \                                 In section FAT, align 4, root
+    117          __root __no_init const HalFixedAddressTableType halFixedAddressTable @ __FAT__;
+   \                     halFixedAddressTable:
+   \   00000000                      DS8 44
+    118          
+    119          #ifdef NULL_BTL
+    120          // In the case of a NULL_BTL application, we define a dummy BAT
+    121          __root const HalBootloaderAddressTableType halBootloaderAddressTable @ __BAT__ = {
+    122            { __section_end("CSTACK"),
+    123              halEntryPoint,
+    124              halNmiIsr,
+    125              halHardFaultIsr,
+    126              BOOTLOADER_ADDRESS_TABLE_TYPE,
+    127              BAT_NULL_VERSION,
+    128              NULL                    // No other vector table.
+    129            },
+    130            BL_EXT_TYPE_NULL,           //int16u bootloaderType;
+    131            BOOTLOADER_INVALID_VERSION, //int16u bootloaderVersion;
+    132            &halAppAddressTable,
+    133            PLAT,   //int8u platInfo;   // type of platform, defined in micro.h
+    134            MICRO,  //int8u microInfo;  // type of micro, defined in micro.h
+    135            PHY,    //int8u phyInfo;    // type of phy, defined in micro.h
+    136            0,      //int8u reserved;   // reserved for future use
+    137            NULL,   // eblProcessInit
+    138            NULL,   // eblProcess
+    139            NULL,   // eblDataFuncs
+    140            NULL,   // eepromInit
+    141            NULL,   // eepromRead
+    142            NULL,   // eepromWrite
+    143            NULL,   // eepromShutdown
+    144            NULL,   // eepromInfo
+    145            NULL,   // eepromErase
+    146            NULL,   // eepromBusy
+    147            EMBER_BUILD_NUMBER, // int16u softwareBuild;
+    148            0,                  // int16u reserved2;
+    149            CUSTOMER_BOOTLOADER_VERSION  // int32u customerBootloaderVersion;
+    150          };
+    151          #else
+    152          // otherwise we just define a variable that maps to the real bootloader BAT
+
+   \                                 In section BAT, align 4, root
+    153          __root __no_init const HalBootloaderAddressTableType halBootloaderAddressTable @ __BAT__;
+   \                     halBootloaderAddressTable:
+   \   00000000                      DS8 84
+    154          #endif
+    155          
+
+   \                                 In section AAT, align 4, root
+    156          __root const HalAppAddressTableType halAppAddressTable @ __AAT__ = {
+   \                     halAppAddressTable:
+   \   00000000   0x........         DC32 SFE(CSTACK), halEntryPoint, halNmiIsr, halHardFaultIsr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000010   0x0AA7 0x0108      DC16 2727, 264
+   \   00000014   0x........         DC32 __vector_table
+   \   00000018   0x04 0x0C          DC8 4, 12, 3, 172
+   \              0x03 0xAC    
+   \   0000001C   0x5301 0x0181      DC16 21249, 385
+   \   00000020   0x00000000         DC32 0
+   \   00000024   0x00               DC8 ""
+   \   00000025   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000035   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00         
+   \   00000044   0x00000000         DC32 0
+   \   00000048   0xFF 0xFF          DC8 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
+   \              0xFF 0xFF    
+   \              0xFF 0xFF    
+   \              0xFF 0xFF    
+   \              0xFF 0xFF    
+   \              0xFF 0xFF    
+   \   00000054   0x........         DC32 SFB(SIMEE), 0, SFB(INTERNAL_STORAGE)
+   \              0x00000000   
+   \              0x........   
+   \   00000060   0xFF 0xFF          DC8 255, 255, 255, 255, 255, 255, 255, 255
+   \              0xFF 0xFF    
+   \              0xFF 0xFF    
+   \              0xFF 0xFF    
+   \   00000068   0xFFFFFFFF         DC32 4294967295, 4294967295, 4294967295, 4294967295, 4294967295
+   \              0xFFFFFFFF   
+   \              0xFFFFFFFF   
+   \              0xFFFFFFFF   
+   \              0xFFFFFFFF   
+   \   0000007C   0xFFFFFFFF         DC32 4294967295, SFB(DEBUG_CHANNEL), SFB(`.noinit`), SFE(`.bss`)
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   0000008C   0x........         DC32 SFE(`.bss`), SFE(CSTACK), SFE(`.data_init`), SFE(`.text`)
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   0000009C   0x........         DC32 SFB(CSTACK), SFE(EMHEAP_overlay), SFE(SIMEE), SFE(DEBUG_CHANNEL)
+   \              0x........   
+   \              0x........   
+   \              0x........   
+    157            { __section_end("CSTACK"),
+    158              halEntryPoint,
+    159              halNmiIsr,
+    160              halHardFaultIsr,
+    161              APP_ADDRESS_TABLE_TYPE,
+    162              AAT_VERSION,
+    163              __vector_table
+    164            },
+    165            PLAT,  //int8u platInfo;   // type of platform, defined in micro.h
+    166            MICRO, //int8u microInfo;  // type of micro, defined in micro.h
+    167            PHY,   //int8u phyInfo;    // type of phy, defined in micro.h
+    168            sizeof(HalAppAddressTableType),  // size of aat itself
+    169            SOFTWARE_VERSION,   // int16u softwareVersion
+    170            EMBER_BUILD_NUMBER, // int16u softwareBuild
+    171            0,  //int32u timestamp; // Unix epoch time of .ebl file, filled in by ebl gen
+    172            "", //int8u imageInfo[IMAGE_INFO_SZ];  // string, filled in by ebl generation
+    173            0,  //int32u imageCrc;  // CRC over following pageRanges, filled in by ebl gen
+    174            { {0xFF, 0xFF},   //pageRange_t pageRanges[6];  // Flash pages used by app,
+    175              {0xFF, 0xFF},                                 // filled in by ebl gen
+    176              {0xFF, 0xFF},
+    177              {0xFF, 0xFF},
+    178              {0xFF, 0xFF},
+    179              {0xFF, 0xFF}
+    180            },
+    181            __section_begin(__SIMEE__),                         //void *simeeBottom;
+    182            CUSTOMER_APPLICATION_VERSION,                       //int32u customerApplicationVersion;
+    183            __section_begin(__INTERNAL_STORAGE__),              //void *internalStorageBottom;
+    184            { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0XFF }, // image stamp (filled in by em3xx_convert)
+    185            {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,    // bootloaderReserved
+    186             0xFFFFFFFF, 0xFFFFFFFF },
+    187            __section_begin(__DEBUG_CHANNEL__),   //void *debugChannelBottom;
+    188            __section_begin(__NO_INIT__),         //void *noInitBottom;
+    189            __section_end(__BSS__),               //void *appRamTop; NO LONGER USED! (set to __BSS__ for 3xx convert)
+    190            __section_end(__BSS__),               //void *globalTop;
+    191            __section_end(__CSTACK__),            //void *cstackTop;
+    192            __section_end(__DATA_INIT__),         //void *initcTop;
+    193            __section_end(__TEXT__),              //void *codeTop;
+    194            __section_begin(__CSTACK__),          //void *cstackBottom;
+    195            __section_end(__EMHEAP_OVERLAY__),    //void *heapTop;
+    196            __section_end(__SIMEE__),             //void *simeeTop;
+    197            __section_end(__DEBUG_CHANNEL__)      //void *debugChannelTop;
+    198          };
+    199          
+    200          
+    201          
+    202          //=============================================================================
+    203          // Define the vector table as a HalVectorTableType.  __root ensures the compiler
+    204          // will not strip the table.  const ensures the table is placed into flash.
+    205          // @ "INTVEC" tells the compiler/linker to place the vector table in the INTVEC
+    206          // segment which holds the reset/interrupt vectors at address 0x00000000.
+    207          //
+    208          // All Handlers point to a corresponding ISR.  The ISRs are prototyped above.
+    209          // The file isr-stubs.s79 provides a weak definition for all ISRs.  To
+    210          // "register" its own ISR, an application simply has to define the function
+    211          // and the weak stub will be overridden.
+    212          //
+    213          // The list of handlers are extracted from the NVIC configuration file.  The
+    214          // order of the handlers in the NVIC configuration file is critical since it
+    215          // translates to the order they are placed into the vector table here.
+    216          //=============================================================================
+
+   \                                 In section .intvec, align 4, root
+    217          __root const HalVectorTableType __vector_table[] @ __INTVEC__ =
+   \                     __vector_table:
+   \   00000000   0x........         DC32 SFE(CSTACK), halEntryPoint, halNmiIsr, halHardFaultIsr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000010   0x........         DC32 halMemoryFaultIsr, halBusFaultIsr, halUsageFaultIsr
+   \              0x........   
+   \              0x........   
+   \   0000001C   0x........         DC32 halReserved07Isr, halReserved08Isr, halReserved09Isr
+   \              0x........   
+   \              0x........   
+   \   00000028   0x........         DC32 halReserved10Isr, halSvCallIsr, halDebugMonitorIsr
+   \              0x........   
+   \              0x........   
+   \   00000034   0x........         DC32 halReserved13Isr, halPendSvIsr, halSysTickIsr, halTimer1Isr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000044   0x........         DC32 halTimer2Isr, halManagementIsr, halBaseBandIsr, halSleepTimerIsr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000054   0x........         DC32 halSc1Isr, halSc2Isr, halSecurityIsr, halStackMacTimerIsr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000064   0x........         DC32 emRadioTransmitIsr, emRadioReceiveIsr, halAdcIsr, halIrqAIsr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000074   0x........         DC32 halIrqBIsr, halIrqCIsr, halIrqDIsr, halDebugIsr, halSc3Isr
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000088   0x........         DC32 halSc4Isr, halUsbIsr
+   \              0x........   
+    218          {
+    219            { .topOfStack = __section_end(__CSTACK__) },
+    220            #ifndef INTERRUPT_DEBUGGING
+    221              #define EXCEPTION(vectorNumber, functionName, priorityLevel) \
+    222                functionName,
+    223            #else //INTERRUPT_DEBUGGING
+    224              // The interrupt debug behavior inserts a special shim handler before
+    225              // the actual interrupt.  The shim handler then redirects to the
+    226              // actual table, defined below
+    227              #define EXCEPTION(vectorNumber, functionName, priorityLevel) \
+    228                halInternalIntDebuggingIsr,
+    229              // PERM_EXCEPTION is used for any vectors that cannot be redirected
+    230              // throught the shim handler.  (such as the reset vector)
+    231              #define PERM_EXCEPTION(vectorNumber, functionName, priorityLevel) \
+    232                functionName,
+    233            #endif //INTERRUPT_DEBUGGING
+    234            #include NVIC_CONFIG
+    235            #undef  EXCEPTION
+    236            #undef PERM_EXCEPTION
+    237          };
+    238          
+    239          // halInternalClassifyReset() records the cause of the last reset here
+
+   \                                 In section .bss, align 2
+    240          static int16u savedResetCause;
+   \                     savedResetCause:
+   \   00000000                      DS8 2
+    241          
+
+   \                                 In section .text, align 2, keep-with-next
+    242          void halInternalClassifyReset(void)
+    243          {
+   \                     halInternalClassifyReset:
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+    244            // Table used to convert from RESET_EVENT register bits to reset types
+    245            static const int16u resetEventTable[] = {
+    246              RESET_POWERON_HV,            // bit 0: RESET_PWRHV_BIT
+    247              RESET_POWERON_LV,            // bit 1: RESET_PWRLV_BIT
+    248              RESET_EXTERNAL_PIN,          // bit 2: RESET_NRESET_BIT
+    249              RESET_WATCHDOG_EXPIRED,      // bit 3: RESET_WDOG_BIT
+    250              RESET_SOFTWARE,              // bit 4: RESET_SW_BIT
+    251              RESET_BOOTLOADER_DEEPSLEEP,  // bit 5: RESET_DSLEEP_BIT
+    252              RESET_FATAL_OPTIONBYTE,      // bit 6: RESET_OPTBYTEFAIL_BIT
+    253              RESET_FATAL_LOCKUP,          // bit 7: RESET_CPULOCKUP_BIT
+    254            };
+    255          
+    256            // It is possible for RSTB and POWER_HV to be set at the same time, which
+    257            // happens when RSTB releases between HV power good and LV power good. (All
+    258            // other reset events are mutually exclusive.) When both RSTB and POWER_HV
+    259            // are set, POWER_HV should be returned as the cause. The bit test order --
+    260            // from LSB to MSB -- ensures that it will.
+    261            int16u resetEvent = RESET_EVENT &
+    262                                  ( RESET_CPULOCKUP_MASK   |
+    263                                    RESET_OPTBYTEFAIL_MASK |
+    264                                    RESET_DSLEEP_MASK      |
+    265                                    RESET_SW_MASK          |
+    266                                    RESET_WDOG_MASK        |
+    267                                    RESET_NRESET_MASK      |
+    268                                    RESET_PWRLV_MASK       |
+    269                                    RESET_PWRHV_MASK );
+   \   00000002   0x....             LDR.N    R0,??DataTable3  ;; 0x4000002c
+   \   00000004   0x6801             LDR      R1,[R0, #+0]
+    270          
+    271            int16u cause = RESET_UNKNOWN;
+   \   00000006   0x2000             MOVS     R0,#+0
+    272            int i;
+    273          
+    274            for (i = 0; i < sizeof(resetEventTable)/sizeof(resetEventTable[0]); i++) {
+   \   00000008   0x2200             MOVS     R2,#+0
+    275              if (resetEvent & (1 << i)) {
+   \                     ??halInternalClassifyReset_0:
+   \   0000000A   0x2401             MOVS     R4,#+1
+   \   0000000C   0x4094             LSLS     R4,R4,R2
+   \   0000000E   0xB2CB             UXTB     R3,R1
+   \   00000010   0x4223             TST      R3,R4
+   \   00000012   0xD012             BEQ.N    ??halInternalClassifyReset_1
+    276                cause = resetEventTable[i];
+   \   00000014   0x.... 0x....      ADR.W    R0,??resetEventTable
+   \   00000018   0xF830 0x0012      LDRH     R0,[R0, R2, LSL #+1]
+    277                break;
+    278              }
+    279            }
+    280          
+    281            if (cause == RESET_SOFTWARE) {
+   \   0000001C   0xF24C 0x313C      MOVW     R1,#+49980
+   \   00000020   0xF24F 0x020F      MOVW     R2,#+61455
+   \   00000024   0x....             LDR.N    R3,??DataTable3_1
+   \   00000026   0x2806             CMP      R0,#+6
+   \   00000028   0xD111             BNE.N    ??halInternalClassifyReset_2
+    282              if((halResetInfo.crash.resetSignature == RESET_VALID_SIGNATURE) &&
+    283                 (RESET_BASE_TYPE(halResetInfo.crash.resetReason) < NUM_RESET_BASE_TYPES)) {
+   \   0000002A   0x8858             LDRH     R0,[R3, #+2]
+   \   0000002C   0x4290             CMP      R0,R2
+   \   0000002E   0xD10A             BNE.N    ??halInternalClassifyReset_3
+   \   00000030   0x8818             LDRH     R0,[R3, #+0]
+   \   00000032   0x0A02             LSRS     R2,R0,#+8
+   \   00000034   0x2A0B             CMP      R2,#+11
+   \   00000036   0xD206             BCS.N    ??halInternalClassifyReset_3
+    284                // The extended reset cause is recovered from RAM
+    285                // This can be trusted because the hardware reset event was software
+    286                //  and additionally because the signature is valid
+    287                savedResetCause = halResetInfo.crash.resetReason;
+   \   00000038   0xE007             B.N      ??halInternalClassifyReset_4
+    288              } else {
+   \                     ??halInternalClassifyReset_1:
+   \   0000003A   0x1C52             ADDS     R2,R2,#+1
+   \   0000003C   0x2A08             CMP      R2,#+8
+   \   0000003E   0xD3E4             BCC.N    ??halInternalClassifyReset_0
+    289                savedResetCause = RESET_SOFTWARE_UNKNOWN;
+    290              }
+    291              // mark the signature as invalid
+    292              halResetInfo.crash.resetSignature = RESET_INVALID_SIGNATURE;
+    293            } else if (    (cause == RESET_BOOTLOADER_DEEPSLEEP)
+    294                        && (halResetInfo.crash.resetSignature == RESET_VALID_SIGNATURE)
+    295                        && (halResetInfo.crash.resetReason == RESET_BOOTLOADER_DEEPSLEEP)) {
+    296              // Save the crash info for bootloader deep sleep (even though it's not used
+    297              // yet) and invalidate the resetSignature.
+    298              halResetInfo.crash.resetSignature = RESET_INVALID_SIGNATURE;
+    299              savedResetCause = halResetInfo.crash.resetReason;
+    300            } else {
+    301              savedResetCause = cause;
+   \                     ??halInternalClassifyReset_5:
+   \   00000040   0x....             LDR.N    R1,??DataTable3_2
+   \   00000042   0x8008             STRH     R0,[R1, #+0]
+    302            }
+    303          }
+   \   00000044   0xBD30             POP      {R4,R5,PC}       ;; return
+   \                     ??halInternalClassifyReset_3:
+   \   00000046   0xF44F 0x60C0      MOV      R0,#+1536
+   \                     ??halInternalClassifyReset_4:
+   \   0000004A   0x8059             STRH     R1,[R3, #+2]
+   \   0000004C   0xE7F8             B.N      ??halInternalClassifyReset_5
+   \                     ??halInternalClassifyReset_2:
+   \   0000004E   0xF240 0x2407      MOVW     R4,#+519
+   \   00000052   0x42A0             CMP      R0,R4
+   \   00000054   0xBF01             ITTTT    EQ 
+   \   00000056   0x885D             LDRHEQ   R5,[R3, #+2]
+   \   00000058   0x4295             CMPEQ    R5,R2
+   \   0000005A   0x881A             LDRHEQ   R2,[R3, #+0]
+   \   0000005C   0x42A2             CMPEQ    R2,R4
+   \   0000005E   0xD1EF             BNE.N    ??halInternalClassifyReset_5
+   \   00000060   0x8059             STRH     R1,[R3, #+2]
+   \   00000062   0x4620             MOV      R0,R4
+   \   00000064   0xE7EC             B.N      ??halInternalClassifyReset_5
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??resetEventTable:
+   \   00000000   0x0401 0x0402      DC16 1025, 1026, 769, 1281, 6, 519, 2307, 2305
+   \              0x0301 0x0501
+   \              0x0006 0x0207
+   \              0x0903 0x0901
+    304          
+
+   \                                 In section .text, align 2, keep-with-next
+    305          int8u halGetResetInfo(void)
+    306          {
+    307            return RESET_BASE_TYPE(savedResetCause);
+   \                     halGetResetInfo:
+   \   00000000   0x....             LDR.N    R0,??DataTable3_2
+   \   00000002   0x8800             LDRH     R0,[R0, #+0]
+   \   00000004   0x0A00             LSRS     R0,R0,#+8
+   \   00000006   0x4770             BX       LR               ;; return
+    308          }
+    309          
+
+   \                                 In section .text, align 2, keep-with-next
+    310          int16u halGetExtendedResetInfo(void)
+    311          {
+    312            return savedResetCause;
+   \                     halGetExtendedResetInfo:
+   \   00000000   0x....             LDR.N    R0,??DataTable3_2
+   \   00000002   0x8800             LDRH     R0,[R0, #+0]
+   \   00000004   0x4770             BX       LR               ;; return
+    313          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable3:
+   \   00000000   0x4000002C         DC32     0x4000002c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable3_1:
+   \   00000000   0x........         DC32     halResetInfo
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable3_2:
+   \   00000000   0x........         DC32     savedResetCause
+    314          
+    315          
+    316          
+    317          #ifdef INTERRUPT_DEBUGGING
+    318          //=============================================================================
+    319          // If interrupt debugging is enabled, the actual ISRs are listed in this
+    320          // secondary interrupt table.  The halInternalIntDebuggingIsr will use this
+    321          // table to jump to the appropriate handler
+    322          //=============================================================================
+    323          __root const HalVectorTableType __real_vector_table[] =
+    324          {
+    325            { .topOfStack = __section_end("CSTACK") },
+    326            #define EXCEPTION(vectorNumber, functionName, priorityLevel) \
+    327              functionName,
+    328              #include NVIC_CONFIG
+    329            #undef EXCEPTION
+    330          };
+    331          
+    332          
+    333          
+    334          
+    335          
+    336          //=============================================================================
+    337          // The halInternalDebuggingIsr will intercept all exceptions in order to
+    338          // set interrupt debugging IO flags so that interrupt latency and other timings
+    339          // may be measured with a logic analyzer
+    340          //=============================================================================
+    341          void halInternalIntDebuggingIsr(void)
+    342          {
+    343            boolean prevState = I_STATE(I_PORT,I_PIN);
+    344            int32u exception;
+    345          
+    346          
+    347          
+    348          
+    349          
+    350          
+    351          
+    352          
+    353          
+    354          
+    355            I_SET(I_PORT, I_PIN);
+    356          
+    357            // call the actual exception we were supposed to go to.  The exception
+    358            // number is conveniently available in the SCS_ICSR register
+    359            exception = (SCS_ICSR & SCS_ICSR_VECACTIVE_MASK) >> SCS_ICSR_VECACTIVE_BIT;
+    360          
+    361          
+    362          
+    363          
+    364          
+    365          
+    366          
+    367          
+    368          
+    369          
+    370          
+    371          
+    372          
+    373          
+    374          
+    375          
+    376          
+    377            __real_vector_table[exception].ptrToHandler();
+    378          
+    379            // In order to deal with the possibility of nesting, only clear the status
+    380            // output if it was clear when we entered
+    381            if(!prevState)
+    382              I_CLR(I_PORT, I_PIN);
+    383          
+    384          
+    385          
+    386          
+    387          
+    388          
+    389          
+    390          
+    391          
+    392          
+    393          
+    394          
+    395          
+    396          
+    397          
+    398          
+    399          
+    400          
+    401          
+    402          
+    403          
+    404          
+    405          
+    406          
+    407          
+    408          
+    409          
+    410          
+    411          
+    412          
+    413          
+    414          
+    415          
+    416          
+    417          
+    418          
+    419          
+    420          
+    421          
+    422          
+    423          
+    424          
+    425          
+    426          
+    427          
+    428          
+    429          
+    430          
+    431          
+    432          
+    433          
+    434          
+    435          
+    436          
+    437          
+    438          
+    439          
+    440          
+    441          
+    442          
+    443          
+    444          
+    445          
+    446          
+    447          
+    448          
+    449          
+    450          
+    451          
+    452          
+    453          
+    454          
+    455          
+    456          
+    457          }
+    458          #endif //INTERRUPT_DEBUGGING
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        0  halGetExtendedResetInfo
+        0  halGetResetInfo
+       12  halInternalClassifyReset
+
+
+   Section sizes:
+
+   Bytes   Function/Label
+   -----   --------------
+        4  ??DataTable3
+        4  ??DataTable3_1
+        4  ??DataTable3_2
+      144  __vector_table
+     2400  cstackMemory
+       32  guardRegionPlaceHolder
+      172  halAppAddressTable
+       84  halBootloaderAddressTable
+       44  halFixedAddressTable
+        6  halGetExtendedResetInfo
+        8  halGetResetInfo
+      102  halInternalClassifyReset
+      152  halResetInfo
+   251904  internalStorage
+       16  resetEventTable
+        2  savedResetCause
+
+ 
+       2 bytes in section .bss
+     144 bytes in section .intvec
+     144 bytes in section .text
+     172 bytes in section AAT
+      84 bytes in section BAT
+   2 400 bytes in section CSTACK
+      44 bytes in section FAT
+      32 bytes in section GUARD_REGION
+ 251 904 bytes in section INTERNAL_STORAGE
+     152 bytes in section RESETINFO
+ 
+     144 bytes of CODE  memory
+     316 bytes of CONST memory
+ 254 618 bytes of DATA  memory
+
+Errors: none
+Warnings: none

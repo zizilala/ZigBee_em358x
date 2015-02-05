@@ -1,0 +1,102 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:53 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\generic\endia #
+#                    n.c                                                      #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\generic\endia #
+#                    n.c -D "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_ #
+#                    SM6011/DoorSensor_SM6011_tokens.h\"" -D                  #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"endian.c\"" -lC                     #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\generic\ -I   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \endian.lst                                              #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \endian.o                                                #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\generic\endian.c
+      1          /** @file hal/micro/generic/endian.c
+      2           *  @brief  Generic firmware source for Endian conversions.
+      3           *
+      4           * <!-- Author(s): Lee Taylor, lee@ember.com -->
+      5           * <!-- Copyright 2004-2009 by Ember Corporation. All rights reserved.   *80*-->   
+      6           */
+      7          
+      8          #include PLATFORM_HEADER
+      9          #include "hal/micro/endian.h"
+     10          
+     11          #include "stack/include/ember-types.h"
+     12          
+     13          // Endian conversion APIs.  
+     14          // Network byte order is big endian, so these APIs are only necessary on 
+     15          //  platforms which have a natural little endian byte order.  On big-endian
+     16          //  platforms, the APIs are macro'd away to nothing
+     17          
+     18          #ifndef NTOHS
+     19          // Network to Host Short
+     20          int16u NTOHS(int16u val)
+     21          {
+     22            int8u *fldPtr;
+     23          
+     24            fldPtr = (int8u *)&val;
+     25            return (HIGH_LOW_TO_INT(*fldPtr, *(fldPtr+1)));
+     26          }
+     27          #endif
+     28          
+     29          #ifndef NTOHL
+     30          // Network to Host Long
+     31          int32u NTOHL(int32u val)
+     32          {
+     33            int16u *fldPtr;
+     34            int16u field;
+     35            int16u field2;
+     36          
+     37            fldPtr = (int16u *)&val;
+     38            field = NTOHS(*fldPtr);
+     39            field2 = NTOHS(*(fldPtr+1));
+     40            return ((int32u)field << 16) | ((int32u)field2);
+     41          }
+     42          #endif
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

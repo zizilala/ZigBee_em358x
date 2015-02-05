@@ -1,0 +1,18 @@
+# NOT Auto-generated.
+
+# Lovingly hand-crafted for any ISC files that live outside the purview of the
+# sample-apps-regenerate.pl auto-generation.
+
+Rf4ceDemo {
+  name=Rf4ceDemo 
+  dir=rf4ce/Rf4ceDemo
+  isc=rf4ce/Rf4ceDemo/Rf4ceDemoEM35X-EZSP.isc
+  This is a demonstration of an RF4CE/HA dual network device.
+}
+
+XncpHostSpi {
+  name=XncpHostSpi
+  dir=xncp/XncpHost
+  isc=xncp/XncpHost/XncpHostEM35X-EZSP.isc
+  This is a demonstration of a host application that utilizes the features of the XNCP.
+}

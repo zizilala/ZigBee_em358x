@@ -1,0 +1,538 @@
+#ISD App Configuration:3.1
+# ISD version: 3.1.519
+#  Identified of a stack descriptor used for this
+#  configuration. This should not be changed manually, unless
+#  you really know what you are doing.
+ConfiguratorID:auto-EM35X
+
+#  Output directory which is used as a root for all generated
+#  files. The actual files relative to that directory are
+#  defined by individual file name.
+GenerationDirectory:__SAMPLE_APPLICATION__
+
+#  Unique identifier for this device. This string should be in
+#  a form of a C identifier, as it will be used in both
+#  generated variable, macros, as well as file names. You
+#  should generally not use characters which are not valid
+#  characters in a C identifier here.
+DeviceName:HaSampleLight
+
+#  Type of the endpoint. Each endpoint implement one endpoint
+#  type. There can be one or more endpoint types, regardless of
+#  number of actual endpoints.
+EndpointType:Primary,256
+
+#  The ZCL device that this particular endpoint is
+#  implementing.
+DeviceType:Primary,HA-onofflight
+
+#  ZigBee PRO network configuration.  Each endpoint belongs to
+#  a single network configuration.  There can be one or more
+#  network configurations.
+ZigbeeProNetwork:*Primary,ZA_ROUTER,HA
+
+#  Attributes that support min/max setting.
+BoundAttributes:0,0,server,0:0,1,server,0:0,2,server,0:0,3,server,0:0,7,server,0:3,0,server,0:4,0,server,0:5,4,server,0:5,1,server,0:5,0,server,0:5,2,server,0:5,3,server,0:6,16386,server,0:6,16385,server,0:6,16384,server,0:6,0,server,0
+
+#  A path, relative to the root of the stack which indicates
+#  where to find a custom token header. This file will be
+#  included in the frameworks main token header located at
+#  app/framework/util/tokens.h
+TokenPath:
+
+#  Lists the channels that this application will be configured
+#  to use.
+Channels:11
+
+#  Definitions of individual endpoints. For each endpoint the
+#  endpoint number (1-254) is listed, as well as the endpoint
+#  type that this endpoint will serve.
+ConfiguredEndpoints:*1&-1&-1&0&Primary&Primary
+
+#  A single specification version for each profile defining the
+#  max version of the spec supported by this configuration.
+SpecVersions:
+
+#  In case of a network coprocessor, this lists a host
+#  processor used.
+Host:atmega32
+
+#  Ember network processor targeted for this application.
+Platform:em357
+
+#  Enable callbacks.
+Callbacks:STACK_STATUS,MAIN_INIT,HAL_BUTTON_ISR,ON_OFF_CLUSTER_ON_OFF_CLUSTER_SERVER_INIT,ON_OFF_CLUSTER_ON_OFF_CLUSTER_SERVER_ATTRIBUTE_CHANGED,EMBER_AF_PLUGIN_EZMODE_COMMISSIONING_EZ_MODE_CLIENT_COMPLETE,EMBER_AF_PLUGIN_GROUPS_SERVER_GROUPS_SERVER_GET_GROUP_NAME,EMBER_AF_PLUGIN_GROUPS_SERVER_GROUPS_SERVER_SET_GROUP_NAME,EMBER_AF_PLUGIN_GROUPS_SERVER_GROUPS_SERVER_GROUP_NAMES_SUPPORTED,EMBER_AF_PLUGIN_NETWORK_FIND_NETWORK_FIND_FINISHED,EMBER_AF_PLUGIN_NETWORK_FIND_GET_RADIO_POWER_FOR_CHANNEL,EMBER_AF_PLUGIN_NETWORK_FIND_JOIN,EMBER_AF_PLUGIN_REPORTING_REPORTING_CONFIGURED,
+
+#  Any customer-specific general purpose custom events.
+CustomEvents:buttonEventControl,buttonEventHandler
+
+#  If bindings are enabled then this is the maximum number of
+#  supported bindings.
+NumberOfBindings:2
+
+#  The size of the stack address table which will be used by
+#  the stack to maintain IEEE to ZigBee short id mappings.
+AddressTableSize:2
+
+#  The size of the portion of the address table used by the
+#  trust center as an address cache. The total size of the
+#  address table will be equal to this value plus the size of
+#  the address table set in the AddressTableSize.
+TrustCenterCacheSize:2
+
+#  Maximum number of supported reported attributes.
+ReportTableSize:5
+
+#  The mode of the link key handling on a trust center.
+LinkKeyMode:2
+
+#  If not using multiple endpoint support, this value contains
+#  the default endpoint. With multiple endpoint support, this
+#  number is ignored.
+Endpoint:10
+
+#  Version of this device.
+DeviceVersion:0
+
+#  Master endpoint which contains global information.
+DefaultDestinationEndpoint:10
+
+#  Profile Id used for the application.
+ProfileId:-1
+
+#  Device Id used for the application.
+DeviceId:-1
+
+#  The largest size for a fragment buffer.
+FragmentationMaxSize:255
+
+#  Size of the table for source routing.
+SourceRouteTableSize:7
+
+#  Default response policy.
+DefaultResponsePolicy:0
+
+#  The level of debugging supported.
+DebugLevel:0
+
+#  Configuration of command-line interface.
+CLIMode:-1
+
+#  If key switching is enabled, this value describes the kind
+#  of switch type that the application does.
+KeySwitchType:0
+
+#  If key switch is time based, then this value contains the
+#  number of seconds between switches.
+KeySwitchInterval:604800
+
+#  The type of key generation, random or ping-pong.
+KeyGenerationType:0
+
+#  Configuration of heartbeat.
+HeartbeatLed:0
+
+#  Configuration of first application button.
+FirstButton:0
+
+#  Configuration of second application button.
+SecondButton:0
+
+#  If this option is set to true, standard reporting is
+#  enabled.
+EnableStandardReporting:false
+
+#  If the device needs to perform inter-PAN sends, then this
+#  option should be enabled.
+EnableInterPanSend:false
+
+#  If the device needs to perform inter-PAN receives, then this
+#  option should be enabled.
+EnableInterPanReceive:false
+
+#  Enable serial commands for ZDO.
+EnableZdoSerialCommands:false
+
+#  Enable this option if you wish to enable device bindings.
+EnableBindings:true
+
+#  Turn this option on, if end-device binding is enabled.
+EnableEndDeviceBind:false
+
+#  Enables the statistics receiving.
+EnableReceiveStatistics:false
+
+#  If true, then command discovery commands are supported.
+SupportCommandDiscovery:true
+
+#  Selects whether application will use the ECC 163k1 library.
+UseEcc163k1:false
+
+#  Selects whether application will use the ECC 283k1 library.
+UseEcc283k1:false
+
+#  Enable preconfigured keys for security.
+PreconfiguredKeyEnabled:false
+
+#  Enable network key.
+NetworkKeyEnabled:false
+
+#  If this option is turned on, then appBuilder will
+#  automatically generate the files, immediately upon saving
+#  the ISC file.
+AutoGenerate:false
+
+#  Enable key switching.
+EnableKeySwitch:false
+
+#  Use this setting to turn on fragmentation.
+FragmentationEnable:false
+
+#  Enables concentrator support
+EnableConcentrator:true
+
+#  If true, then this concentrator is low ram, otherwise high
+#  ram
+LowRamConcentrator:true
+
+#  If this option is set to true, then MFG_INSTALL_CODE token
+#  is used for setting the security install code.
+UseSeInstallCodes:false
+
+#  If this option is turned on, then the code will enable the
+#  checking of the attributes.
+EnableAttributeRangeChecking:false
+
+#  Enable application handling of supported ZigBee Device
+#  Object messages.
+ReceiveSupportedZdoRequests:false
+
+#  Enable application handling of unsupported ZigBee Device
+#  Object messages.
+HandleUnsupportedZdoRequests:false
+
+#  Enable application handling of ZigBee Device Object requests
+#  related to endpoints.
+HandleEndpointZdoRequests:false
+
+#  Enable application handling of ZigBee Device Object requests
+#  related to bindings.
+HandleBindingZdoRequests:false
+
+#  Use token for TX power mode.
+TxPowerModeUseToken:true
+
+#  Enable boost power mode.
+BoostMode:false
+
+#  Enable the alternate transmitter output.
+AlternatePowerMode:false
+
+#  Use legacy CLI instead of generated CLI.
+LegacyCli:false
+
+#  Add Custom CLI sub-menu
+AddCustomCli:false
+
+#  Include command and argument descriptions in the embedded
+#  code.
+IncludeCommandDescriptions:true
+
+#  Actual preconfigured key, if it is enabled.
+PreconfiguredKey:56777777777777777777777777777777
+
+#  Actual network key.
+NetworkKey:12333333333333333333333333333333
+
+#  Actual second network key.
+NetworkKey2:ABCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+
+# Setup configurations
+{setupId:bootloader
+}
+{setupId:serial
+em357=0,false,*,*,*,*,*,1,false,115200,*,*,*,*
+}
+{setupId:boardHeader
+}
+{setupId:debugConfiguration
+off
+area name off
+appSerial=1
+}
+{setupId:additionalFiles
+}
+{setupId:macros
+}
+{setupId:halOptions
+}
+{setupId:information
+\{key:description
+ZigBee Home Automation Sample Applications
+
+These sample applications demonstrate basic ZigBee Home Automation
+functionality between a light, a sleepy switch, and a gateway. The gateway
+will form a network with the light & sleepy switch joined to it. The light
+periodically reports the On/Off Cluster "on/off" status to the gateway.
+The switch controls the light. All bindings, required for On/Off attribute
+reporting & light/switch control via unicast, are created through Ez-Mode
+Commissioning.
+
+The gateway will perform network operations in reponse to press button 0 & 1.
+Pressing button 0 will cause it to perform an energy scan in order to find an
+available channel and form a network. Once network is formed, pressing button
+0 will cause the light to permit joining on its network for 60 seconds.
+Pressing button 1 will put the current device in Ez-Mode Server Commissioning
+mode. This will allow the light to form a binding to the gateway for On/Off
+Cluster attribute reporting.
+
+The light will perform network operations in response to pressing button 0 & 1.
+If the light is not joined to a network, pressing button 0 will cause it to
+search for a joinable network. Once it has joined a network, pressing button
+0 will cause the light to enter Ez-Mode Client Commissioning mode. This is
+used to form binding from the light to the gateway as required by the
+Reporting plugin. Pressing button 1 will put the device in Ez-Mode Server
+Commissioning Mode. This is used to form binding from the switch to the light.
+
+The switch will sleep until a button is pressed.  If the switch is not joined
+to a network, pressing button 0 will cause the switch to wake up and search for a
+joinable network.  If joined, pressing button 0 will cause the switch to wake up
+and send an unicast on/off command to all existing bindings. To create
+bindings, pressing button 1 will put the device in Ez-Mode client mode. If the
+switch has slept long enough to have aged out of its parent's child table,
+the switch will automatically attempt to rejoin the network prior to
+broadcasting the on/off command. Once an action completes, the switch will
+return to deep sleep.
+
+All devices provide feedback during network operations by playing a tune. 
+A rising two-tone tune indicates a successful operation while
+a falling two-tone tune indicates a failure. A brief tone indicates that the
+device has performed a long-running action and is waiting for a result.
+
+All application code is contained in the _callbacks.c files within each
+application directory.
+
+To use each application:
+
+   1. Load the included application configuration file (i.e, the .isc file)
+      into Ember Desktop.
+
+   2. Enter a new name for the application in the pop-up window.
+
+   3. Generate the application's header and project/workspace files by
+      clicking on the "Generate" button in Ember Desktop.  The application
+      files will be generated in the app/builder/<name> directory in the stack
+      installation location.
+
+   4. Load the generated project file into the appropriate compiler and build
+      the project.
+
+   5. Load the binary image onto a device using Ember Desktop.
+
+\}
+}
+{setupId:rf4ce
+nodeCapabilities=0
+vendorId=65521
+vendorString=
+userString=
+deviceTypes=[254]
+profileIds=[0]
+power=3
+}
+#  The name of the set of Command Line Interface (CLI) commands
+#  that are compiled into the application by default.
+CliCommandSet:Full
+
+#  These are the various Command Line Interface (CLI) commands
+#  that can be included, or excluded (if they are included by
+#  default), in the application.
+#  Plugin configuration
+appPlugin:address-table,false
+
+appPlugin:basic,false
+
+appPlugin:button-joining,false
+
+appPlugin:color-control,false
+
+appPlugin:concentrator,false
+
+appPlugin:counters,false
+
+appPlugin:custom-ezsp,false
+
+appPlugin:diagnostic-server,false
+
+appPlugin:door-lock-server,false
+
+appPlugin:drlc,false
+
+appPlugin:drlc-server,false
+
+appPlugin:eeprom,false
+
+appPlugin:end-device-support,false
+
+appPlugin:esi-management,false
+
+appPlugin:ezmode-commissioning,true
+
+appPlugin:fragmentation,false
+
+appPlugin:gateway,false
+
+appPlugin:general-response-commands,false
+
+appPlugin:groups-client,false
+
+appPlugin:groups-server,true
+
+appPlugin:hc-11073-tunnel,false
+
+appPlugin:ias-zone-client,false
+
+appPlugin:ias-zone-server,false
+
+appPlugin:identify,true
+
+appPlugin:identify-feedback,true
+
+appPlugin:idle-sleep,true
+
+appPlugin:interpan,false
+
+appPlugin:key-establishment,false
+
+appPlugin:level-control,false
+
+appPlugin:messaging-client,false
+
+appPlugin:messaging-server,false
+
+appPlugin:meter-mirror,false
+
+appPlugin:meter-snapshot-server,false
+
+appPlugin:meter-snapshot-storage,false
+
+appPlugin:mn-price-passthrough,false
+
+appPlugin:ncp-configuration,false
+
+appPlugin:network-find,true
+
+appPlugin:on-off,true
+
+appPlugin:ota-bootload,false
+
+appPlugin:ota-client,false
+
+appPlugin:ota-client-policy,false
+
+appPlugin:ota-common,false
+
+appPlugin:ota-server,false
+
+appPlugin:ota-server-policy,false
+
+appPlugin:ota-storage-common,false
+
+appPlugin:ota-storage-posix-filesystem,false
+
+appPlugin:ota-storage-simple,false
+
+appPlugin:ota-storage-simple-eeprom,false
+
+appPlugin:ota-storage-simple-ram,false
+
+appPlugin:partner-link-key-exchange,false
+
+appPlugin:poll-control-client,false
+
+appPlugin:poll-control-server,false
+
+appPlugin:price-client,false
+
+appPlugin:price-server,false
+
+appPlugin:reporting,true
+
+appPlugin:rf4ce-gdp,false
+
+appPlugin:rf4ce-mso,false
+
+appPlugin:rf4ce-profile,false
+
+appPlugin:rf4ce-zrc11,false
+
+appPlugin:rf4ce-zrc20,false
+
+appPlugin:scenes,true
+
+appPlugin:scenes-client,false
+
+appPlugin:simple-clock,false
+
+appPlugin:simple-metering-client,false
+
+appPlugin:simple-metering-server,false
+
+appPlugin:smart-energy-registration,false
+
+appPlugin:stack-diagnostics,false
+
+appPlugin:standalone-bootloader-client,false
+
+appPlugin:standalone-bootloader-common,false
+
+appPlugin:standalone-bootloader-server,false
+
+appPlugin:test-harness,false
+
+appPlugin:time-server,false
+
+appPlugin:tou-calendar-client,false
+
+appPlugin:tou-calendar-common,false
+
+appPlugin:tou-calendar-server,false
+
+appPlugin:trust-center-backup,false
+
+appPlugin:trust-center-keepalive,false
+
+appPlugin:trust-center-nwk-key-update-broadcast,false
+
+appPlugin:trust-center-nwk-key-update-periodic,false
+
+appPlugin:trust-center-nwk-key-update-unicast,false
+
+appPlugin:tunneling-client,false
+
+appPlugin:tunneling-server,false
+
+appPlugin:xmodem-sender,false
+
+appPlugin:zll-commissioning,false
+
+appPlugin:zll-identify-server,false
+
+appPlugin:zll-level-control-server,false
+
+appPlugin:zll-on-off-server,false
+
+appPlugin:zll-scenes-client,false
+
+appPlugin:zll-scenes-server,false
+
+appPlugin:zll-utility-client,false
+
+appPlugin:zll-utility-server,false
+
+#  Plugin specific options
+AppPluginOption:EMBER_AF_PLUGIN_IDENTIFY_FEEDBACK_LED_FEEDBACK,FALSE
+
+AppPluginOption:EMBER_AF_PLUGIN_IDENTIFY_FEEDBACK_BUZZER_FEEDBACK,TRUE
+

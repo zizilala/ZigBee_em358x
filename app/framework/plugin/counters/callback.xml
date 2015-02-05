@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<callback prefix="emberAf" postfix="Callback">
+  <function id="COUNTER_ROLLOVER" name="Rollover" returnType="void">
+  	<description>
+  		 This function is called every time a counter exceeds its threshold.
+  	</description>
+  	<arg name="type"  type="EmberCounterType" description="The counter that rolled over" />
+  	<codeForStub/>
+  </function>
+</callback>

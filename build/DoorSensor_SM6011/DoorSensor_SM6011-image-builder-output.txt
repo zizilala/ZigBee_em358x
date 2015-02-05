@@ -1,0 +1,1 @@
+Image-builder not invoked since 'OTA Bootload Cluster Policy plugin' is not enabled 

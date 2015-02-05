@@ -1,0 +1,892 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:19 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\co #
+#                    unters\counters-cli.c                                    #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\co #
+#                    unters\counters-cli.c -D "GENERATED_TOKEN_HEADER=\"app/b #
+#                    uilder/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\""   #
+#                    -D "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D           #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"counters-cli.c\"" -lC               #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\co #
+#                    unters\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\a #
+#                    pp\builder\DoorSensor_SM6011\..\..\..\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \counters-cli.lst                                        #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \counters-cli.o                                          #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\counters\counters-cli.c
+      1          // File: counters-cli.c
+      2          //
+      3          // Used for testing the counters library via a command line interface.
+      4          // For documentation on the counters library see counters.h.
+      5          //
+      6          // Copyright 2007 by Ember Corporation. All rights reserved.                *80*
+      7          
+      8          #include "app/framework/include/af.h"
+      9          #include "app/util/serial/command-interpreter2.h"
+     10          #include "app/util/common/common.h"
+     11          #include "counters.h"
+     12          #include "counters-ota.h"
+     13          #include "counters-cli.h"
+     14          
+     15          
+
+   \                                 In section .data, align 4
+     16          PGM_NO_CONST PGM_P titleStrings[] = {
+   \                     titleStrings:
+   \   00000000   0x........         DC32 `?<Constant "Mac Rx Bcast">`, `?<Constant "Mac Tx Bcast">`
+   \              0x........   
+   \   00000008   0x........         DC32 `?<Constant "Mac Rx Ucast">`, `?<Constant "Mac Tx Ucast">`
+   \              0x........   
+   \   00000010   0x........         DC32 `?<Constant "Mac Tx Ucast Retry">`
+   \   00000014   0x........         DC32 `?<Constant "Mac Tx Ucast Fail">`, `?<Constant "APS Rx Bcast">`
+   \              0x........   
+   \   0000001C   0x........         DC32 `?<Constant "APS Tx Bcast">`, `?<Constant "APS Rx Ucast">`
+   \              0x........   
+   \   00000024   0x........         DC32 `?<Constant "APS Tx Ucast Success">`
+   \   00000028   0x........         DC32 `?<Constant "APS Tx Ucast Retry">`
+   \   0000002C   0x........         DC32 `?<Constant "APS Tx Ucast Fail">`
+   \   00000030   0x........         DC32 `?<Constant "Route Disc Initiated">`
+   \   00000034   0x........         DC32 `?<Constant "Neighbor Added">`, `?<Constant "Neighbor Removed">`
+   \              0x........   
+   \   0000003C   0x........         DC32 `?<Constant "Neighbor Stale">`, `?<Constant "Join Indication">`
+   \              0x........   
+   \   00000044   0x........         DC32 `?<Constant "Child Moved">`, `?<Constant "ASH Overflow">`
+   \              0x........   
+   \   0000004C   0x........         DC32 `?<Constant "ASH Frame Error">`, `?<Constant "ASH Overrun Error">`
+   \              0x........   
+   \   00000054   0x........         DC32 `?<Constant "NWK FC Failure">`, `?<Constant "APS FC Failure">`
+   \              0x........   
+   \   0000005C   0x........         DC32 `?<Constant "ASH XOff">`, `?<Constant "APS Unauthorized Key">`
+   \              0x........   
+   \   00000064   0x........         DC32 `?<Constant "NWK Decrypt Failures">`
+   \   00000068   0x........         DC32 `?<Constant "APS Decrypt Failures">`
+   \   0000006C   0x........         DC32 `?<Constant "Packet Buffer Allocat...">`
+   \   00000070   0x........         DC32 `?<Constant "Relayed Ucast">`
+   \   00000074   0x........         DC32 `?<Constant "Phy to MAC queue limi...">`
+   \   00000078   0x........         DC32 `?<Constant "Packet Validate drop ...">`
+   \   0000007C   0x........         DC32 `?<Constant "NWK retry overflow">`, `?<Constant "CCA Failures">`
+   \              0x........   
+   \   00000084   0x00000000         DC32 0H
+     17            EMBER_COUNTER_STRINGS
+     18          };
+
+   \                                 In section .data, align 4
+     19          PGM_NO_CONST PGM_P unknownCounter = "???";
+   \                     unknownCounter:
+   \   00000000   0x........         DC32 `?<Constant "???">`
+     20          static void emberAfPluginCountersPrint(void);
+     21          
+
+   \                                 In section .text, align 2, keep-with-next
+     22          void emberAfPluginCountersPrintCommand(void)
+     23          { 
+   \                     emberAfPluginCountersPrintCommand:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     24          
+     25          #if defined(EZSP_HOST)
+     26            ezspReadAndClearCounters(emberCounters);
+     27          #endif
+     28          
+     29          emberAfPluginCountersPrint();
+   \   00000002   0x.... 0x....      BL       emberAfPluginCountersPrint
+     30          
+     31          #if !defined(EZSP_HOST)
+     32            emberAfPluginCountersClear();
+   \   00000006   0xE8BD 0x4001      POP      {R0,LR}
+   \   0000000A   0x.... 0x....      B.W      emberAfPluginCountersClear
+     33          #endif
+     34          
+     35          }
+     36          
+
+   \                                 In section .text, align 2, keep-with-next
+     37          void emberAfPluginCountersSimplePrintCommand(void)
+     38          {
+     39          
+     40          #if defined(EZSP_HOST)
+     41            ezspReadCounters(emberCounters);
+     42          #endif
+     43          
+     44            emberAfPluginCountersPrint();
+   \                     emberAfPluginCountersSimplePrintCommand:
+   \   00000000   0x....             B.N      emberAfPluginCountersPrint
+     45          }
+     46          
+
+   \                                 In section .text, align 2, keep-with-next
+     47          void emberAfPluginCountersSendRequestCommand(void)
+     48          {
+     49          
+     50          #if defined(EMBER_AF_PLUGIN_COUNTERS_OTA)
+     51            emberAfPluginCountersSendRequest(emberUnsignedCommandArgument(0),
+     52                                             emberUnsignedCommandArgument(1));
+     53          #endif
+     54          
+     55          }
+   \                     emberAfPluginCountersSendRequestCommand:
+   \   00000000   0x4770             BX       LR               ;; return
+     56          
+     57          
+
+   \                                 In section .text, align 2, keep-with-next
+     58          void emberAfPluginCountersSetThresholdCommand(void)
+     59          {
+   \                     emberAfPluginCountersSetThresholdCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     60            emberAfCorePrintln("Setting Threshold command");
+   \   00000002   0x.... 0x....      ADR.W    R1,`?<Constant "Setting Threshold com...">`
+   \   00000006   0x2001             MOVS     R0,#+1
+   \   00000008   0x.... 0x....      BL       emberAfPrintln
+     61            EmberCounterType type = (int8u)emberUnsignedCommandArgument(0);
+   \   0000000C   0x2000             MOVS     R0,#+0
+   \   0000000E   0x.... 0x....      BL       emberUnsignedCommandArgument
+   \   00000012   0x4604             MOV      R4,R0
+     62            int16u threshold = (int16u)emberUnsignedCommandArgument(1);
+   \   00000014   0x2001             MOVS     R0,#+1
+   \   00000016   0x.... 0x....      BL       emberUnsignedCommandArgument
+     63            emberAfPluginCountersSetThreshold(type,threshold);
+   \   0000001A   0xB281             UXTH     R1,R0
+   \   0000001C   0xB2E0             UXTB     R0,R4
+   \   0000001E   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000022   0x.... 0x....      B.W      emberAfPluginCountersSetThreshold
+     64          }
+     65          
+
+   \                                 In section .text, align 2, keep-with-next
+     66          void emberAfPluginCountersPrintThresholdsCommand(void)
+     67          {
+   \                     emberAfPluginCountersPrintThresholdsCommand:
+   \   00000000   0xE92D 0x41F0      PUSH     {R4-R8,LR}
+   \   00000004   0xB082             SUB      SP,SP,#+8
+     68            int8u i;
+     69            for(i=0; i<EMBER_COUNTER_TYPE_COUNT; i++) {
+   \   00000006   0x2400             MOVS     R4,#+0
+   \   00000008   0x.... 0x....      ADR.W    R5,`?<Constant "%u) %p: %u">`
+   \   0000000C   0x....             LDR.N    R6,??DataTable39
+   \   0000000E   0x....             B.N      ?Subroutine0
+     70              emberAfCorePrintln("%u) %p: %u",
+     71                                 i,
+     72                                 (titleStrings[i] == NULL
+     73                                 ? unknownCounter
+     74                                 : titleStrings[i]),                       
+     75                                 emberCountersThresholds[i]);
+     76            }
+     77          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x....             LDR.N    R7,??DataTable39_3
+   \   00000002   0x.... 0x....      LDR.W    R8,??DataTable39_4
+   \                     ??Subroutine0_0:
+   \   00000006   0xF858 0x3024      LDR      R3,[R8, R4, LSL #+2]
+   \   0000000A   0xB903             CBNZ.N   R3,??Subroutine0_1
+   \   0000000C   0x683B             LDR      R3,[R7, #+0]
+   \                     ??Subroutine0_1:
+   \   0000000E   0xF836 0x0014      LDRH     R0,[R6, R4, LSL #+1]
+   \   00000012   0x9000             STR      R0,[SP, #+0]
+   \   00000014   0x4622             MOV      R2,R4
+   \   00000016   0x4629             MOV      R1,R5
+   \   00000018   0x2001             MOVS     R0,#+1
+   \   0000001A   0x.... 0x....      BL       emberAfPrintln
+   \   0000001E   0x1C64             ADDS     R4,R4,#+1
+   \   00000020   0x2C21             CMP      R4,#+33
+   \   00000022   0xDBF0             BLT.N    ??Subroutine0_0
+   \   00000024   0xE8BD 0x81F3      POP      {R0,R1,R4-R8,PC}  ;; return
+     78          
+     79          
+     80          #if !defined(EZSP_HOST)
+     81          
+
+   \                                 In section .text, align 2, keep-with-next
+     82          void emberAfPluginCounterPrintCountersResponse(EmberMessageBuffer message)
+     83          {
+   \                     emberAfPluginCounterPrintCountersResponse:
+   \   00000000   0xE92D 0x41F0      PUSH     {R4-R8,LR}
+   \   00000004   0x4604             MOV      R4,R0
+     84            int8u i;
+     85            int8u length = emberMessageBufferLength(message);
+   \   00000006   0x....             LDR.N    R0,??DataTable39_1
+   \   00000008   0x6800             LDR      R0,[R0, #+0]
+   \   0000000A   0x5C25             LDRB     R5,[R4, R0]
+     86            for (i = 0; i < length; i += 3) {
+   \   0000000C   0x2600             MOVS     R6,#+0
+   \   0000000E   0x.... 0x....      ADR.W    R7,`?<Constant "%d: %d">`
+   \   00000012   0xE011             B.N      ??emberAfPluginCounterPrintCountersResponse_0
+     87              emberAfCorePrintln("%d: %d",
+     88                                 emberGetLinkedBuffersByte(message, i),
+     89                                 emberGetLinkedBuffersLowHighInt16u(message, i + 1));
+   \                     ??emberAfPluginCounterPrintCountersResponse_1:
+   \   00000014   0x1C71             ADDS     R1,R6,#+1
+   \   00000016   0xB2C9             UXTB     R1,R1
+   \   00000018   0x4620             MOV      R0,R4
+   \   0000001A   0x.... 0x....      BL       emberGetLinkedBuffersLowHighInt16u
+   \   0000001E   0x4680             MOV      R8,R0
+   \   00000020   0x4631             MOV      R1,R6
+   \   00000022   0x4620             MOV      R0,R4
+   \   00000024   0x.... 0x....      BL       emberGetLinkedBuffersByte
+   \   00000028   0x4643             MOV      R3,R8
+   \   0000002A   0x4602             MOV      R2,R0
+   \   0000002C   0x4639             MOV      R1,R7
+   \   0000002E   0x2001             MOVS     R0,#+1
+   \   00000030   0x.... 0x....      BL       emberAfPrintln
+     90            }
+   \   00000034   0x1CF6             ADDS     R6,R6,#+3
+   \   00000036   0xB2F6             UXTB     R6,R6
+   \                     ??emberAfPluginCounterPrintCountersResponse_0:
+   \   00000038   0x42AE             CMP      R6,R5
+   \   0000003A   0xDBEB             BLT.N    ??emberAfPluginCounterPrintCountersResponse_1
+     91          }
+   \   0000003C   0xE8BD 0x81F0      POP      {R4-R8,PC}       ;; return
+     92          
+     93          #endif
+     94          
+
+   \                                 In section .text, align 2, keep-with-next
+     95          static void emberAfPluginCountersPrint(void)
+     96          {
+   \                     emberAfPluginCountersPrint:
+   \   00000000   0xE92D 0x41F0      PUSH     {R4-R8,LR}
+   \   00000004   0xB082             SUB      SP,SP,#+8
+     97            int8u i;
+     98            for(i=0; i<EMBER_COUNTER_TYPE_COUNT; i++) {
+   \   00000006   0x2400             MOVS     R4,#+0
+   \   00000008   0x.... 0x....      ADR.W    R5,`?<Constant "%u) %p: %u">`
+   \   0000000C   0x....             LDR.N    R6,??DataTable39_2
+   \   0000000E                      REQUIRE ?Subroutine0
+   \   0000000E                      ;; // Fall through to label ?Subroutine0
+     99              emberAfCorePrintln("%u) %p: %u", 
+    100                                  i,
+    101                                  (titleStrings[i] == NULL
+    102                                  ? unknownCounter
+    103                                  : titleStrings[i]),
+    104                                  emberCounters[i]);
+    105            }  
+    106          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable39:
+   \   00000000   0x........         DC32     emberCountersThresholds
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable39_1:
+   \   00000000   0x........         DC32     emMessageBufferLengths
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable39_2:
+   \   00000000   0x........         DC32     emberCounters
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable39_3:
+   \   00000000   0x........         DC32     unknownCounter
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable39_4:
+   \   00000000   0x........         DC32     titleStrings
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Mac Rx Bcast">`:
+   \   00000000   0x4D 0x61          DC8 "Mac Rx Bcast"
+   \              0x63 0x20    
+   \              0x52 0x78    
+   \              0x20 0x42    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Mac Tx Bcast">`:
+   \   00000000   0x4D 0x61          DC8 "Mac Tx Bcast"
+   \              0x63 0x20    
+   \              0x54 0x78    
+   \              0x20 0x42    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Mac Rx Ucast">`:
+   \   00000000   0x4D 0x61          DC8 "Mac Rx Ucast"
+   \              0x63 0x20    
+   \              0x52 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Mac Tx Ucast">`:
+   \   00000000   0x4D 0x61          DC8 "Mac Tx Ucast"
+   \              0x63 0x20    
+   \              0x54 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Mac Tx Ucast Retry">`:
+   \   00000000   0x4D 0x61          DC8 "Mac Tx Ucast Retry"
+   \              0x63 0x20    
+   \              0x54 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x20 0x52    
+   \              0x65 0x74    
+   \              0x72 0x79    
+   \              0x00         
+   \   00000013   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Mac Tx Ucast Fail">`:
+   \   00000000   0x4D 0x61          DC8 "Mac Tx Ucast Fail"
+   \              0x63 0x20    
+   \              0x54 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x20 0x46    
+   \              0x61 0x69    
+   \              0x6C 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Rx Bcast">`:
+   \   00000000   0x41 0x50          DC8 "APS Rx Bcast"
+   \              0x53 0x20    
+   \              0x52 0x78    
+   \              0x20 0x42    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Tx Bcast">`:
+   \   00000000   0x41 0x50          DC8 "APS Tx Bcast"
+   \              0x53 0x20    
+   \              0x54 0x78    
+   \              0x20 0x42    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Rx Ucast">`:
+   \   00000000   0x41 0x50          DC8 "APS Rx Ucast"
+   \              0x53 0x20    
+   \              0x52 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Tx Ucast Success">`:
+   \   00000000   0x41 0x50          DC8 "APS Tx Ucast Success"
+   \              0x53 0x20    
+   \              0x54 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x20 0x53    
+   \              0x75 0x63    
+   \              0x63 0x65    
+   \              0x73 0x73    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Tx Ucast Retry">`:
+   \   00000000   0x41 0x50          DC8 "APS Tx Ucast Retry"
+   \              0x53 0x20    
+   \              0x54 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x20 0x52    
+   \              0x65 0x74    
+   \              0x72 0x79    
+   \              0x00         
+   \   00000013   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Tx Ucast Fail">`:
+   \   00000000   0x41 0x50          DC8 "APS Tx Ucast Fail"
+   \              0x53 0x20    
+   \              0x54 0x78    
+   \              0x20 0x55    
+   \              0x63 0x61    
+   \              0x73 0x74    
+   \              0x20 0x46    
+   \              0x61 0x69    
+   \              0x6C 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Route Disc Initiated">`:
+   \   00000000   0x52 0x6F          DC8 "Route Disc Initiated"
+   \              0x75 0x74    
+   \              0x65 0x20    
+   \              0x44 0x69    
+   \              0x73 0x63    
+   \              0x20 0x49    
+   \              0x6E 0x69    
+   \              0x74 0x69    
+   \              0x61 0x74    
+   \              0x65 0x64    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Neighbor Added">`:
+   \   00000000   0x4E 0x65          DC8 "Neighbor Added"
+   \              0x69 0x67    
+   \              0x68 0x62    
+   \              0x6F 0x72    
+   \              0x20 0x41    
+   \              0x64 0x64    
+   \              0x65 0x64    
+   \              0x00         
+   \   0000000F   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Neighbor Removed">`:
+   \   00000000   0x4E 0x65          DC8 "Neighbor Removed"
+   \              0x69 0x67    
+   \              0x68 0x62    
+   \              0x6F 0x72    
+   \              0x20 0x52    
+   \              0x65 0x6D    
+   \              0x6F 0x76    
+   \              0x65 0x64    
+   \              0x00         
+   \   00000011   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Neighbor Stale">`:
+   \   00000000   0x4E 0x65          DC8 "Neighbor Stale"
+   \              0x69 0x67    
+   \              0x68 0x62    
+   \              0x6F 0x72    
+   \              0x20 0x53    
+   \              0x74 0x61    
+   \              0x6C 0x65    
+   \              0x00         
+   \   0000000F   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Join Indication">`:
+   \   00000000   0x4A 0x6F          DC8 "Join Indication"
+   \              0x69 0x6E    
+   \              0x20 0x49    
+   \              0x6E 0x64    
+   \              0x69 0x63    
+   \              0x61 0x74    
+   \              0x69 0x6F    
+   \              0x6E 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Child Moved">`:
+   \   00000000   0x43 0x68          DC8 "Child Moved"
+   \              0x69 0x6C    
+   \              0x64 0x20    
+   \              0x4D 0x6F    
+   \              0x76 0x65    
+   \              0x64 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ASH Overflow">`:
+   \   00000000   0x41 0x53          DC8 "ASH Overflow"
+   \              0x48 0x20    
+   \              0x4F 0x76    
+   \              0x65 0x72    
+   \              0x66 0x6C    
+   \              0x6F 0x77    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ASH Frame Error">`:
+   \   00000000   0x41 0x53          DC8 "ASH Frame Error"
+   \              0x48 0x20    
+   \              0x46 0x72    
+   \              0x61 0x6D    
+   \              0x65 0x20    
+   \              0x45 0x72    
+   \              0x72 0x6F    
+   \              0x72 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ASH Overrun Error">`:
+   \   00000000   0x41 0x53          DC8 "ASH Overrun Error"
+   \              0x48 0x20    
+   \              0x4F 0x76    
+   \              0x65 0x72    
+   \              0x72 0x75    
+   \              0x6E 0x20    
+   \              0x45 0x72    
+   \              0x72 0x6F    
+   \              0x72 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "NWK FC Failure">`:
+   \   00000000   0x4E 0x57          DC8 "NWK FC Failure"
+   \              0x4B 0x20    
+   \              0x46 0x43    
+   \              0x20 0x46    
+   \              0x61 0x69    
+   \              0x6C 0x75    
+   \              0x72 0x65    
+   \              0x00         
+   \   0000000F   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS FC Failure">`:
+   \   00000000   0x41 0x50          DC8 "APS FC Failure"
+   \              0x53 0x20    
+   \              0x46 0x43    
+   \              0x20 0x46    
+   \              0x61 0x69    
+   \              0x6C 0x75    
+   \              0x72 0x65    
+   \              0x00         
+   \   0000000F   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ASH XOff">`:
+   \   00000000   0x41 0x53          DC8 "ASH XOff"
+   \              0x48 0x20    
+   \              0x58 0x4F    
+   \              0x66 0x66    
+   \              0x00         
+   \   00000009   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Unauthorized Key">`:
+   \   00000000   0x41 0x50          DC8 "APS Unauthorized Key"
+   \              0x53 0x20    
+   \              0x55 0x6E    
+   \              0x61 0x75    
+   \              0x74 0x68    
+   \              0x6F 0x72    
+   \              0x69 0x7A    
+   \              0x65 0x64    
+   \              0x20 0x4B    
+   \              0x65 0x79    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "NWK Decrypt Failures">`:
+   \   00000000   0x4E 0x57          DC8 "NWK Decrypt Failures"
+   \              0x4B 0x20    
+   \              0x44 0x65    
+   \              0x63 0x72    
+   \              0x79 0x70    
+   \              0x74 0x20    
+   \              0x46 0x61    
+   \              0x69 0x6C    
+   \              0x75 0x72    
+   \              0x65 0x73    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "APS Decrypt Failures">`:
+   \   00000000   0x41 0x50          DC8 "APS Decrypt Failures"
+   \              0x53 0x20    
+   \              0x44 0x65    
+   \              0x63 0x72    
+   \              0x79 0x70    
+   \              0x74 0x20    
+   \              0x46 0x61    
+   \              0x69 0x6C    
+   \              0x75 0x72    
+   \              0x65 0x73    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Packet Buffer Allocat...">`:
+   \   00000000   0x50 0x61          DC8 "Packet Buffer Allocate Failures"
+   \              0x63 0x6B    
+   \              0x65 0x74    
+   \              0x20 0x42    
+   \              0x75 0x66    
+   \              0x66 0x65    
+   \              0x72 0x20    
+   \              0x41 0x6C    
+   \              0x6C 0x6F    
+   \              0x63 0x61    
+   \              0x74 0x65    
+   \              0x20 0x46    
+   \              0x61 0x69    
+   \              0x6C 0x75    
+   \              0x72 0x65    
+   \              0x73 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Relayed Ucast">`:
+   \   00000000   0x52 0x65          DC8 "Relayed Ucast"
+   \              0x6C 0x61    
+   \              0x79 0x65    
+   \              0x64 0x20    
+   \              0x55 0x63    
+   \              0x61 0x73    
+   \              0x74 0x00    
+   \   0000000E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Phy to MAC queue limi...">`:
+   \   00000000   0x50 0x68          DC8 "Phy to MAC queue limit reached"
+   \              0x79 0x20    
+   \              0x74 0x6F    
+   \              0x20 0x4D    
+   \              0x41 0x43    
+   \              0x20 0x71    
+   \              0x75 0x65    
+   \              0x75 0x65    
+   \              0x20 0x6C    
+   \              0x69 0x6D    
+   \              0x69 0x74    
+   \              0x20 0x72    
+   \              0x65 0x61    
+   \              0x63 0x68    
+   \              0x65 0x64    
+   \              0x00         
+   \   0000001F   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Packet Validate drop ...">`:
+   \   00000000   0x50 0x61          DC8 "Packet Validate drop count"
+   \              0x63 0x6B    
+   \              0x65 0x74    
+   \              0x20 0x56    
+   \              0x61 0x6C    
+   \              0x69 0x64    
+   \              0x61 0x74    
+   \              0x65 0x20    
+   \              0x64 0x72    
+   \              0x6F 0x70    
+   \              0x20 0x63    
+   \              0x6F 0x75    
+   \              0x6E 0x74    
+   \              0x00         
+   \   0000001B   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "NWK retry overflow">`:
+   \   00000000   0x4E 0x57          DC8 "NWK retry overflow"
+   \              0x4B 0x20    
+   \              0x72 0x65    
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x6F 0x76    
+   \              0x65 0x72    
+   \              0x66 0x6C    
+   \              0x6F 0x77    
+   \              0x00         
+   \   00000013   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "CCA Failures">`:
+   \   00000000   0x43 0x43          DC8 "CCA Failures"
+   \              0x41 0x20    
+   \              0x46 0x61    
+   \              0x69 0x6C    
+   \              0x75 0x72    
+   \              0x65 0x73    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "???">`:
+   \   00000000   0x3F 0x3F          DC8 "???"
+   \              0x3F 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Setting Threshold com...">`:
+   \   00000000   0x53 0x65          DC8 "Setting Threshold command"
+   \              0x74 0x74    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x54 0x68    
+   \              0x72 0x65    
+   \              0x73 0x68    
+   \              0x6F 0x6C    
+   \              0x64 0x20    
+   \              0x63 0x6F    
+   \              0x6D 0x6D    
+   \              0x61 0x6E    
+   \              0x64 0x00    
+   \   0000001A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%u) %p: %u">`:
+   \   00000000   0x25 0x75          DC8 "%u) %p: %u"
+   \              0x29 0x20    
+   \              0x25 0x70    
+   \              0x3A 0x20    
+   \              0x25 0x75    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%d: %d">`:
+   \   00000000   0x25 0x64          DC8 "%d: %d"
+   \              0x3A 0x20    
+   \              0x25 0x64    
+   \              0x00         
+   \   00000007   0x00               DC8 0
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       24  emberAfPluginCounterPrintCountersResponse
+             24 -> emberAfPrintln
+             24 -> emberGetLinkedBuffersByte
+             24 -> emberGetLinkedBuffersLowHighInt16u
+       32  emberAfPluginCountersPrint
+             32 -> emberAfPrintln
+        8  emberAfPluginCountersPrintCommand
+              0 -> emberAfPluginCountersClear
+              8 -> emberAfPluginCountersPrint
+       32  emberAfPluginCountersPrintThresholdsCommand
+             32 -> emberAfPrintln
+        0  emberAfPluginCountersSendRequestCommand
+        8  emberAfPluginCountersSetThresholdCommand
+              0 -> emberAfPluginCountersSetThreshold
+              8 -> emberAfPrintln
+              8 -> emberUnsignedCommandArgument
+        0  emberAfPluginCountersSimplePrintCommand
+              0 -> emberAfPluginCountersPrint
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant "%d: %d">
+      12  ?<Constant "%u) %p: %u">
+       4  ?<Constant "???">
+      24  ?<Constant "APS Decrypt Failures">
+      16  ?<Constant "APS FC Failure">
+      16  ?<Constant "APS Rx Bcast">
+      16  ?<Constant "APS Rx Ucast">
+      16  ?<Constant "APS Tx Bcast">
+      20  ?<Constant "APS Tx Ucast Fail">
+      20  ?<Constant "APS Tx Ucast Retry">
+      24  ?<Constant "APS Tx Ucast Success">
+      24  ?<Constant "APS Unauthorized Key">
+      16  ?<Constant "ASH Frame Error">
+      16  ?<Constant "ASH Overflow">
+      20  ?<Constant "ASH Overrun Error">
+      12  ?<Constant "ASH XOff">
+      16  ?<Constant "CCA Failures">
+      12  ?<Constant "Child Moved">
+      16  ?<Constant "Join Indication">
+      16  ?<Constant "Mac Rx Bcast">
+      16  ?<Constant "Mac Rx Ucast">
+      16  ?<Constant "Mac Tx Bcast">
+      20  ?<Constant "Mac Tx Ucast Fail">
+      20  ?<Constant "Mac Tx Ucast Retry">
+      16  ?<Constant "Mac Tx Ucast">
+      24  ?<Constant "NWK Decrypt Failures">
+      16  ?<Constant "NWK FC Failure">
+      20  ?<Constant "NWK retry overflow">
+      16  ?<Constant "Neighbor Added">
+      20  ?<Constant "Neighbor Removed">
+      16  ?<Constant "Neighbor Stale">
+      32  ?<Constant "Packet Buffer Allocat...">
+      28  ?<Constant "Packet Validate drop ...">
+      32  ?<Constant "Phy to MAC queue limi...">
+      16  ?<Constant "Relayed Ucast">
+      24  ?<Constant "Route Disc Initiated">
+      28  ?<Constant "Setting Threshold com...">
+       4  ??DataTable39
+       4  ??DataTable39_1
+       4  ??DataTable39_2
+       4  ??DataTable39_3
+       4  ??DataTable39_4
+      40  ?Subroutine0
+      64  emberAfPluginCounterPrintCountersResponse
+      14  emberAfPluginCountersPrint
+      14  emberAfPluginCountersPrintCommand
+      16  emberAfPluginCountersPrintThresholdsCommand
+       2  emberAfPluginCountersSendRequestCommand
+      38  emberAfPluginCountersSetThresholdCommand
+       2  emberAfPluginCountersSimplePrintCommand
+     136  titleStrings
+       4  unknownCounter
+
+ 
+ 140 bytes in section .data
+ 636 bytes in section .rodata
+ 258 bytes in section .text
+ 
+ 258 bytes of CODE  memory
+ 636 bytes of CONST memory
+ 140 bytes of DATA  memory
+
+Errors: none
+Warnings: none

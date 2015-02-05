@@ -1,0 +1,257 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:28 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    em_usbhal.c                                              #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    em_usbhal.c -D "GENERATED_TOKEN_HEADER=\"app/builder/Doo #
+#                    rSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D          #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"em_usbhal.c\"" -lC                  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                     -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSen #
+#                    sor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\buil #
+#                    der\DoorSensor_SM6011\..\..\..\ -I                       #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \em_usbhal.lst                                           #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \em_usbhal.o                                             #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\em_usbhal.c
+      1          /**************************************************************************//**
+      2           * @file
+      3           * @brief USB protocol stack library, low level USB peripheral access.
+      4           * @author Nathaniel Ting
+      5           * @version 3.20.3
+      6           * <!-- Copyright 2013 by Silicon Laboratories. All rights reserved.     *80*-->
+      7           *****************************************************************************/
+      8          
+      9          #include PLATFORM_HEADER
+     10          #include "stack/include/ember.h"
+     11          #include "hal/hal.h"
+     12          
+     13          #if defined(CORTEXM3_EM35X_USB)
+     14          #include "em_usb.h"
+     15          #include "em_usbtypes.h"
+     16          #include "em_usbhal.h"
+     17          
+     18          
+     19          
+     20          boolean usbVbusPresent;
+     21          extern USBD_Device_TypeDef *dev;
+     22          
+     23          #pragma data_alignment=8
+     24          EndPointUnion usbBufferA = {0,};
+     25          int8u *EPOUTBUF[7] = {usbBufferA.eps.ep0OUT,
+     26                              usbBufferA.eps.ep1OUT,
+     27                              usbBufferA.eps.ep2OUT,
+     28                              usbBufferA.eps.ep3OUT,
+     29                              usbBufferA.eps.ep4OUT,
+     30                              usbBufferA.eps.ep5OUT,
+     31                              usbBufferA.eps.ep6OUT};
+     32          int8u *EPINBUF[7]  = {usbBufferA.eps.ep0IN,
+     33                                usbBufferA.eps.ep1IN,
+     34                                usbBufferA.eps.ep2IN,
+     35                                usbBufferA.eps.ep3IN,
+     36                                usbBufferA.eps.ep4IN,
+     37                                usbBufferA.eps.ep5IN,
+     38                                usbBufferA.eps.ep6IN};
+     39          volatile int32u *EPOUTBUFSIZE[7] = {&USB_RXBUFSIZEEP0A,
+     40                                              &USB_RXBUFSIZEEP1A,
+     41                                              &USB_RXBUFSIZEEP2A,
+     42                                              &USB_RXBUFSIZEEP3A,
+     43                                              &USB_RXBUFSIZEEP4A,
+     44                                              &USB_RXBUFSIZEEP5A,
+     45                                              &USB_RXBUFSIZEEP6A};
+     46          
+     47          volatile int32u *EPINBUFSIZE[7] =  {&USB_TXBUFSIZEEP0A,
+     48                                              &USB_TXBUFSIZEEP1A,
+     49                                              &USB_TXBUFSIZEEP2A,
+     50                                              &USB_TXBUFSIZEEP3A,
+     51                                              &USB_TXBUFSIZEEP4A,
+     52                                              &USB_TXBUFSIZEEP5A,
+     53                                              &USB_TXBUFSIZEEP6A};
+     54          void USBDHAL_Connect( void )
+     55          {
+     56            #if USB_SELFPWRD_STATE==1 && defined(VBUSMON)
+     57          
+     58            //For self-powered devices, The USB specification requires that the pull-up
+     59            //resistor is disconnected if VBUS is not connected.
+     60            vbusMonCfg();
+     61            if(usbVbusPresent) {
+     62              //Set ENUMCTRL ouput-high to enumerate.
+     63              ENUMCTRL_SETCFG(GPIOCFG_OUT);
+     64              ENUMCTRL_SET();
+     65            }
+     66            #else // USB_SELFPWRD_STATE==1 && defined(VBUSMON)
+     67              //Set ENUMCTRL ouput-high to enumerate.
+     68              ENUMCTRL_SETCFG(GPIOCFG_OUT);
+     69              ENUMCTRL_SET();
+     70            #endif // USB_SELFPWRD_STATE==1 && defined(VBUSMON)
+     71          
+     72          }
+     73          
+     74          void USBDHAL_Disconnect( void )
+     75          {
+     76            ENUMCTRL_SETCFG(GPIOCFG_IN);
+     77            ENUMCTRL_CLR();
+     78          }
+     79          
+     80          USB_Status_TypeDef USBDHAL_CoreInit( int32u totalRxFifoSize,
+     81                                               int32u totalTxFifoSize )
+     82          {
+     83          
+     84            //Configure PA0 and PA1 in analog mode for USB
+     85            SET_REG_FIELD(GPIO_PACFGL, PA0_CFG, GPIOCFG_ANALOG);
+     86            SET_REG_FIELD(GPIO_PACFGL, PA1_CFG, GPIOCFG_ANALOG);
+     87            
+     88            USB_BUFBASEA = (int32u)usbBufferA.allEps;
+     89            MEMSET(usbBufferA.allEps, 0, USB_BUFFER_SIZE);
+     90          
+     91            // Double buffering currently not supported
+     92            // #ifdef USB_DOUBLE_BUFFER  
+     93            //   USB_BUFBASEB = (int32u)usbBufferB.allEps;
+     94            //   MEMSET(usbBufferB.allEps, 0, USB_BUFFER_SIZE);
+     95            //   //Refer to "handle buffer B" in the driveEp3Tx() function above
+     96            //   //to learn why double buffering is not enabled by default.
+     97            //   
+     98            //   //Enable double buffering bulk EP3.
+     99            //   USB_CTRL |= (USB_ENBUFOUTEP3B | USB_ENBUFINEP3B);
+    100            // #endif // USB_DOUBLE_BUFFER
+    101            
+    102            //Use the SELFPWDRD and REMOTEWKUPEN state defines to set the appropriate
+    103            //bits in USB_CTRL
+    104            USB_CTRL = (USB_CTRL & (~(USB_SELFPWRD_MASK | USB_REMOTEWKUPEN_MASK))) |
+    105                       ((USB_SELFPWRD_STATE<<USB_SELFPWRD_BIT) |
+    106                        (USB_REMOTEWKUPEN_STATE<<USB_REMOTEWKUPEN_BIT));
+    107          
+    108          #ifdef  EMBER_EMU_TEST
+    109            //Select which GPIO output is used for connect/disconnect. Any
+    110            //value > 47, selects disconnected state.
+    111            EMU_USB_DISCONNECT = PORTA_PIN(2);
+    112          #endif //EMBER_EMU_TEST
+    113            
+    114          
+    115            return USB_STATUS_OK;
+    116          }
+    117          
+    118          
+    119          void USBDHAL_AbortAllTransfers( USB_Status_TypeDef reason )
+    120          {
+    121            int i;
+    122            USBD_Ep_TypeDef *ep;
+    123            USB_XferCompleteCb_TypeDef callback;
+    124          
+    125            if ( reason != USB_STATUS_DEVICE_RESET )
+    126            {
+    127              // unsupported
+    128              // USBDHAL_AbortAllEps();
+    129            }
+    130          
+    131            for ( i = 1; i <= NUM_EP_USED; i++ )
+    132            {
+    133              ep = &(dev->ep[i]);
+    134              if ( ep->state != D_EP_IDLE )
+    135              {
+    136                ep->state = D_EP_IDLE;
+    137                if ( ep->xferCompleteCb )
+    138                {
+    139                  callback = ep->xferCompleteCb;
+    140                  ep->xferCompleteCb = NULL;
+    141          
+    142                  if ( ( dev->lastState == USBD_STATE_CONFIGURED ) &&
+    143                       ( dev->state     == USBD_STATE_ADDRESSED  )    )
+    144                  {
+    145                    USBDHAL_DeactivateEp( ep );
+    146                  }
+    147                  callback( reason, ep->xferred, ep->remaining );
+    148                }
+    149              }
+    150            }
+    151          }
+    152          
+    153          #ifdef VBUSMON
+    154          //Use a selectable IRQ for monitoring VBUS on VBUSMON.
+    155          void vbusMonCfg(void)
+    156          {
+    157            //VBUSMON just needs to be a simple input.
+    158            VBUSMON_SETCFG();
+    159          
+    160            //start from a fresh state, just in case
+    161            VBUSMON_INTCFG = 0;              //disable triggering
+    162            INT_CFGCLR = VBUSMON_INT_EN_BIT; //clear top level int enable
+    163            INT_GPIOFLAG = VBUSMON_FLAG_BIT; //clear stale interrupt
+    164            INT_MISS = VBUSMON_MISS_BIT;     //clear stale missed interrupt
+    165            //configure
+    166            VBUSMON_SEL();             //point IRQ at the desired pin
+    167            VBUSMON_INTCFG  = ((0 << GPIO_INTFILT_BIT) | //no filter
+    168                               (3 << GPIO_INTMOD_BIT));  //3 = both edges
+    169            
+    170            usbVbusPresent = ((VBUSMON_IN & VBUSMON) == VBUSMON);
+    171            
+    172            INT_CFGSET = VBUSMON_INT_EN_BIT; //set top level interrupt enable
+    173          }
+    174          #endif //VBUSMON
+    175          
+    176          #ifndef EMBER_APPLICATION_HAS_CUSTOM_SUSPEND_CALLBACK
+    177            int32u savedPeripheralReg;
+    178            void halSuspendCallback(void)
+    179            {
+    180              halSuspend();
+    181              savedPeripheralReg = PERIPHERAL_DISABLE;
+    182              PERIPHERAL_DISABLE |= ((1 << PERIDIS_ADC_BIT) |   \
+    183                                     (1 << PERIDIS_TIM2_BIT)|   \
+    184                                     (1 << PERIDIS_TIM1_BIT)|   \
+    185                                     (1 << PERIDIS_SC1_BIT) |   \
+    186                                     (1 << PERIDIS_SC2_BIT));
+    187            }
+    188          
+    189            void halResumeCallback(void)
+    190            {
+    191              PERIPHERAL_DISABLE = savedPeripheralReg;
+    192              halResume();
+    193            }
+    194          #endif // EMBER_APPLICATION_HAS_CUSTOM_SUSPEND_CALLBACK
+    195          
+    196          
+    197          #endif //CORTEXM3_EM35X_USB
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

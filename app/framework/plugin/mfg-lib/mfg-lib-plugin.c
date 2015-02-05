@@ -1,0 +1,341 @@
+// *******************************************************************
+// * bulb-ui.c
+// *
+// *
+// * Copyright 2012 by Ember Corporation. All rights reserved.              *80*
+// *******************************************************************
+
+// this file contains all the common includes for clusters in the util
+#include "app/framework/include/af.h"
+#include "app/framework/util/attribute-storage.h"
+
+void custMfgLibStartCommand( void );
+void custMfgLibEndCommand( void );
+void custMfgLibToneCommand( void );
+void custMfgLibStreamCommand( void );
+void custMfgLibChannelCommand( void );
+void custMfgLibPowerCommand( void );
+void custMfgLibSendCommand( void );
+void customProgramEuiCommand( void );
+
+#if 0
+// The table of custom commands.
+EmberCommandEntry emberAfCustomCommands[] = {
+{ "mfgStart",   custMfgLibStartCommand, ""},
+{ "mfgEnd",     custMfgLibEndCommand, ""},
+{ "mfgTone",    custMfgLibToneCommand, "u"},
+{ "mfgStream",  custMfgLibStreamCommand, "u"},
+{ "mfgChannel", custMfgLibChannelCommand, "u"},
+{ "mfgPower",   custMfgLibPowerCommand, "sv"},
+{ "mfgSend",    custMfgLibSendCommand, "uv"},
+{ "programEui", customProgramEuiCommand, "b"},
+  emberCommandEntryAction("mfgenable", customProgramEuiCommand, "u", "enable/disable MFG Lib at startup"),
+
+{ NULL }
+};
+#endif
+
+// *******************************************************************
+// MFGLIB integration
+boolean mfgLibRunning = FALSE;
+boolean mfgToneTestRunning = FALSE;
+boolean mfgStreamTestRunning = FALSE;
+boolean stackUp = FALSE;
+
+// this variable keeps track of how many mfglib packets have been received 
+// during a mfglib session (from mfglib start to mfglib end). This can be 
+// accessed using the "info" command.
+int16u  mfgTotalPacketCounter;
+
+// this buffer is filled with the contents to be sent using mfglibSendPacket
+#pragma align sendBuff
+int8u   sendBuff[128];
+
+
+void emberAfPluginMfgLibInitCallback( void )
+{
+}
+
+// *******************************************************************
+// MFGLIB callback function:
+
+// mfglibRxHandler is called whenever a mfglib packet is received if
+// the device has called mfglibStart and pass in the function pointer
+// as the parameter.
+//
+// If the mfglib packets are coming in very fast, the receiving node
+// should take care to not do a lot of work in mfglibRxHandler. 
+//
+// This example application simply keeps track of the first packet received
+// and how many have been received until it sees a pause in sending.
+// If it does not receive packets for two "heartbeat" periods (200 ms - see 
+// the heartBeat function) it considers the stream of packets to have ended 
+// and prints the results for the user by calling appMfglibSendIsComplete
+//
+// The following variables relate to keeping the saved packet info and keeping
+// track of the state (current packets received in this group, how many
+// had been received since last heartbeat call.
+
+// the number of packets in the current transmit group
+int16u mfgCurrentPacketCounter = 0;
+
+// the saved information for the first packet
+int8u savedPktLength = 0;
+int8s savedRssi = 0;
+int8u savedLinkQuality = 0;
+int8u savedPkt[128];
+
+// if we are in a transmit group of packets or not 
+boolean inReceivedStream = FALSE;
+
+// this keeps track of the number of packets received as of the last heartbeat
+// "tick" (200 ms). If this value stays constant for two ticks, then
+// appMfglibSendIsComplete is called by heartBeat.
+int16u heartbeatLastPacketCounterValue = 0;
+
+
+// *****************************
+// mfglibRxHandler
+//
+// The function is passed to mfglibStart() to report a mfglib message received.
+// The first byte of the packet is the length byte.
+// *****************************
+void mfglibRxHandler(int8u *packet, 
+                      int8u linkQuality, 
+                      int8s rssi)
+{
+  // This increments the total packets for the whole mfglib session
+  // this starts when mfglibStart is called and stops when mfglibEnd
+  // is called.
+  mfgTotalPacketCounter++;
+
+  // This keeps track of the number of packets in the current transmit group.
+  // This starts when a mfglib packet is received and ends when no mfglib
+  // packets are received for two heartBeat ticks (a tick is 200 ms)
+  mfgCurrentPacketCounter++;
+
+  // If this is the first packet of a transmit group then save the information
+  // of the current packet. Don't do this for every packet, just the first one.
+  if (!inReceivedStream) {
+    inReceivedStream = TRUE;
+    mfgCurrentPacketCounter = 1;
+    savedRssi = rssi;
+    savedLinkQuality = linkQuality;
+    savedPktLength = *packet;
+    MEMCOPY(savedPkt, (packet+1), savedPktLength); 
+  }
+}
+
+// custom mfgStart
+// enables the manufacturing library capabilities
+void custMfgLibStartCommand( void ) {
+  EmberStatus status;
+
+  // the number of packets in the current transmit group
+  mfgCurrentPacketCounter = 0;
+
+  // the saved information for the first packet
+  savedPktLength = 0;
+  savedRssi = 0;
+  savedLinkQuality = 0;
+
+  mfgLibRunning = TRUE;  
+
+  status = mfglibStart((*mfglibRxHandler));
+  emberSerialPrintf(APP_SERIAL, "mfglib start status 0x%x\r\n\r\n",
+                    status);
+
+}
+
+// custom mfgEnd
+// disables the manfuacturing library capabilities.
+void custMfgLibEndCommand( void ) {
+  EmberStatus status;
+
+  status = mfglibEnd();
+  emberSerialPrintf(APP_SERIAL, "mfglib end status 0x%x\r\n\r\n", status);
+
+  // set a flag indicating to the app that the mfg lib is not running
+  if (status == EMBER_SUCCESS) {
+    mfgLibRunning = FALSE;
+  }
+}
+
+// custom mfgTone <on>
+// Enables/disables the tone transmission.  1 turns on the tone.  0 turns it off.
+void custMfgLibToneCommand( void ) {
+  int8u on = (int8u) emberUnsignedCommandArgument(0);
+  EmberStatus status;
+
+  if(on) {
+    status = mfglibStartTone();
+    emberSerialPrintf(APP_SERIAL, "start tone 0x%x\r\n\r\n", status);
+  } else {
+    status = mfglibStopTone();
+    emberSerialPrintf(APP_SERIAL, "stop tone 0x%x\r\n\r\n", status);
+  }
+}
+
+// custom mfgStream <on>
+// Enables/disables the stream trnasmission.  1 turns on the stream.  0 turns it off.
+// note:  stream is a carrier modulated with random data
+void custMfgLibStreamCommand( void ) {
+  int8u on = (int8u) emberUnsignedCommandArgument(0);
+  EmberStatus status;
+
+  if(on) {
+    status = mfglibStartStream();
+    emberSerialPrintf(APP_SERIAL, "start stream 0x%x\r\n\r\n", status);
+  } else {
+    status = mfglibStopStream();
+    emberSerialPrintf(APP_SERIAL, "stop stream 0x%x\r\n\r\n", status);
+  }
+}
+
+// custom mfgChannel <channel>
+// Will set the radio channel to <channel>.  Channel is an integer 
+// value between 11 and 26.
+void custMfgLibChannelCommand( void ) {
+  int8u channel = (int8u) emberUnsignedCommandArgument(0);
+  int32u time1 = halCommonGetInt32uMillisecondTick();
+  int32u time2;
+
+  EmberStatus status = mfglibSetChannel(channel);
+
+  time2 = halCommonGetInt32uMillisecondTick() - time1;
+  emberSerialPrintf(APP_SERIAL, 
+                   "mfg set channel to 0x%x, status 0x%x\r\n",
+                   channel, status);  
+  emberSerialPrintf(APP_SERIAL, 
+                   "Time 0x%x\r\n",
+                   (int8u) time2);  
+}
+
+// custom mfgPower <dBm> <mode>
+// Will set the transmit power to <dBm>.  Mode is an integer that is one of the
+// following values:
+// EMBER_TX_POWER_MODE_DEFAULT = 0
+// EMBER_TX_POWER_MODE_BOOST = 1
+// EMBER_TX_POWER_MODE_ALTERNATE = 2
+void custMfgLibPowerCommand( void ) {
+  int8s power = (int8s) emberSignedCommandArgument(0);
+  int16u powerMode = (int16u) emberUnsignedCommandArgument(1);
+  EmberStatus status;
+ 
+  status = mfglibSetPower(powerMode, power);
+  emberSerialPrintf(APP_SERIAL, 
+                    "mfg set power to 0x%x, mode 0x%2x, status 0x%x\r\n\r\n", 
+                    power, powerMode, status); 
+}
+
+#define MFGAPP_TEST_PACKET_MAX_SIZE 0x7f
+int8u testPacket[] = { 
+  0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+  0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
+  0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+  0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20,
+  0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+  0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,
+  0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+  0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40,
+  0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+  0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50,
+  0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
+  0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60,
+  0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+  0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70,
+  0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
+  0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f
+};
+
+// utility used by msMfgCB
+void fillBuffer(int8u* buff, int8u length)
+{
+  int8u i;
+  // length byte does not include itself. If the user asks for 10
+  // bytes of packet this means 1 byte length, 7 bytes, and 2 bytes CRC
+  // this example will have a length byte of 9, but 10 bytes will show
+  // up on the receive side
+  buff[0] = length - 1;
+
+  for (i=1; i < length; i++) {
+    buff[i] = testPacket[i-1];
+  }
+}
+
+// custom mfgSend <count> <length>
+// Will transmit a packet of <length> bytes <count> times.  Note:  the 
+// packet length must be between 6 and 127 inclusive.  The command will
+// set to the nearest limit if the value of <length> is beyond the valid
+// range
+void custMfgLibSendCommand( void ) {
+  int16u numPacketsToSend = (int16u)emberUnsignedCommandArgument(0);
+  int8u packetLength = (int8u)emberUnsignedCommandArgument(1);
+  EmberStatus status;
+
+  if(packetLength < 6) {
+    emberSerialPrintf(APP_SERIAL, "Send:  packet length too short (using 6)\r\n");
+    packetLength = 6;
+  } else if (packetLength > MFGAPP_TEST_PACKET_MAX_SIZE)
+  {
+    emberSerialPrintf(APP_SERIAL, "Send:  packet length too long (using %d)\r\n", MFGAPP_TEST_PACKET_MAX_SIZE );
+    packetLength = MFGAPP_TEST_PACKET_MAX_SIZE;
+  }
+
+  if(numPacketsToSend == 0) {
+    emberSerialPrintf(APP_SERIAL, "Send:  too few packets (using 1)\r\n" );
+    numPacketsToSend = 1;
+  }
+
+  fillBuffer(sendBuff, packetLength);
+
+  // The second parameter to the mfglibSendPacket() is the 
+  // number of "repeats", therefore we decrement numPackets by 1.
+  numPacketsToSend--;
+
+  status = mfglibSendPacket(sendBuff, numPacketsToSend);
+
+  // print an error on failure
+  if (status != EMBER_SUCCESS) {
+    emberSerialPrintf(APP_SERIAL, 
+                      "Send:  err 0x%x\r\n", status); 
+  }
+}
+
+void halInternalSetMfgTokenData(int16u token, void *data, int8u len);
+
+// custom programEui <EUI64>
+// Example:
+// custom programEui { 01 02 03 04 05 06 07 08 }
+// Note:  this command is OTP.  It only works once.  To re-run, you
+// must erase the chip.  
+void customProgramEuiCommand( void )
+{
+  EmberEUI64 eui64;
+
+  emberAfCopyBigEndianEui64Argument(0, eui64);
+  
+  // potentially verify first few bytes for customer OUI
+
+  // OK, we verified the customer OUI.  Let's program it here.
+  halInternalSetMfgTokenData(TOKEN_MFG_CUSTOM_EUI_64,(int8u *) &eui64, EUI64_SIZE);
+}
+
+void customEnableMfgLib( void )
+{
+  int8u enabled = (int8u) emberSignedCommandArgument(0);
+
+  halCommonSetToken( TOKEN_MFG_LIB_ENABLED, &enabled );
+}
+
+boolean emberAfMfgLibEnabled( void )
+{
+  int8u enabled;
+
+  halCommonGetToken(&enabled,TOKEN_MFG_LIB_ENABLED);
+
+  emberSerialPrintf(APP_SERIAL, 
+                    "MFG_LIB Enabled %x\r\n", enabled); 
+
+  return enabled;
+}

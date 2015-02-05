@@ -1,0 +1,275 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:06 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\polling-soc.c                           #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\polling-soc.c -D                        #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"polling-soc.c\"" -lC                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\ap #
+#                    p\builder\DoorSensor_SM6011\ -I                          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \polling-soc.lst                                         #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \polling-soc.o                                           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\end-device-support\polling-soc.c
+      1          // Copyright 2013 Silicon Laboratories, Inc.
+      2          
+      3          #include "app/framework/include/af.h"
+      4          #include "app/framework/plugin/end-device-support/end-device-support.h"
+      5          
+      6          // *****************************************************************************
+      7          // Globals
+      8          
+      9          extern EmberEventControl emberAfPluginEndDeviceSupportPollingNetworkEventControls[];
+     10          
+     11          // *****************************************************************************
+     12          // Functions
+     13          
+     14          // This is called to scheduling polling events for the network(s).  We only
+     15          // care about end device networks.  For each of those, a polling event will be
+     16          // scheduled for joined networks or canceled otherwise.
+
+   \                                 In section .text, align 2, keep-with-next
+     17          void emberAfSchedulePollEventCallback(void)
+     18          {
+   \                     emberAfSchedulePollEventCallback:
+   \   00000000   0xE92D 0x47F0      PUSH     {R4-R10,LR}
+     19            int8u i;
+     20            for (i = 0; i < EMBER_SUPPORTED_NETWORKS; i++) {
+   \   00000004   0x2400             MOVS     R4,#+0
+   \   00000006   0x.... 0x....      ADR.W    R8,`?<Constant "Next poll nwk %d in %...">`
+   \   0000000A   0x.... 0x....      LDR.W    R9,??DataTable2
+   \   0000000E   0x.... 0x....      LDR.W    R10,??DataTable2_1
+   \   00000012   0x....             LDR.N    R5,??DataTable2_2
+     21              if (emAfNetworks[i].type == EM_AF_NETWORK_TYPE_ZIGBEE_PRO
+     22                  && EMBER_END_DEVICE <= emAfNetworks[i].variant.pro.nodeType) {
+   \                     ??emberAfSchedulePollEventCallback_0:
+   \   00000014   0xEB04 0x0044      ADD      R0,R4,R4, LSL #+1
+   \   00000018   0x5D41             LDRB     R1,[R0, R5]
+   \   0000001A   0xBB31             CBNZ.N   R1,??emberAfSchedulePollEventCallback_1
+   \   0000001C   0x1940             ADDS     R0,R0,R5
+   \   0000001E   0x7840             LDRB     R0,[R0, #+1]
+   \   00000020   0x2803             CMP      R0,#+3
+   \   00000022   0xD322             BCC.N    ??emberAfSchedulePollEventCallback_1
+     23                emberAfPushNetworkIndex(i);
+   \   00000024   0xB2E0             UXTB     R0,R4
+   \   00000026   0x.... 0x....      BL       emberAfPushNetworkIndex
+     24                if (emberAfNetworkState() == EMBER_JOINED_NETWORK) {
+   \   0000002A   0x.... 0x....      BL       emberAfNetworkState
+   \   0000002E   0x2802             CMP      R0,#+2
+   \   00000030   0xD116             BNE.N    ??emberAfSchedulePollEventCallback_2
+     25                  EmAfPollingState *state = &emAfPollingStates[i];
+   \   00000032   0xEB0A 0x06C4      ADD      R6,R10,R4, LSL #+3
+     26                  int32u lastPollIntervalMs = state->pollIntervalMs;
+   \   00000036   0x6837             LDR      R7,[R6, #+0]
+     27                  state->pollIntervalMs = emberAfGetCurrentPollIntervalMsCallback();
+   \   00000038   0x.... 0x....      BL       emberAfGetCurrentPollIntervalMsCallback
+   \   0000003C   0x6030             STR      R0,[R6, #+0]
+     28                  if (state->pollIntervalMs != lastPollIntervalMs
+     29                      || !emberAfNetworkEventControlGetActive(emberAfPluginEndDeviceSupportPollingNetworkEventControls)) {
+   \   0000003E   0x42B8             CMP      R0,R7
+   \   00000040   0xD103             BNE.N    ??emberAfSchedulePollEventCallback_3
+   \   00000042   0x4648             MOV      R0,R9
+   \   00000044   0x.... 0x....      BL       emberAfNetworkEventControlGetActive
+   \   00000048   0xB968             CBNZ.N   R0,??emberAfSchedulePollEventCallback_4
+     30                    emberAfDebugPrintln("Next poll nwk %d in %l ms",
+     31                                        i,
+     32                                        state->pollIntervalMs);
+   \                     ??emberAfSchedulePollEventCallback_3:
+   \   0000004A   0x6833             LDR      R3,[R6, #+0]
+   \   0000004C   0x4622             MOV      R2,R4
+   \   0000004E   0x4641             MOV      R1,R8
+   \   00000050   0x2002             MOVS     R0,#+2
+   \   00000052   0x.... 0x....      BL       emberAfPrintln
+     33                    emberAfNetworkEventControlSetDelay(emberAfPluginEndDeviceSupportPollingNetworkEventControls,
+     34                                                       state->pollIntervalMs);
+   \   00000056   0x6831             LDR      R1,[R6, #+0]
+   \   00000058   0x4648             MOV      R0,R9
+   \   0000005A   0x.... 0x....      BL       emberAfNetworkEventControlSetDelay
+   \   0000005E   0xE002             B.N      ??emberAfSchedulePollEventCallback_4
+     35                  }
+     36                } else {
+     37                  emberAfNetworkEventControlSetInactive(emberAfPluginEndDeviceSupportPollingNetworkEventControls);
+   \                     ??emberAfSchedulePollEventCallback_2:
+   \   00000060   0x4648             MOV      R0,R9
+   \   00000062   0x.... 0x....      BL       emberAfNetworkEventControlSetInactive
+     38                }
+     39                emberAfPopNetworkIndex();
+   \                     ??emberAfSchedulePollEventCallback_4:
+   \   00000066   0x.... 0x....      BL       emberAfPopNetworkIndex
+     40              }
+     41            }
+   \                     ??emberAfSchedulePollEventCallback_1:
+   \   0000006A   0x1C64             ADDS     R4,R4,#+1
+   \   0000006C   0x2C01             CMP      R4,#+1
+   \   0000006E   0xDBD1             BLT.N    ??emberAfSchedulePollEventCallback_0
+     42          }
+   \   00000070   0xE8BD 0x87F0      POP      {R4-R10,PC}      ;; return
+     43          
+     44          // Whenever the polling event fires for a network, a MAC data poll is sent.
+
+   \                                 In section .text, align 2, keep-with-next
+     45          void emberAfPluginEndDeviceSupportPollingNetworkEventHandler(void)
+     46          {
+   \                     emberAfPluginEndDeviceSupportPollingNetworkEventHandler:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     47            EmberNetworkStatus state = emberAfNetworkState();
+     48            if (state == EMBER_JOINED_NETWORK) {
+   \   00000002   0x.... 0x....      BL       emberAfNetworkState
+   \   00000006   0x2802             CMP      R0,#+2
+   \   00000008   0xD10E             BNE.N    ??emberAfPluginEndDeviceSupportPollingNetworkEv_0
+     49              EmberStatus status = emberPollForData();
+   \   0000000A   0x.... 0x....      BL       emberPollForData
+   \   0000000E   0x0004             MOVS     R4,R0
+     50              if (status != EMBER_SUCCESS) {
+   \   00000010   0xD00A             BEQ.N    ??emberAfPluginEndDeviceSupportPollingNetworkEv_0
+     51                emberAfCorePrintln("poll nwk %d: 0x%x", emberGetCurrentNetwork(), status);
+   \   00000012   0x.... 0x....      BL       emberGetCurrentNetwork
+   \   00000016   0x4623             MOV      R3,R4
+   \   00000018   0x4602             MOV      R2,R0
+   \   0000001A   0x.... 0x....      ADR.W    R1,`?<Constant "poll nwk %d: 0x%x">`
+   \   0000001E   0x2001             MOVS     R0,#+1
+   \   00000020   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000024   0x.... 0x....      B.W      emberAfPrintln
+     52              }
+     53            }
+     54          }
+   \                     ??emberAfPluginEndDeviceSupportPollingNetworkEv_0:
+   \   00000028   0xBD10             POP      {R4,PC}          ;; return
+     55          
+     56          // This function is called when a poll completes and explains what happend with
+     57          // the poll.  If the number of sequential data polls not ACKed by the parent
+     58          // exceeds the threshold, we will try to find a new parent.
+
+   \                                 In section .text, align 2, keep-with-next
+     59          void emberPollCompleteHandler(EmberStatus status)
+     60          {
+     61            emAfPollCompleteHandler(status,
+     62                                    EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_MAX_MISSED_POLLS);
+   \                     emberPollCompleteHandler:
+   \   00000000   0x210A             MOVS     R1,#+10
+   \   00000002   0x.... 0x....      B.W      emAfPollCompleteHandler
+     63          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable2:
+   \   00000000   0x........         DC32     emberAfPluginEndDeviceSupportPollingNetworkEventControls
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable2_1:
+   \   00000000   0x........         DC32     emAfPollingStates
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable2_2:
+   \   00000000   0x........         DC32     emAfNetworks
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Next poll nwk %d in %...">`:
+   \   00000000   0x4E 0x65          DC8 "Next poll nwk %d in %l ms"
+   \              0x78 0x74    
+   \              0x20 0x70    
+   \              0x6F 0x6C    
+   \              0x6C 0x20    
+   \              0x6E 0x77    
+   \              0x6B 0x20    
+   \              0x25 0x64    
+   \              0x20 0x69    
+   \              0x6E 0x20    
+   \              0x25 0x6C    
+   \              0x20 0x6D    
+   \              0x73 0x00    
+   \   0000001A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "poll nwk %d: 0x%x">`:
+   \   00000000   0x70 0x6F          DC8 "poll nwk %d: 0x%x"
+   \              0x6C 0x6C    
+   \              0x20 0x6E    
+   \              0x77 0x6B    
+   \              0x20 0x25    
+   \              0x64 0x3A    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emberAfPluginEndDeviceSupportPollingNetworkEventHandler
+              8 -> emberAfNetworkState
+              0 -> emberAfPrintln
+              8 -> emberGetCurrentNetwork
+              8 -> emberPollForData
+       32  emberAfSchedulePollEventCallback
+             32 -> emberAfGetCurrentPollIntervalMsCallback
+             32 -> emberAfNetworkEventControlGetActive
+             32 -> emberAfNetworkEventControlSetDelay
+             32 -> emberAfNetworkEventControlSetInactive
+             32 -> emberAfNetworkState
+             32 -> emberAfPopNetworkIndex
+             32 -> emberAfPrintln
+             32 -> emberAfPushNetworkIndex
+        0  emberPollCompleteHandler
+              0 -> emAfPollCompleteHandler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      28  ?<Constant "Next poll nwk %d in %...">
+      20  ?<Constant "poll nwk %d: 0x%x">
+       4  ??DataTable2
+       4  ??DataTable2_1
+       4  ??DataTable2_2
+      42  emberAfPluginEndDeviceSupportPollingNetworkEventHandler
+     116  emberAfSchedulePollEventCallback
+       6  emberPollCompleteHandler
+
+ 
+ 224 bytes in section .text
+ 
+ 224 bytes of CODE memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,546 @@
+<?xml version="1.0"?>
+<callback>
+
+  <!-- SOC handlers -->
+  <function id="POLL_COMPLETE" 
+            name="emberPollCompleteHandler" 
+            returnType="void" 
+            stackMacro="EMBER_APPLICATION_HAS_POLL_COMPLETE_HANDLER" 
+            consumed="false" 
+            platformType="soc">
+    <description>
+This is called by the stack when a data poll to the parent is complete. See stack documentation for more information.
+    </description>
+    <arg name="status" 
+         type="EmberStatus" 
+         description="Ember status value." />
+    <codeForStub />
+  </function>
+
+  <function id="MAC_PASSTHROUGH" name="emberMacPassthroughMessageHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_MAC_PASSTHROUGH_HANDLER" consumed="false" platformType="soc">
+    <description>
+      This is called by stack when an interpan message is received.
+    </description>
+    <arg name="messageType" 
+         type="EmberMacPassthroughType" 
+         description="The type of interpan message being received"/>
+    <arg name="message" 
+         type="EmberMessageBuffer" 
+         description="The interpan message"/>
+    <codeForStub/>
+  </function>
+
+  <function id="MAC_FILTER_MATCH_MESSAGE" name="emberMacFilterMatchMessageHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_MAC_FILTER_MATCH_MESSAGE_HANDLER" consumed="false" platformType="soc">
+    <description>
+      This function is called when the stack has received a raw MAC message that has matched one of the application's configured MAC filters.
+    </description>
+    <arg name="macFilterMatchStruct" type="const EmberMacFilterMatchStruct *" description="This is a pointer to a structure containing information about the matching message, including the index of the filter that was matched, and the actual data of the message." />
+    <codeForStub />
+  </function>
+
+  <function id="POLL" name="emberPollHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_POLL_HANDLER" consumed="false" platformType="soc">
+    <description>
+      This is called by stack when poll is initiated. See stack documentation for more information.
+    </description>
+    <arg name="childId" 
+         type="EmberNodeId" 
+         description="The ID of the child that is requesting data"/>
+    <arg name="transmitExpected" 
+         type="boolean" 
+         description="TRUE if the child is expecting an application supplied data message"/>
+    <codeForStub/>
+  </function>
+
+  <function id="ZIGBEE_KEY_ESTABLISHMENT" name="emberZigbeeKeyEstablishmentHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_ZIGBEE_KEY_ESTABLISHMENT_HANDLER" consumed="false" platformType="soc">
+    <description>
+      This is called by stack to notify it of the status of the request for a Link Key.  See stack documentation for more information.
+    </description>
+    <arg name="partner" type="EmberEUI64"     description="The IEEE address of the partner device.  Or all zeros if the Key establishment failed." />
+    <arg name="status"  type="EmberKeyStatus" description="The status of the key establishment." />
+    <codeForStub />
+  </function>
+
+  <function id="INCOMING_ROUTE_ERROR_HANDLER" name="emberIncomingRouteErrorHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_INCOMING_ROUTE_ERROR_HANDLER" consumed="false" platformType="soc">
+     <description>
+       This is called by the stack to notify the application that a route error message has been received.
+     </description>
+     <arg name="status" type="EmberStatus" description="The type of route error."/>
+     <arg name="target" type="EmberNodeId" description="The node ID associated with the error.  Depending on the error code this may be either originator of the error message or the node ID of the destination that could not be reached."/>
+     <codeForStub>
+emberAfPushCallbackNetworkIndex();
+emberAfPopNetworkIndex();
+     </codeForStub>
+   </function>
+
+  <function id="INCOMING_BOOTLOAD_MESSAGE_HANDLER" name="emberIncomingBootloadMessageHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_BOOTLOAD_HANDLERS">
+    <description>
+      This is called when the stack receives an incoming Ember bootload message.
+    </description>
+    <arg name="longId" type="EmberEUI64" description="The sender of the message"/>
+    <arg name="message" type="EmberMessageBuffer" description="The buffer containing the message data."/>
+    <codeForStub/>
+  </function>
+
+  <function id="BOOTLOAD_TRANSMIT_COMPLETE_HANDLER" name="emberBootloadTransmitCompleteHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_BOOTLOAD_HANDLERS">
+    <description>
+      This is called when the stack has the result of an attempt to send an Ember bootload message."
+    </description>
+    <arg name="message" type="EmberMessageBuffer" description="The buffer containing the message data that was sent."/>
+    <arg name="status"  type="EmberStatus" description="The message send result"/>
+    <codeForStub/>
+  </function>
+
+  <function id="COUNTER_HANDLER" name="emberCounterHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_COUNTER_HANDLER">
+    <description>
+      This is called when a certain type of stack event occurs
+    </description>
+    <arg name="type" type="EmberCounterType" description="The type of event that occured"/>
+    <arg name="data" type="int8u" description="The number of occurances of this event type"/>
+    <codeForStub/>
+  </function>
+
+  <function id="EMBER_COUNTER_ROLLOVER_HANDLER" name="emberCounterRolloverHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_COUNTER_ROLLOVER_HANDLER">
+    <description>
+      This is called when a counter exceeds its threshold
+    </description>
+    <arg name="type" type="EmberCounterType" description="The type of event that occured"/>
+    <codeForStub/>
+  </function>  
+
+  <function id="ZLL_ADDRESS_ASSIGNMENT_HANDLER" name="emberZllAddressAssignmentHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_ZLL_ADDRESS_ASSIGNMENT_HANDLER">
+    <description>
+      This call is fired when network and group addresses are assigned to a remote mode in a network start or network join request.
+    </description>
+    <arg name="addressInfo" type="const EmberZllAddressAssignment*" description="Address assignment information"/>
+    <codeForStub/>
+  </function>
+
+  <function id="ZLL_NETWORK_FOUND_HANDLER" name="emberZllNetworkFoundHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_ZLL_NETWORK_FOUND_HANDLER">
+    <description>
+      This call is fired when a ZLL network scan finds a ZLL network.
+    </description>
+    <arg name="networkInfo" type="const EmberZllNetwork*" description="Zigbee and ZLL specific information about the discovered network."/>
+    <arg name="deviceInfo" type="const EmberZllDeviceInfoRecord*" description="Device specific info. This pointer may be NULL, indicating the device has either 0 sub-devices, or more than 1 sub-devices."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="ZLL_SCAN_COMPLETE_HANDLER" name="emberZllScanCompleteHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_ZLL_SCAN_COMPLETE_HANDLER">
+    <description>
+      This call is fired when a ZLL network scan is complete.
+    </description>
+    <arg name="status" type="EmberStatus" description="The result of the network scan operation"/>
+    <codeForStub/>
+  </function>  
+
+  <function id="ZLL_TOUCH_LINK_TARGET_HANDLER" name="emberZllTouchLinkTargetHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_ZLL_TOUCH_LINK_TARGET_HANDLER">
+    <description>
+      This call is fired when the device is a target of a touch link.
+    </description>
+    <arg name="networkInfo" type="const EmberZllNetwork*" description="Zigbee and ZLL specific information about the initiator"/>
+    <codeForStub/>
+  </function>  
+
+  <function id="RF4CE_AUTO_DISCOVERY_RESPONSE_COMPLETE_HANDLER" name="emberRf4ceAutoDiscoveryResponseCompleteHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_AUTO_DISCOVERY_RESPONSE_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when it has completed the requested auto discovery response phase.
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of EMBER_SUCCESS indicatingthat it successfully received a discovery request frametwice from the same node with IEEE address specified by the scrIeeeAddr parameter. An ::EmberStatus value of EMBER_DISCOVERY_TIMEOUT if the node has not received the two discovery request frame within the auto discovery response duration interval. An ::EmberStatus valueof EMBER_DISCOVERY_ERROR if the node has received two valid discovery request command frames from two different nodes. An ::EmberStatus value of EMBER_NO_BUFFERS if the node could not respond because of RAM shortage. An ::EmberStatus value of EMBER_ERR_FATAL if the MAC layer rejected the discovery response."/>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="An ::EmberEUI64 value indicating the IEEE address from which the discovery request command frame was received. This parameter is non-NULL only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="nodeCapabilities" type="int8u" description="The node capabilities of the node that issued the discovery request. This parameter is meaningful   only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo *" description="A pointer to an ::EmberRf4ceVendorInfo struct containing the vendor information of the node that issued the discovery request. This parameter is non-NULL only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo *" description="A pointer to an ::EmberRf4ceApplicationInfo struct containing the application information of the node that issued the discovery request. This parameter is non-NULL only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="searchDevType" type="int8u" description="The device type being discovered. If this is 0xFF, any type is being requested. This parameter is meaningful only if the status parameter is EMBER_SUCCESS."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="RF4CE_DISCOVERY_COMPLETE_HANDLER" name="emberRf4ceDiscoveryCompleteHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_DISCOVERY_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when it has completed the discovery process.
+    </description>
+    <arg name="status" type="EmberStatus" description=" An ::EmberStatus value of ::EMBER_SUCCESS if discovery has been correctly performed over the three RF4CE channels and at least a valid discovery response was received. An ::EmberStatus value of ::EMBER_DISCOVERY_TIMEOUT if the discovery process completed and no valid discovery response was received. Otherwise, another ::EmberStatus value indicating the error occurred."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="RF4CE_DISCOVERY_REQUEST_HANDLER" name="emberRf4ceDiscoveryRequestHandler" returnType="boolean" stackMacro="EMBER_APPLICATION_HAS_RF4CE_DISCOVERY_REQUEST_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a discovery request is received. If the callback returns TRUE, the stack shall respond with a discovery response, otherwise it will silently discard the discovery request message. This callback should return FALSE if the discovery request should be discarded. Return TRUE if the application wants to respond to the discovery request.
+    </description>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="The IEEE address of the node that issued the discovery request."/>
+    <arg name="nodeCapabilities" type="int8u" description="The node capabilities of the node that issued the discovery request."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo" description="A pointer to an ::EmberRf4ceVendorInfo struct containing the vendor information of the node that issued the discovery request."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo" description=" A pointer to an ::EmberRf4ceApplicationInfo struct containing the application information of the node that issued the discovery request. "/>
+    <arg name="searchDevType" type="int8u" description="The device type being discovered. If this is 0xFF, any type is being requested."/>
+    <arg name="rxLinkQuality" type="int8u" description=" LQI value, as passed via the MAC sub-layer, of the discovery request command frame. "/>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>  
+
+  <function id="RF4CE_DISCOVERY_RESPONSE_HANDLER" name="emberRf4ceDiscoveryResponseHandler" returnType="boolean" stackMacro="EMBER_APPLICATION_HAS_RF4CE_DISCOVERY_RESPONSE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a discovery response is received. If this callback returns TRUE the stack will continue the discovery process. If this callback returns FALSE, the discovery process will end at the end of the current discovery trial. A discovery trial is defined as the transmission of a discovery request command frame on all available channels.
+    </description>
+    <arg name="atCapacity" type="boolean" description=" A boolean set to TRUE if the node sending the discovery response has no free entry in its pairing table, FALSE otherwise."/>
+    <arg name="channel" type="int8u" description=" The channel on which the discovery response was received."/>
+    <arg name="panId" type="EmberPanId" description="The PAN identifier of the responding device."/>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="The IEEE address of the responding device."/>
+    <arg name="nodeCapabilities" type="int8u" description="The capabilities of the responding node."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo *" description="The vendor information of the responding device."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo *" description=" The application information of the responding device."/>
+    <arg name="rxLinkQuality" type="int8u" description=" LQI value, as passed via the MAC sub-layer, of the discovery response command frame."/>
+    <arg name="discRequestLqi" type="int8u" description=" The LQI of the discovery request command frame reported by the responding device."/>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>
+  <function id="RF4CE_INCOMING_MESSAGE_HANDLER" name="emberRf4ceIncomingMessageHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_INCOMING_MESSAGE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a message is received.
+    </description>
+ <arg name="pairingIndex" type="int8u" description="The index of the entry in the pairing table corresponding to the PAN on which the message was received."/>
+    <arg name="profileId" type="int8u" description="The profile ID included in the message."/>
+    <arg name="vendorId" type="int16u" description="The vendor ID included in the message, if any."/>
+    <arg name="messageLength" type="int8u" description="The length in bytes of the received message."/>
+    <arg name="message" type="int8u *" description="A pointer to the payload of the received message."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="RF4CE_MESSAGE_SENT_HANDLER" name="emberRf4ceMessageSentHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_MESSAGE_SENT_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when it has completed sending a message.  
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of: - ::EMBER_SUCCESS - The message was successfully delivered. - ::EMBER_DELIVERY_FAILED - The message was not delivered."/>
+    <arg name="pairingIndex" type="int8u" description="The index of the entry in the pairing table used to transmit the message."/>
+    <arg name="txOptions" type="int8u" description="The TX options bitmask as per ZigBee RF4CE specification used for transmitting the packet."/>
+    <arg name="profileId" type="int8u" description="The profile ID included in the message."/>
+    <arg name="vendorId" type="int16u" description="The vendor ID included in the message, if any."/>
+    <arg name="messageLength" type="int8u" description="The length in bytes of the message."/>
+    <arg name="message" type="int8u *" description="A pointer to the payload of the message that was sent."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="RF4CE_PAIR_COMPLETE_HANDLER" name="emberRf4cePairCompleteHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_PAIR_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when the originator or the recipient node has completed the pairing process.
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of EMBER_SUCCESS if the pairing process succeeded and a pairing link has been established. An ::EmberStatus value of EMBER_NO_RESPONSE if the originator has timed out waiting for the pair response or for the ping response during the link key exchange procedure. An ::EmberStatus value of EMBER_TABLE_FULL if a pair response was received at the originator indicating that the recipient device has no available entry in its pairing table. An ::EmberStatus value of EMBER_NOT_PERMITTED if a pair response was received at the originator indicating that the recipient device did not accept the pair request. An ::EmberStatus value of EMBER_SECURITY_TIMEOUT if the node has timed out during the link key exchange or recovery procedures. An ::EmberStatus value of EMBER_SECURITY_FAILURE if some other error occurred during the link key exchange or recovery procedures. Another ::EmberStatus value indicating the specific reason why the originator or the recipient node failed to deliver a command frame."/>
+    <arg name="pairingIndex" type="int8u" description="The index of the pairing table entry corresponding to the pairing link that was established during the pairing process. This field is meaningful only if the status parameter is EMBER_SUCCESS."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="RF4CE_PAIR_REQUEST_HANDLER" name="emberRf4cePairRequestHandler" returnType="boolean" stackMacro="EMBER_APPLICATION_HAS_RF4CE_PAIR_REQUEST_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a pair request has been received. The function will return TRUE if the application accepts the pair, FALSE otherwise.
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of EMBER_SUCCESS if the request pairing is not a duplicate pairing and an unused entry in the pairing table is available. An ::EmberStatus value of EMBER_TABLE_FULL if the request pairing is not a duplicate pairing and the pairing table is full. An ::EmberStatus value of EMBER_DUPLICATE_ENTRY if the request pairing is a duplicate pairing. In this case, the stack will update the entry indicated by the pairingIndex parameter."/>
+    <arg name="pairingIndex" type="int8u" description="The index of the entry that will be used by the stack for the pairing link. If the status parameter is EMBER_TABLE_FULL this parameter is meaningless."/>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="An ::EmberEUI64 value indicating the source IEEE address of the incoming pair request command."/>
+    <arg name="nodeCapabilities" type="int8u" description="The node capabilities of requesting device."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo" description="The vendor information of the requesting device."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo" description="The application information of the requesting device."/>
+    <arg name="keyExchangeTransferCount" type="keyExchangeTransferCount" description=" The number of transfers to be used to      exchange the link key with the pairing     originator, indicated in the incoming pair request command."/>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>  
+
+  <function id="RF4CE_UNPAIR_COMPLETE_HANDLER" name="emberRf4ceUnpairCompleteHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_UNPAIR_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when the unpair procedure has been completed. According to the RF4CE specs, during the unpair procedure, the stack sends an unpair command frame. If the command is not successfully delivered, the stack tries another RF4CE channel until the frame is received or the stack already tried all the RF4CE channels. Either way, at the end of the unpair process the pairing table entry is deleted and this callback is invoked.
+    </description>
+    <arg name="pairingIndex" type="void" description="The index of the removed pairing link."/>
+    <codeForStub/>
+  </function>  
+  <function id="RF4CE_UNPAIR_HANDLER" name="emberRf4ceUnpairHandler" returnType="void" stackMacro="EMBER_APPLICATION_HAS_RF4CE_UNPAIR_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when an unpair command frame has been received. The stack will remove the pairing link indicated by the passed index.
+    </description>
+    <arg name="pairingIndex" type="void" description="The index of the pairing link to be removed."/>
+    <codeForStub/>
+  </function>  
+
+<!-- Ezsp handlers -->
+  <function id="EZSP_POLL_COMPLETE" 
+            name="ezspPollCompleteHandler" 
+            returnType="void" 
+            stackMacro="EZSP_APPLICATION_HAS_POLL_COMPLETE_HANDLER" 
+            consumed="false" 
+            platformType="host">
+    <description>
+This is called by the EZSP when a data poll to the parent is complete. See EZSP documentation for more information.
+    </description>
+    <arg name="status" 
+         type="EmberStatus" 
+         description="Ember status value." />
+    <codeForStub />
+  </function>
+
+  <function id="EZSP_POLL" 
+            name="ezspPollHandler" 
+            returnType="void" 
+            stackMacro="EZSP_APPLICATION_HAS_POLL_HANDLER" 
+            consumed="false" 
+            platformType="host">
+    <description>
+      This is called by EZSP when poll is initiated. See EZSP documentation for more information.
+    </description>
+    <arg name="childId" 
+         type="EmberNodeId" 
+         description="The ID of the child that is requesting data"/>
+    <codeForStub/>
+  </function>
+  <function id="EZSP_TIMER" 
+            name="ezspTimerHandler" 
+            returnType="void" 
+            stackMacro="EZSP_APPLICATION_HAS_TIMER_HANDLER" 
+            consumed="false" 
+            platformType="host">
+    <description>
+      A callback from the timer.
+    </description>
+    <arg name="timerId" 
+         type="int8u" 
+         description="Which timer generated the callback (0 or 1)"/>
+  </function>
+
+  <function id="EZSP_MAC_PASSTHROUGH" name="ezspMacPassthroughMessageHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_MAC_PASSTHROUGH_HANDLER" consumed="false" platformType="host">
+    <description>
+      This is called by stack when an interpan message is received.
+    </description>
+    <arg name="messageType" 
+         type="EmberMacPassthroughType" 
+         description="The type of interpan message being received"/>
+    <arg name="lastHopLqi" 
+         type="int8u" 
+         description="The link quality indicator of the last hop"/>
+    <arg name="lastHopRssi" 
+         type="int8s" 
+         description="The received signal strength of the last hop"/>
+    <arg name="messageLength" 
+         type="int8u" 
+         description="The length of the incoming interpan message"/>
+    <arg name="messageContents" 
+         type="int8u *" 
+         description="A pointer to the incoming interpan message"/>
+    <codeForStub/>
+  </function>
+
+  <function id="EZSP_MAC_FILTER_MATCH_MESSAGE" name="ezspMacFilterMatchMessageHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_MAC_FILTER_MATCH_HANDLER" consumed="false" platformType="host">
+    <description>
+      This function is called when the stack has received a raw MAC message that has matched one of the application's configured MAC filters.
+    </description>
+    <arg name="filterIndexMatch"      type="int8u"                   description="The index of the filter that was matched." />
+    <arg name="legacyPassthroughType" type="EmberMacPassthroughType" description="The type of MAC passthrough message received." />
+    <arg name="lastHopLqi"            type="int8u"                   description="The link quality from the node that last relayed the message." />
+    <arg name="lastHopRssi"           type="int8s"                   description="The energy level (in units of dBm) observed during reception." />
+    <arg name="messageLength"         type="int8u"                   description="The length of the messageContents parameter in bytes." />
+    <arg name="messageContents"       type="int8u *"                 description="The raw message that was received." />
+    <codeForStub />
+  </function>
+
+  <function id="EZSP_ZIGBEE_KEY_ESTABLISHMENT" name="ezspZigbeeKeyEstablishmentHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_ZIGBEE_KEY_ESTABLISHMENT_HANDLER" consumed="false" platformType="host">
+    <description>
+      This is called by stack to notify it of the status of the request for a Link Key.  See stack documentation for more information.
+    </description>
+    <arg name="partner" type="EmberEUI64"     description="The IEEE address of the partner device.  Or all zeros if the Key establishment failed." />
+    <arg name="status"  type="EmberKeyStatus" description="The status of the key establishment." />
+    <codeForStub />
+  </function>
+
+  <function id="EZSP_INCOMING_ROUTE_ERROR_HANDLER" name="ezspIncomingRouteErrorHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_INCOMING_ROUTE_ERROR_HANDLER" consumed="false" platformType="host">
+     <description>
+       This is called by the stack to notify the application that a route error message has been received.
+     </description>
+     <arg name="status" type="EmberStatus" description="The type of route error."/>
+     <arg name="target" type="EmberNodeId" description="The node ID associated with the error.  Depending on the error code this may be either originator of the error message or the node ID of the destination that could not be reached."/>
+     <codeForStub>
+emberAfPushCallbackNetworkIndex();
+emberAfPopNetworkIndex();
+     </codeForStub>
+   </function>
+
+  <function id="EZSP_CUSTOM_FRAME_HANDLER" name="ezspCustomFrameHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_CUSTOM_FRAME_HANDLER" consumed="false" platformType="host">
+    <description>
+      This is called when Extensible NCP software running on the NCP sends a custom EZSP frame to the host.  Normal Silicon Labs NCP software images do not use custom EZSP frames.  Customer created NCP images may implement this frame.
+    </description>
+    <arg name="payloadLength" type="int8u"  description="The length of the custom frame."/>
+    <arg name="payload"       type="int8u*" description="The custom payload data."/>
+    <codeForStub>
+    </codeForStub>
+  </function>
+
+  <function id="EZSP_INCOMING_BOOTLOAD_MESSAGE_HANDLER" name="ezspIncomingBootloadMessageHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_BOOTLOADER_HANDLER" consumed="false" platformType="host">
+    <description>
+      This is called when the NCP receives an Ember bootload message and it is being passed to the host.
+    </description>
+    <arg type="EmberEUI64" name="longId"   description="The sender of the message"/>
+    <arg type="int8s" name="lastHopLqi"    description="The LQI of the message"/>
+    <arg type="int8s" name="lastHopRssi"   description="The RSSI of the message"/>
+    <arg type="int8u" name="messageLength" description="The length of the received message"/>
+    <arg type="int8u*" name="message"      description="The message data"/>
+    <codeForStub/>
+  </function>
+  <function id="EZSP_BOOTLOAD_TRANSMIT_COMPLETE_HANDLER" name="ezspBootloadTransmitCompleteHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_BOOTLOADER_HANDLER" consumed="false" platformType="host">
+    <description>
+      This is called to notify the host of the result of an attempt to send an Ember bootload message.
+    </description>
+    <arg type="EmberStatus" name="status"        description="The result of the send attempt."/>
+    <arg type="int8u"       name="messageLength" description="The length of the received message"/>
+    <arg type="int8u*"      name="message"       description="The message data"/>
+  </function>
+  <function id="EZSP_COUNTER_ROLLOVER_HANDLER" name="ezspCounterRolloverHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_COUNTER_ROLLOVER_HANDLER">
+    <description>
+      This is called when a counter exceeds its threshold
+    </description>
+    <arg name="type" type="EmberCounterType" description="The type of event that occured"/>
+    <codeForStub/>
+  </function>  
+  <function id="EZSP_ZLL_ADDRESS_ASSIGNMENT_HANDLER" name="ezspZllAddressAssignmentHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_ZLL_ADDRESS_ASSIGNMENT_HANDLER">
+    <description>
+      This call is fired when network and group addresses are assigned to a remote mode in a network start or network join request.
+    </description>
+    <arg name="addressInfo" type="const EmberZllAddressAssignment*" description="Address assignment information"/>
+    <codeForStub/>
+  </function>
+  <function id="EZSP_ZLL_NETWORK_FOUND_HANDLER" name="ezspZllNetworkFoundHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_ZLL_NETWORK_FOUND_HANDLER">
+    <description>
+      This call is fired when a ZLL network scan finds a ZLL network.
+    </description>
+    <arg name="networkInfo" type="const EmberZllNetwork*" description="Zigbee and ZLL specific information about the discovered network."/>
+    <arg name="deviceInfo" type="const EmberZllDeviceInfoRecord*" description="Device specific info. This pointer may be NULL, indicating the device has either 0 sub-devices, or more than 1 sub-devices."/>
+    <codeForStub/>
+  </function>  
+  <function id="EZSP_ZLL_SCAN_COMPLETE_HANDLER" name="ezspZllScanCompleteHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_ZLL_SCAN_COMPLETE_HANDLER">
+    <description>
+      This call is fired when a ZLL network scan is complete.
+    </description>
+    <arg name="status" type="EmberStatus" description="The result of the network scan operation"/>
+    <codeForStub/>
+  </function>  
+  <function id="EZSP_ZLL_TOUCH_LINK_TARGET_HANDLER" name="ezspZllTouchLinkTargetHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_ZLL_TOUCH_LINK_TARGET_HANDLER">
+    <description>
+      This call is fired when the device is a target of a touch link.
+    </description>
+    <arg name="networkInfo" type="const EmberZllNetwork*" description="Zigbee and ZLL specific information about the initiator"/>
+    <codeForStub/>
+  </function>
+
+  <function id="EZSP_RF4CE_AUTO_DISCOVERY_RESPONSE_COMPLETE_HANDLER" name="emberRf4ceAutoDiscoveryResponseCompleteHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_AUTO_DISCOVERY_RESPONSE_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when it has completed the requested auto discovery response phase.
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of EMBER_SUCCESS indicatingthat it successfully received a discovery request frametwice from the same node with IEEE address specified by the scrIeeeAddr parameter. An ::EmberStatus value of EMBER_DISCOVERY_TIMEOUT if the node has not received the two discovery request frame within the auto discovery response duration interval. An ::EmberStatus valueof EMBER_DISCOVERY_ERROR if the node has received two valid discovery request command frames from two different nodes. An ::EmberStatus value of EMBER_NO_BUFFERS if the node could not respond because of RAM shortage. An ::EmberStatus value of EMBER_ERR_FATAL if the MAC layer rejected the discovery response."/>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="An ::EmberEUI64 value indicating the IEEE address from which the discovery request command frame was received. This parameter is non-NULL only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="nodeCapabilities" type="int8u" description="The node capabilities of the node that issued the discovery request. This parameter is meaningful   only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo *" description="A pointer to an ::EmberRf4ceVendorInfo struct containing the vendor information of the node that issued the discovery request. This parameter is non-NULL only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo *" description="A pointer to an ::EmberRf4ceApplicationInfo struct containing the application information of the node that issued the discovery request. This parameter is non-NULL only if the status parameter is EMBER_SUCCESS."/>
+    <arg name="searchDevType" type="int8u" description="The device type being discovered. If this is 0xFF, any type is being requested. This parameter is meaningful only if the status parameter is EMBER_SUCCESS."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="EZSP_RF4CE_DISCOVERY_COMPLETE_HANDLER" name="emberRf4ceDiscoveryCompleteHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_DISCOVERY_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when it has completed the discovery process.
+    </description>
+    <arg name="status" type="EmberStatus" description=" An ::EmberStatus value of ::EMBER_SUCCESS if discovery has been correctly performed over the three RF4CE channels and at least a valid discovery response was received. An ::EmberStatus value of ::EMBER_DISCOVERY_TIMEOUT if the discovery process completed and no valid discovery response was received. Otherwise, another ::EmberStatus value indicating the error occurred."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="EZSP_RF4CE_DISCOVERY_REQUEST_HANDLER" name="emberRf4ceDiscoveryRequestHandler" returnType="boolean" stackMacro="EZSP_APPLICATION_HAS_RF4CE_DISCOVERY_REQUEST_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a discovery request is received. If the callback returns TRUE, the stack shall respond with a discovery response, otherwise it will silently discard the discovery request message. This callback should return FALSE if the discovery request should be discarded. Return TRUE if the application wants to respond to the discovery request.
+    </description>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="The IEEE address of the node that issued the discovery request."/>
+    <arg name="nodeCapabilities" type="int8u" description="The node capabilities of the node that issued the discovery request."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo" description="A pointer to an ::EmberRf4ceVendorInfo struct containing the vendor information of the node that issued the discovery request."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo" description=" A pointer to an ::EmberRf4ceApplicationInfo struct containing the application information of the node that issued the discovery request. "/>
+    <arg name="searchDevType" type="int8u" description="The device type being discovered. If this is 0xFF, any type is being requested."/>
+    <arg name="rxLinkQuality" type="int8u" description=" LQI value, as passed via the MAC sub-layer, of the discovery request command frame. "/>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>  
+
+  <function id="EZSP_RF4CE_DISCOVERY_RESPONSE_HANDLER" name="emberRf4ceDiscoveryResponseHandler" returnType="boolean" stackMacro="EZSP_APPLICATION_HAS_RF4CE_DISCOVERY_RESPONSE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a discovery response is received. If this callback returns TRUE the stack will continue the discovery process. If this callback returns FALSE, the discovery process will end at the end of the current discovery trial. A discovery trial is defined as the transmission of a discovery request command frame on all available channels.
+    </description>
+    <arg name="atCapacity" type="boolean" description=" A boolean set to TRUE if the node sending the discovery response has no free entry in its pairing table, FALSE otherwise."/>
+    <arg name="channel" type="int8u" description=" The channel on which the discovery response was received."/>
+    <arg name="panId" type="EmberPanId" description="The PAN identifier of the responding device."/>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="The IEEE address of the responding device."/>
+    <arg name="nodeCapabilities" type="int8u" description="The capabilities of the responding node."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo *" description="The vendor information of the responding device."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo *" description=" The application information of the responding device."/>
+    <arg name="rxLinkQuality" type="int8u" description=" LQI value, as passed via the MAC sub-layer, of the discovery response command frame."/>
+    <arg name="discRequestLqi" type="int8u" description=" The LQI of the discovery request command frame reported by the responding device."/>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>
+  <function id="EZSP_RF4CE_INCOMING_MESSAGE_HANDLER" name="emberRf4ceIncomingMessageHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_INCOMING_MESSAGE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a message is received.
+    </description>
+ <arg name="pairingIndex" type="int8u" description="The index of the entry in the pairing table corresponding to the PAN on which the message was received."/>
+    <arg name="profileId" type="int8u" description="The profile ID included in the message."/>
+    <arg name="vendorId" type="int16u" description="The vendor ID included in the message, if any."/>
+    <arg name="messageLength" type="int8u" description="The length in bytes of the received message."/>
+    <arg name="message" type="int8u *" description="A pointer to the payload of the received message."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="EZSP_RF4CE_MESSAGE_SENT_HANDLER" name="emberRf4ceMessageSentHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_MESSAGE_SENT_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when it has completed sending a message.  
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of: - ::EMBER_SUCCESS - The message was successfully delivered. - ::EMBER_DELIVERY_FAILED - The message was not delivered."/>
+    <arg name="pairingIndex" type="int8u" description="The index of the entry in the pairing table used to transmit the message."/>
+    <arg name="txOptions" type="int8u" description="The TX options bitmask as per ZigBee RF4CE specification used for transmitting the packet."/>
+    <arg name="profileId" type="int8u" description="The profile ID included in the message."/>
+    <arg name="vendorId" type="int16u" description="The vendor ID included in the message, if any."/>
+    <arg name="messageLength" type="int8u" description="The length in bytes of the message."/>
+    <arg name="message" type="int8u *" description="A pointer to the payload of the message that was sent."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="EZSP_RF4CE_PAIR_COMPLETE_HANDLER" name="emberRf4cePairCompleteHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_PAIR_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when the originator or the recipient node has completed the pairing process.
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of EMBER_SUCCESS if the pairing process succeeded and a pairing link has been established. An ::EmberStatus value of EMBER_NO_RESPONSE if the originator has timed out waiting for the pair response or for the ping response during the link key exchange procedure. An ::EmberStatus value of EMBER_TABLE_FULL if a pair response was received at the originator indicating that the recipient device has no available entry in its pairing table. An ::EmberStatus value of EMBER_NOT_PERMITTED if a pair response was received at the originator indicating that the recipient device did not accept the pair request. An ::EmberStatus value of EMBER_SECURITY_TIMEOUT if the node has timed out during the link key exchange or recovery procedures. An ::EmberStatus value of EMBER_SECURITY_FAILURE if some other error occurred during the link key exchange or recovery procedures. Another ::EmberStatus value indicating the specific reason why the originator or the recipient node failed to deliver a command frame."/>
+    <arg name="pairingIndex" type="int8u" description="The index of the pairing table entry corresponding to the pairing link that was established during the pairing process. This field is meaningful only if the status parameter is EMBER_SUCCESS."/>
+    <codeForStub/>
+  </function>  
+
+  <function id="EZSP_RF4CE_PAIR_REQUEST_HANDLER" name="emberRf4cePairRequestHandler" returnType="boolean" stackMacro="EZSP_APPLICATION_HAS_RF4CE_PAIR_REQUEST_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when a pair request has been received. The function will return TRUE if the application accepts the pair, FALSE otherwise.
+    </description>
+    <arg name="status" type="EmberStatus" description="An ::EmberStatus value of EMBER_SUCCESS if the request pairing is not a duplicate pairing and an unused entry in the pairing table is available. An ::EmberStatus value of EMBER_TABLE_FULL if the request pairing is not a duplicate pairing and the pairing table is full. An ::EmberStatus value of EMBER_DUPLICATE_ENTRY if the request pairing is a duplicate pairing. In this case, the stack will update the entry indicated by the pairingIndex parameter."/>
+    <arg name="pairingIndex" type="int8u" description="The index of the entry that will be used by the stack for the pairing link. If the status parameter is EMBER_TABLE_FULL this parameter is meaningless."/>
+    <arg name="srcIeeeAddr" type="EmberEUI64" description="An ::EmberEUI64 value indicating the source IEEE address of the incoming pair request command."/>
+    <arg name="nodeCapabilities" type="int8u" description="The node capabilities of requesting device."/>
+    <arg name="vendorInfo" type="EmberRf4ceVendorInfo" description="The vendor information of the requesting device."/>
+    <arg name="appInfo" type="EmberRf4ceApplicationInfo" description="The application information of the requesting device."/>
+    <arg name="keyExchangeTransferCount" type="keyExchangeTransferCount" description=" The number of transfers to be used to      exchange the link key with the pairing     originator, indicated in the incoming pair request command."/>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>  
+
+  <function id="EZSP_RF4CE_UNPAIR_COMPLETE_HANDLER" name="emberRf4ceUnpairCompleteHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_UNPAIR_COMPLETE_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when the unpair procedure has been completed. According to the RF4CE specs, during the unpair procedure, the stack sends an unpair command frame. If the command is not successfully delivered, the stack tries another RF4CE channel until the frame is received or the stack already tried all the RF4CE channels. Either way, at the end of the unpair process the pairing table entry is deleted and this callback is invoked.
+    </description>
+    <arg name="pairingIndex" type="void" description="The index of the removed pairing link."/>
+    <codeForStub/>
+  </function>  
+  <function id="EZSP_RF4CE_UNPAIR_HANDLER" name="emberRf4ceUnpairHandler" returnType="void" stackMacro="EZSP_APPLICATION_HAS_RF4CE_UNPAIR_HANDLER">
+    <description>
+      A callback invoked by the ZigBee RF4CE stack when an unpair command frame has been received. The stack will remove the pairing link indicated by the passed index.
+    </description>
+    <arg name="pairingIndex" type="void" description="The index of the pairing link to be removed."/>
+    <codeForStub/>
+  </function>  
+</callback>

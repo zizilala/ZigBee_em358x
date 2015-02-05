@@ -1,0 +1,650 @@
+// *****************************************************************************
+// * sensor-iface.c
+// *
+// * Generic security sensor interface code.
+// *
+// * It implements many common security sensor functions, such as joining, 
+// * sending asserts, button press, leaving, manufacturing library, search
+// * for lost parent, and batter level update during transmission.  
+// *
+// *
+// * Copyright 2014 by Silicon Labs. All rights reserved.                   *80*
+// *****************************************************************************
+
+#include "app/framework/include/af.h"
+#include "app/framework/util/af-main.h"
+
+// callbacks that must be implemented
+void emberAfPluginSensorIfaceButtonPressedShortCallback( int8u button0Counter );
+void emberAfPluginSensorIfaceButton0PressedLongCallback( 
+       int16u button0TimePressed, 
+       int8u pressedAtReset );
+void emberAfPluginSensorIfaceButton0PressingCallback( void );
+
+//------------------------------------------------------------------------------
+// Forward Declaration
+
+EmberEventControl emberAfPluginSensorIfaceButton0PressedEventControl;
+EmberEventControl emberAfPluginSensorIfaceButton0ReleasedEventControl;
+EmberEventControl emberAfPluginSensorIfaceButton1PressedEventControl;
+EmberEventControl emberAfPluginSensorIfaceButton1ReleasedEventControl;
+EmberEventControl emberAfPluginSensorIfaceButtonTimeoutEventControl;
+
+EmberEventControl emberAfPluginSensorIfaceRejoinEventControl;
+EmberEventControl emberAfPluginSensorIfaceInitEventControl;
+EmberEventControl emberAfPluginSensorIfaceDebounceEventControl;
+
+static boolean buttonPress(int8u button, int8u state);
+void startSearchForJoinableNetwork( void );
+void emberAfSensorAssertedCallback(void);
+void emberAfSensorDeassertedCallback(void);
+static void idleSensor(void);
+
+void initializeTxActiveIrq( void );
+
+void emberAfForceEndDeviceToStayAwake(boolean stayAwake);
+extern boolean mfgLibRunning;
+
+//------------------------------------------------------------------------------
+// Globals
+
+#define buttonEvent0         emberAfPluginSensorIfaceButton0PressedEventControl
+#define buttonEvent1         emberAfPluginSensorIfaceButton1PressedEventControl
+#define buttonEvent0Released emberAfPluginSensorIfaceButton0ReleasedEventControl
+#define buttonEvent1Released emberAfPluginSensorIfaceButton1ReleasedEventControl
+#define buttonTimeout        emberAfPluginSensorIfaceButtonTimeoutEventControl
+#define initEventControl     emberAfPluginSensorIfaceInitEventControl
+#define rejoinEventControl   emberAfPluginSensorIfaceRejoinEventControl
+#define debounceEventControl emberAfPluginSensorIfaceDebounceEventControl
+
+#define BUTTON_TIMEOUT       EMBER_AF_PLUGIN_SENSOR_IFACE_BUTTON_TIMEOUT
+#define BUTTON_SHORT_TIMEOUT (EMBER_AF_PLUGIN_SENSOR_IFACE_BUTTON_TIMEOUT / 4)
+
+#define SENSOR_ASSERT_DEBOUNCE   EMBER_AF_PLUGIN_SENSOR_IFACE_ASSERT_DEBOUNCE
+#define SENSOR_DEASSERT_DEBOUNCE EMBER_AF_PLUGIN_SENSOR_IFACE_DEASSERT_DEBOUNCE
+#define SENSOR_POLARITY          EMBER_AF_PLUGIN_SENSOR_IFACE_SENSOR_POLARITY
+#define REJOIN_TIME              EMBER_AF_PLUGIN_SENSOR_IFACE_REJOIN_TIME
+#define BUTTON_GATING            EMBER_AF_PLUGIN_SENSOR_IFACE_BUTTON_GATE
+
+#define STATUS_ALARM    0x0001
+#define STATUS_NO_ALARM 0x0000
+
+// Endpoint index that will be sent next time button0 is pressed.
+static int8u endDevEndpointNextSend = 0;
+static int16u button0Timer = 0;
+static int8u button0Counter = 0;
+enum {
+  BUTTON_PRESSED_AT_STARTUP = 0x00,
+  BUTTON_PRESSED_SHORT      = 0x01,
+  BUTTON_PRESSED_LONG       = 0x02,
+  BUTTON_IDLE               = 0x03,
+};
+  
+static int8u button0PressedState = BUTTON_PRESSED_AT_STARTUP;
+boolean emberAfMfgLibEnabled( void );
+
+//------------------------------------------------------------------------------
+
+void buttonInit( void )
+{
+  // Note:  the following items should be initialized from their declarations.
+  // I put them in here just for completeness sake.
+  // clearButtonCounters();
+  // button0PressedState = BUTTON_PRESSED_AT_STARTUP;
+  // button0Timer = 0;
+}
+
+static void clearButtonCounters( void )
+{
+  button0Counter = 0; 
+}
+
+void emberAfPluginSensorIfaceButtonTimeoutEventHandler(void)
+{
+  emberEventControlSetInactive(buttonTimeout);
+  //debug code
+  //emberAfCorePrintln("Button 0: %u @reset %x Button 1: %u @reset %x", 
+  //                   button0Counter, button0PressedAtRese);
+
+  assert(button0Counter > 0 );
+
+  emberAfPluginSensorIfaceButtonPressedShortCallback(button0Counter);
+                                              
+  clearButtonCounters();
+}
+
+void emberAfPluginSensorIfaceButton0PressedEventHandler(void)
+{
+  // if the button is being pressed, we must deactivate this event control.
+  emberEventControlSetInactive(buttonTimeout);
+
+  // we may want to idle the sensor if the button is being pressed.  This is
+  // to avoid the situation with key fob devices that may have two buttons.
+  idleSensor();
+
+  switch(button0PressedState) {
+  case BUTTON_PRESSED_AT_STARTUP:
+  case BUTTON_IDLE:
+    //emberAfCorePrintln("Button 0 Pressed");
+    button0PressedState = BUTTON_PRESSED_SHORT;
+    emberEventControlSetDelayMS(buttonEvent0, BUTTON_TIMEOUT);
+    button0Timer = halCommonGetInt16uMillisecondTick();
+    break;
+  case BUTTON_PRESSED_SHORT:
+    button0PressedState = BUTTON_PRESSED_LONG;
+  case BUTTON_PRESSED_LONG:
+    emberEventControlSetDelayMS(buttonEvent0, BUTTON_SHORT_TIMEOUT);
+    emberAfPluginSensorIfaceButton0PressingCallback();
+    break;
+  }
+
+  return;
+}
+
+void emberAfPluginSensorIfaceButton0ReleasedEventHandler(void)
+{
+  int16u timePressed = halCommonGetInt16uMillisecondTick() - button0Timer;
+  emberEventControlSetInactive(buttonEvent0Released);
+  emberEventControlSetInactive(buttonEvent0);
+
+  //emberAfCorePrintln("Button 0 %u milliseconds", timePressed);
+  if(timePressed >= BUTTON_TIMEOUT) {
+    emberAfPluginSensorIfaceButton0PressedLongCallback( 
+       timePressed, 
+       button0PressedState ==  BUTTON_PRESSED_AT_STARTUP);
+    clearButtonCounters();
+  } else {
+    button0Counter ++;
+    emberEventControlSetDelayMS(buttonTimeout, BUTTON_TIMEOUT);
+  }
+  button0PressedState = BUTTON_IDLE;
+}
+
+void emberAfPluginSensorIfaceButton1PressedEventHandler(void)
+{
+  // if the button is being pressed, we must deactivate this event control.
+  emberEventControlSetInactive(buttonEvent1);
+
+  if(SENSOR_POLARITY == 0) {
+    emberAfSensorAssertedCallback();
+  } else {
+    emberAfSensorDeassertedCallback();
+  }
+}
+
+void emberAfPluginSensorIfaceButton1ReleasedEventHandler(void)
+{
+  emberEventControlSetInactive(buttonEvent1Released);
+
+  if(SENSOR_POLARITY == 0) {
+    emberAfSensorDeassertedCallback();
+  } else {
+    emberAfSensorAssertedCallback();
+  }
+}
+
+void emberAfPluginButtonJoiningPressButton(int8u button)
+{
+  boolean result = buttonPress(button, BUTTON_PRESSED);
+  if (!result) {
+    emberAfCorePrintln("Invalid button %d", button);
+  }
+}
+
+// ISR context functions!!!
+
+// WARNING: these functions are in ISR so we must do minimal
+// processing and not make any blocking calls (like printf)
+// or calls that take a long time.
+
+static boolean buttonPress(int8u button, int8u state)
+{
+  // ISR CONTEXT!!!
+
+  boolean result = FALSE;
+  if (state != BUTTON_PRESSED) {
+#ifdef BUTTON0
+    if (button == BUTTON0) {
+      emberEventControlSetActive(buttonEvent0Released);
+      result = FALSE;
+    }
+#endif
+#ifdef BUTTON1
+    if (button == BUTTON1) {
+      emberEventControlSetActive(buttonEvent1Released);
+      result = FALSE;
+    }
+#endif
+  } else {
+
+#ifdef BUTTON0
+    if (button == BUTTON0) {
+      emberEventControlSetActive(buttonEvent0);
+      result = TRUE;
+    }
+#endif
+#ifdef BUTTON1
+    if (button == BUTTON1) {
+      emberEventControlSetActive(buttonEvent1);
+      result = TRUE;
+    }
+#endif
+  }
+  return result;
+}
+
+void emberAfHalButtonIsrCallback(int8u button, int8u state)
+{
+  // ISR CONTEXT!!!
+  buttonPress(button, state);
+}
+
+
+// initialization routines
+// pull in common sensor initialization routines into this plugin.
+
+// forward declarations
+void unenrollSecurityDevice( void );
+void initSuperSleepyDevice( void );
+
+void emberAfPluginSensorIfaceInitEventHandler(void)
+{
+  if(mfgLibRunning) {
+    return;
+  }
+
+  emberSerialPrintf(APP_SERIAL,"Sensor Iface:  init function works.\r\n");
+
+  // initialize the super sleepy features
+  initSuperSleepyDevice();
+
+  emberAfForceEndDeviceToStayAwake(FALSE);
+
+  emberEventControlSetInactive(initEventControl);
+
+  switch(emberNetworkState()) {
+  case EMBER_NO_NETWORK:
+    startSearchForJoinableNetwork();
+    break;
+  case EMBER_JOINED_NETWORK_NO_PARENT:
+    break;
+  }
+}
+
+extern void buttonInit( void );
+void emberAfPluginSensorIfaceInitCallback(void)
+{
+  buttonInit();
+
+  if(emberAfMfgLibEnabled()) {
+    emberSerialPrintf(APP_SERIAL,"Sensor Iface:  init function works.\r\n");
+
+    // delay activation for 10 seconds to allow manufacturing test to begin
+    emberEventControlSetDelayQS(initEventControl, (10*4));
+    emberAfForceEndDeviceToStayAwake(TRUE);
+  } else {
+    emberEventControlSetActive(initEventControl);
+  }
+
+  //initializeTxActiveIrq();
+
+  // Steven:  this initializes the fast polling event
+  //emberEventControlSetDelayMS(periodicTransmitEventControl, 20);
+}
+
+// *********
+// search for joinable network code
+static int8u networkJoinAttempts = 0;
+
+void emberAfLedBlinkPattern( int8u count, int8u length, int16u *pattern );
+extern EmberStatus emberAfStartSearchForJoinableNetworkAllChannels(void);
+
+void startSearchForJoinableNetwork( void )
+{
+  // don't kick off join if the mfglib is running.  
+  if(mfgLibRunning)
+    return;
+
+  if(networkJoinAttempts == 0 &&
+     emberNetworkState() == EMBER_NO_NETWORK) {
+    int8u patternLength = 4;
+    int16u pattern[] = {200, 200, 200, 1000};
+    emberAfLedBlinkPattern(187, patternLength, pattern); // blink the pattern for 300 seconds.
+  }
+  if(networkJoinAttempts < 20) {
+    networkJoinAttempts++;
+    if(networkJoinAttempts == 1) {
+      emberAfStartSearchForJoinableNetwork();
+    } else {
+      emberAfStartSearchForJoinableNetworkAllChannels();
+    }
+    // make a join attempt every 5 seconds
+    emberEventControlSetDelayQS(rejoinEventControl, (5*4) );
+  } else if(networkJoinAttempts < 40) {
+    networkJoinAttempts++;
+    emberAfStartSearchForJoinableNetworkAllChannels();
+    // make a join attempt every 5 seconds
+    emberEventControlSetDelayQS(rejoinEventControl, (10*4) );
+  } else {
+    // going to stop joining attempts.  Disabel LED blinking
+    emberAfLedOff( 0 );
+  }
+}
+
+void resetJoinAttempts( void )
+{
+  networkJoinAttempts = 0;
+}
+
+
+// stack status routines
+static void printNetworkState( void )
+{
+  switch(emberNetworkState()) {
+  case EMBER_NO_NETWORK:
+    emberSerialPrintf(APP_SERIAL, "EMBER_NO_NETWORK ");
+    break;
+  case EMBER_JOINING_NETWORK:
+    emberSerialPrintf(APP_SERIAL, "EMBER_JOINING_NETWORK ");
+    break;
+  case EMBER_JOINED_NETWORK:
+    emberSerialPrintf(APP_SERIAL, "EMBER_JOINED_NETWORK ");
+    break;
+  case EMBER_JOINED_NETWORK_NO_PARENT:
+    emberSerialPrintf(APP_SERIAL, "EMBER_JOINED_NETWORK_NO_PARENT ");
+    break;
+  case EMBER_LEAVING_NETWORK:
+    emberSerialPrintf(APP_SERIAL, "EMBER_LEAVING_NETWORK ");
+    break;
+  }
+}
+
+boolean emberAfPluginSensorIfaceStackStatusCallback(EmberStatus status)
+{
+  emberSerialPrintf(APP_SERIAL,"Stack Status Handler:  ");
+
+  printNetworkState();
+
+  switch(status) {
+  case EMBER_NETWORK_UP:
+    emberSerialPrintf(APP_SERIAL,"EMBER_NETWORK_UP");
+    resetJoinAttempts();
+    // blink LED for 5 seconds solid then deassert
+    // note:  time is in quarter seconds.
+    emberAfLedOn( 5 ); 
+    //startEnrollmentProcess();
+    break;
+  case EMBER_NETWORK_DOWN:
+    emberSerialPrintf(APP_SERIAL,"EMBER_NETWORK_DOWN");
+    if(emberNetworkState() == EMBER_NO_NETWORK) {
+      // if we are off the network, we need to unenroll
+      unenrollSecurityDevice();
+    }
+    break;
+  case EMBER_JOIN_FAILED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_JOIN_FAILED");
+    break;
+  case EMBER_MOVE_FAILED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_MOVE_FAILED");
+    break;
+  case EMBER_CANNOT_JOIN_AS_ROUTER:
+    emberSerialPrintf(APP_SERIAL,"EMBER_CANNOT_JOIN_AS_ROUTER");
+    break;
+  case EMBER_NODE_ID_CHANGED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_NODE_ID_CHANGED");
+    break;
+  case EMBER_PAN_ID_CHANGED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_PAN_ID_CHANGED");
+    break;
+  case EMBER_CHANNEL_CHANGED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_CHANNEL_CHANGED");
+    break;
+  case EMBER_NO_BEACONS:
+    emberSerialPrintf(APP_SERIAL,"EMBER_NO_BEACONS");
+    break;
+  case EMBER_RECEIVED_KEY_IN_THE_CLEAR:
+    emberSerialPrintf(APP_SERIAL,"EMBER_RECEIVED_KEY_IN_THE_CLEAR");
+    break;
+  case EMBER_NO_NETWORK_KEY_RECEIVED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_NO_NETWORK_KEY_RECEIVED");
+    break;
+  case EMBER_NO_LINK_KEY_RECEIVED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_NO_LINK_KEY_RECEIVED");
+    break;
+  case EMBER_PRECONFIGURED_KEY_REQUIRED:
+    emberSerialPrintf(APP_SERIAL,"EMBER_PRECONFIGURED_KEY_REQUIRED");
+    break;
+  default:
+    emberSerialPrintf(APP_SERIAL,"unknown %x",status);
+    break;
+  }
+  emberSerialPrintf(APP_SERIAL,"\r\n");
+
+
+  if(status == EMBER_NETWORK_DOWN && 
+     emberNetworkState() == EMBER_NO_NETWORK) {
+    emberSerialPrintf(APP_SERIAL,"DC: search for joinable network\r\n");
+    startSearchForJoinableNetwork();
+  }
+  
+  if(status == EMBER_NETWORK_DOWN && 
+     emberNetworkState() == EMBER_JOINED_NETWORK_NO_PARENT) {
+    emberSerialPrintf(APP_SERIAL,"DC: kick off rejoin event in %d minutes.\r\n", REJOIN_TIME);
+    emberEventControlSetDelayQS(rejoinEventControl, (REJOIN_TIME*4*60) );
+  }
+  return FALSE;
+}
+
+// rejoin code
+void emberAfPluginSensorIfaceRejoinEventHandler(void)
+{
+  emberEventControlSetInactive(rejoinEventControl);
+
+  emberSerialPrintf(APP_SERIAL,"Rejoin event function ");
+  printNetworkState();
+  
+  switch(emberNetworkState()) {
+  case EMBER_NO_NETWORK:
+    startSearchForJoinableNetwork();
+    break;
+  case EMBER_JOINED_NETWORK_NO_PARENT:
+    // perform the secure rejoin every 30 minutes until we find a network.
+    emberSerialPrintf(APP_SERIAL,"Perform and schedule rejoin\r\n");
+    emberEventControlSetDelayQS(rejoinEventControl, (REJOIN_TIME*4*60) );
+    emberFindAndRejoinNetworkWithReason(FALSE,  // unsecure rejoin 
+                                        EMBER_ALL_802_15_4_CHANNELS_MASK, 
+                                        EMBER_AF_REJOIN_DUE_TO_END_DEVICE_MOVE);
+    break;
+  default:
+    emberSerialPrintf(APP_SERIAL,"No More Rejoin!\r\n");
+    break;
+  }
+}
+
+/** @brief emberAfPluginSensorIfaceButtonPressedShortCallback
+ *
+ * This function handles one or more short presses on a button.
+ *
+ * @param int8u button0Counter:  number of times button 0 was pressed
+ */
+void emberAfPluginSensorIfaceButtonPressedShortCallback( 
+       int8u button0Counter )
+{
+  emberSerialPrintf(APP_SERIAL,"multi button:  %x\r\n",
+                    button0Counter);
+  if(emberNetworkState() == EMBER_NO_NETWORK) {
+    emberSerialPrintf(APP_SERIAL,"kick off join\r\n");
+    resetJoinAttempts();
+    startSearchForJoinableNetwork();
+  } else if(emberNetworkState() == EMBER_JOINED_NETWORK_NO_PARENT) {
+    emberLeaveNetwork();
+  } else {
+    emberSerialPrintf(APP_SERIAL,"network state %x\r\n", emberNetworkState());
+  }
+}
+
+void emberAfPluginSensorIfaceButton0PressedLongCallback( 
+       int16u button0TimePressed, 
+       int8u pressedAtReset )
+{
+  emberSerialPrintf(APP_SERIAL,"Button 0 long:  %d %x\r\n",
+                    button0TimePressed, pressedAtReset);
+  if(button0TimePressed > 5000) {
+    emberSerialPrintf(APP_SERIAL,"Factory Reset\r\n");
+    // clear the tokens here.  
+    //emberAfResetAttributes(emAfEndpoints[0].endpoint); // this should work now???  TODO:  try this.  
+    emberSerialPrintf(APP_SERIAL, "current endpoint %x\r\n", emAfEndpoints[0].endpoint);
+
+    // now leave network
+    unenrollSecurityDevice();
+    emberLeaveNetwork();
+
+  }
+} 
+
+int16u halCommonGetInt16uQuarterSecondTick(void);
+int32u halCommonGetInt32uMillisecondTick(void);
+// 
+static int8u lastUpdateTimeQs = 0;
+
+static int32u lastMsTick = 0;
+
+void printCurrentMsTick( void )
+{
+#if 0
+  int32u currentMs = halCommonGetInt32uMillisecondTick();
+
+  emberSerialPrintf(APP_SERIAL, "MS Tick:  %d %d\r\n",currentMs, (currentMs-lastMsTick));
+
+  lastMsTick = currentMs;
+#endif
+}
+
+static int8u lastStatus = STATUS_NO_ALARM;
+static int8u newStatus = STATUS_NO_ALARM;
+void sensorStateChangeDebounce( int16u status );
+void emSleepySetGpio( int8u port, int8u pin );
+void emSleepyClearGpio( int8u port, int8u pin );
+
+void emberAfSensorDeassertedCallback(void) {
+  // Clear PA7 LED when sensor is deasserted
+  emSleepySetGpio(0,7);
+
+  emberSerialPrintf(APP_SERIAL,"Sensor Deasserted\r\n");
+  printCurrentMsTick();
+  //emberAfWriteAttribute(1, // endpoint
+  //                      ZCL_IAS_ZONE_CLUSTER_ID,
+  //                      ZCL_ZONE_STATUS_ATTRIBUTE_ID,
+  //                      CLUSTER_MASK_SERVER,
+  //                      status,
+  //                      ZCL_BITMAP16_ATTRIBUTE_TYPE);
+#if 0
+  emberAfPluginIasZoneServerUpdateZoneStatus(0x0000,   // status
+                                             0);       // QS since last update
+#else
+  sensorStateChangeDebounce( STATUS_NO_ALARM );
+#endif
+}
+
+void emberAfSensorAssertedCallback(void) {
+  // Drive PA7 LED when sensor is deasserted
+  emSleepyClearGpio(0,7);
+
+  emberSerialPrintf(APP_SERIAL,"Sensor Asserted\r\n");
+  printCurrentMsTick();
+  //emberAfWriteAttribute(1, // endpoint
+  //                      ZCL_IAS_ZONE_CLUSTER_ID,
+  //                      ZCL_ZONE_STATUS_ATTRIBUTE_ID,
+  //                      CLUSTER_MASK_SERVER,
+  //                      status,
+  //                      ZCL_BITMAP16_ATTRIBUTE_TYPE);
+#if 0
+  emberAfPluginIasZoneServerUpdateZoneStatus(0x0001,   // status
+                                             0);       // QS since last update                    
+#else
+  sensorStateChangeDebounce( STATUS_ALARM );
+#endif
+}
+
+// code to ignore any pending sensor events.
+static void idleSensor(void)
+{
+  if(BUTTON_GATING == 0) {
+    return;
+  }
+
+  //emberSerialPrintf(APP_SERIAL,"Idle Sensor %x\r\n", lastStatus);
+
+  emberEventControlSetInactive(debounceEventControl);
+  lastStatus  = STATUS_NO_ALARM;
+}
+
+static boolean isButtonActive( void )
+{
+  if(BUTTON_GATING == 0) {
+    // button gating is not active.  Return false.
+    //emberSerialPrintf(APP_SERIAL,"button gating disabled\r\n", button0PressedState);
+    return FALSE;
+  }
+  //emberSerialPrintf(APP_SERIAL,"button0:  %x ", button0PressedState);
+
+  if(button0PressedState == BUTTON_PRESSED_SHORT ||
+    button0PressedState == BUTTON_PRESSED_LONG) {
+    //emberSerialPrintf(APP_SERIAL,"TRUE\r\n", button0PressedState);
+    return TRUE;
+  }
+
+  //emberSerialPrintf(APP_SERIAL,"FALSE\r\n", button0PressedState);
+
+  return FALSE;
+}
+
+void sensorStateChangeDebounce( int16u status )
+{
+  // First, if the button is being pressed, then we want to ignore any
+  // in advertent sensor activations.  This is for the key fob device.
+  if(isButtonActive()) {
+    idleSensor();
+    return;
+  }
+
+  if(status == lastStatus) {
+    // we went back to last status before debounce.  don't send the
+    // message.
+    emberEventControlSetInactive(debounceEventControl);
+    return;
+  }
+  if(status == STATUS_ALARM) {
+    newStatus = status;
+    emberEventControlSetDelayMS(debounceEventControl, SENSOR_ASSERT_DEBOUNCE);
+    return;
+  } else if(status == STATUS_NO_ALARM) {
+    newStatus = status;
+    emberEventControlSetDelayMS(debounceEventControl, SENSOR_DEASSERT_DEBOUNCE);
+    return;
+  }
+    
+}
+
+void emberAfPluginSensorIfaceDebounceEventHandler(void)
+{
+  emberEventControlSetInactive(debounceEventControl);
+  lastStatus = newStatus;
+
+  emberSerialPrintf(APP_SERIAL,"Sensor Debounce New Status:  %x\r\n", newStatus);
+  emberAfPluginIasZoneServerUpdateZoneStatus(newStatus,   // status
+                                             0);       // QS since last update                    
+}
+
+boolean emberAfMfgLibEnabled( void )
+{
+  int8u enabled;
+
+  halCommonGetToken(&enabled,TOKEN_MFG_LIB_ENABLED);
+
+  emberSerialPrintf(APP_SERIAL, 
+                    "MFG_LIB Enabled %x\r\n", enabled); 
+
+  return enabled;
+}
+

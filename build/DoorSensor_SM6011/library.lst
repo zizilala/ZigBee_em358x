@@ -1,0 +1,543 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:00 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\util\common\library #
+#                    .c                                                       #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\util\common\library #
+#                    .c -D "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_S #
+#                    M6011/DoorSensor_SM6011_tokens.h\"" -D                   #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"library.c\"" -lC                    #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\util\common\ -I     #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \library.lst                                             #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \library.o                                               #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\util\common\library.c
+      1          // File: library.c
+      2          // 
+      3          // Description: Code to display or retrieve the presence or absence of
+      4          //   Ember stack libraries on the device.
+      5          //
+      6          // Copyright 2009 by Ember Corporation. All rights reserved.                *80*
+      7          
+      8          #include PLATFORM_HEADER
+      9          
+     10          #if defined EZSP_HOST
+     11            #include "stack/include/ember-types.h"
+     12            #include "stack/include/error.h"
+     13            #include "hal/hal.h"
+     14            #include "app/util/ezsp/ezsp-protocol.h"
+     15            #include "app/util/ezsp/ezsp.h"
+     16            #include "stack/include/library.h"
+     17          #else
+     18            #include "stack/include/ember.h"
+     19            #include "hal/hal.h"
+     20          #endif
+     21          
+     22          #include "app/util/serial/serial.h"
+     23          #include "app/util/common/common.h"
+     24          
+
+   \                                 In section .data, align 4
+     25          static PGM_P libraryNames[] = {
+   \                     libraryNames:
+   \   00000000   0x........         DC32 `?<Constant "Zigbee Pro">`, `?<Constant "Binding">`
+   \              0x........   
+   \   00000008   0x........         DC32 `?<Constant "End Device Bind">`, `?<Constant "Security Core">`
+   \              0x........   
+   \   00000010   0x........         DC32 `?<Constant "Security Link Keys">`, `?<Constant "Alarm">`
+   \              0x........   
+   \   00000018   0x........         DC32 `?<Constant "CBKE 163K1">`, `?<Constant "CBKE DSA Sign">`
+   \              0x........   
+   \   00000020   0x........         DC32 `?<Constant "ECC">`, `?<Constant "CBKE DSA Verify">`
+   \              0x........   
+   \   00000028   0x........         DC32 `?<Constant "Packet Validate">`, `?<Constant "Install Code">`
+   \              0x........   
+   \   00000030   0x........         DC32 `?<Constant "ZLL">`, `?<Constant "CBKE 283K1">`
+   \              0x........   
+   \   00000038   0x........         DC32 `?<Constant "ECC 283K1">`, `?<Constant "CBKE core">`
+   \              0x........   
+   \   00000040   0x........         DC32 `?<Constant "NCP">`
+     26            EMBER_LIBRARY_NAMES
+     27          };
+     28          
+
+   \                                 In section .text, align 2, keep-with-next
+     29          void printAllLibraryStatus(void)
+     30          {
+   \                     printAllLibraryStatus:
+   \   00000000   0xE92D 0x4FF8      PUSH     {R3-R11,LR}
+     31            int8u i = EMBER_FIRST_LIBRARY_ID;
+   \   00000004   0x2400             MOVS     R4,#+0
+   \   00000006   0x.... 0x....      ADR.W    R8,`?<Constant "%p library%p present">`
+   \   0000000A   0x.... 0x....      LDR.W    R9,??DataTable25_1
+   \   0000000E   0x.... 0x....      ADR.W    R11,`?<Constant " NOT">`
+   \   00000012   0x....             ADR.N    R5,??DataTable25  ;; ""
+   \   00000014   0x....             LDR.N    R6,??DataTable25_2
+   \   00000016   0x.... 0x....      ADR.W    R10,`?<Constant "Error retrieving info...">`
+     32            while (i < EMBER_NUMBER_OF_LIBRARIES) {
+     33              EmberLibraryStatus status = emberGetLibraryStatus(i);
+   \                     ??printAllLibraryStatus_0:
+   \   0000001A   0xB2E0             UXTB     R0,R4
+   \   0000001C   0x.... 0x....      BL       emberGetLibraryStatus
+   \   00000020   0x4607             MOV      R7,R0
+     34              if (status == EMBER_LIBRARY_ERROR) {
+   \   00000022   0x7830             LDRB     R0,[R6, #+0]
+   \   00000024   0x2FFF             CMP      R7,#+255
+   \   00000026   0xD104             BNE.N    ??printAllLibraryStatus_1
+     35                emberSerialPrintfLine(serialPort, "Error retrieving info for library ID %d",
+     36                                      i);
+   \   00000028   0x4622             MOV      R2,R4
+   \   0000002A   0x4651             MOV      R1,R10
+   \   0000002C   0x.... 0x....      BL       emberSerialPrintfLine
+   \   00000030   0xE022             B.N      ??printAllLibraryStatus_2
+     37              } else {
+     38                emberSerialPrintfLine(serialPort,
+     39                                      "%p library%p present",
+     40                                      libraryNames[i],
+     41                                      ((status & EMBER_LIBRARY_PRESENT_MASK)
+     42                                       ? ""
+     43                                       : " NOT"));
+   \                     ??printAllLibraryStatus_1:
+   \   00000032   0x0639             LSLS     R1,R7,#+24
+   \   00000034   0xBF4C             ITE      MI 
+   \   00000036   0x462B             MOVMI    R3,R5
+   \   00000038   0x465B             MOVPL    R3,R11
+   \   0000003A   0xF859 0x2024      LDR      R2,[R9, R4, LSL #+2]
+   \   0000003E   0x4641             MOV      R1,R8
+   \   00000040   0x.... 0x....      BL       emberSerialPrintfLine
+     44                if (status & EMBER_LIBRARY_PRESENT_MASK) {
+   \   00000044   0x0638             LSLS     R0,R7,#+24
+   \   00000046   0xD517             BPL.N    ??printAllLibraryStatus_2
+     45                  if (i == EMBER_ZIGBEE_PRO_LIBRARY_ID
+     46                      || i == EMBER_SECURITY_CORE_LIBRARY_ID) {
+   \   00000048   0x2C00             CMP      R4,#+0
+   \   0000004A   0xBF18             IT       NE 
+   \   0000004C   0x2C03             CMPNE    R4,#+3
+   \   0000004E   0xD108             BNE.N    ??printAllLibraryStatus_3
+     47                    emberSerialPrintfLine(serialPort,
+     48                                          ((status 
+     49                                            & EMBER_ZIGBEE_PRO_LIBRARY_HAVE_ROUTER_CAPABILITY)
+     50                                           ? "  Have Router Support"
+     51                                           : "  End Device Only"));
+   \   00000050   0x07F8             LSLS     R0,R7,#+31
+   \   00000052   0xBF4C             ITE      MI 
+   \   00000054   0x.... 0x....      ADRMI.W  R1,`?<Constant "  Have Router Support">`
+   \   00000058   0x.... 0x....      ADRPL.W  R1,`?<Constant "  End Device Only">`
+   \   0000005C   0x7830             LDRB     R0,[R6, #+0]
+   \   0000005E   0x.... 0x....      BL       emberSerialPrintfLine
+     52                  }
+     53                  if (i == EMBER_PACKET_VALIDATE_LIBRARY_ID
+     54                      && (status
+     55                          & EMBER_LIBRARY_PRESENT_MASK)) {
+   \                     ??printAllLibraryStatus_3:
+   \   00000062   0x2C0A             CMP      R4,#+10
+   \   00000064   0xD108             BNE.N    ??printAllLibraryStatus_2
+     56                    emberSerialPrintfLine(serialPort,
+     57                                          ((status & EMBER_PACKET_VALIDATE_LIBRARY_ENABLED)
+     58                                           ? "  Enabled"
+     59                                           : "  Disabled"));
+   \   00000066   0x07F8             LSLS     R0,R7,#+31
+   \   00000068   0xBF4C             ITE      MI 
+   \   0000006A   0x.... 0x....      ADRMI.W  R1,`?<Constant "  Enabled">`
+   \   0000006E   0x.... 0x....      ADRPL.W  R1,`?<Constant "  Disabled">`
+   \   00000072   0x7830             LDRB     R0,[R6, #+0]
+   \   00000074   0x.... 0x....      BL       emberSerialPrintfLine
+     60                  }
+     61                }
+     62              }
+     63              emberSerialWaitSend(serialPort);
+   \                     ??printAllLibraryStatus_2:
+   \   00000078   0x7830             LDRB     R0,[R6, #+0]
+   \   0000007A   0x.... 0x....      BL       emberSerialWaitSend
+     64              i++;
+   \   0000007E   0x1C64             ADDS     R4,R4,#+1
+     65            }
+   \   00000080   0x2C11             CMP      R4,#+17
+   \   00000082   0xDBCA             BLT.N    ??printAllLibraryStatus_0
+     66          }
+   \   00000084   0xE8BD 0x8FF1      POP      {R0,R4-R11,PC}   ;; return
+     67          
+
+   \                                 In section .text, align 2, keep-with-next
+     68          boolean isLibraryPresent(int8u libraryId)
+     69          {
+   \                     isLibraryPresent:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     70            EmberLibraryStatus status = emberGetLibraryStatus(libraryId);
+   \   00000002   0x.... 0x....      BL       emberGetLibraryStatus
+     71            return (status != EMBER_LIBRARY_ERROR
+     72                    && (status & EMBER_LIBRARY_PRESENT_MASK));
+   \   00000006   0x28FF             CMP      R0,#+255
+   \   00000008   0xD001             BEQ.N    ??isLibraryPresent_0
+   \   0000000A   0x09C0             LSRS     R0,R0,#+7
+   \   0000000C   0xBD02             POP      {R1,PC}
+   \                     ??isLibraryPresent_0:
+   \   0000000E   0x2000             MOVS     R0,#+0
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+     73          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25:
+   \   00000000   0x00 0x00          DC8      "",0x0,0x0,0x0
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25_1:
+   \   00000000   0x........         DC32     libraryNames
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25_2:
+   \   00000000   0x........         DC32     serialPort
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Error retrieving info...">`:
+   \   00000000   0x45 0x72          DC8 "Error retrieving info for library ID %d"
+   \              0x72 0x6F    
+   \              0x72 0x20    
+   \              0x72 0x65    
+   \              0x74 0x72    
+   \              0x69 0x65    
+   \              0x76 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x69    
+   \              0x6E 0x66    
+   \              0x6F 0x20    
+   \              0x66 0x6F    
+   \              0x72 0x20    
+   \              0x6C 0x69    
+   \              0x62 0x72    
+   \              0x61 0x72    
+   \              0x79 0x20    
+   \              0x49 0x44    
+   \              0x20 0x25    
+   \              0x64 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%p library%p present">`:
+   \   00000000   0x25 0x70          DC8 "%p library%p present"
+   \              0x20 0x6C    
+   \              0x69 0x62    
+   \              0x72 0x61    
+   \              0x72 0x79    
+   \              0x25 0x70    
+   \              0x20 0x70    
+   \              0x72 0x65    
+   \              0x73 0x65    
+   \              0x6E 0x74    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant " NOT">`:
+   \   00000000   0x20 0x4E          DC8 " NOT"
+   \              0x4F 0x54    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "  Have Router Support">`:
+   \   00000000   0x20 0x20          DC8 "  Have Router Support"
+   \              0x48 0x61    
+   \              0x76 0x65    
+   \              0x20 0x52    
+   \              0x6F 0x75    
+   \              0x74 0x65    
+   \              0x72 0x20    
+   \              0x53 0x75    
+   \              0x70 0x70    
+   \              0x6F 0x72    
+   \              0x74 0x00    
+   \   00000016   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "  End Device Only">`:
+   \   00000000   0x20 0x20          DC8 "  End Device Only"
+   \              0x45 0x6E    
+   \              0x64 0x20    
+   \              0x44 0x65    
+   \              0x76 0x69    
+   \              0x63 0x65    
+   \              0x20 0x4F    
+   \              0x6E 0x6C    
+   \              0x79 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "  Enabled">`:
+   \   00000000   0x20 0x20          DC8 "  Enabled"
+   \              0x45 0x6E    
+   \              0x61 0x62    
+   \              0x6C 0x65    
+   \              0x64 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "  Disabled">`:
+   \   00000000   0x20 0x20          DC8 "  Disabled"
+   \              0x44 0x69    
+   \              0x73 0x61    
+   \              0x62 0x6C    
+   \              0x65 0x64    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Zigbee Pro">`:
+   \   00000000   0x5A 0x69          DC8 "Zigbee Pro"
+   \              0x67 0x62    
+   \              0x65 0x65    
+   \              0x20 0x50    
+   \              0x72 0x6F    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Binding">`:
+   \   00000000   0x42 0x69          DC8 "Binding"
+   \              0x6E 0x64    
+   \              0x69 0x6E    
+   \              0x67 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "End Device Bind">`:
+   \   00000000   0x45 0x6E          DC8 "End Device Bind"
+   \              0x64 0x20    
+   \              0x44 0x65    
+   \              0x76 0x69    
+   \              0x63 0x65    
+   \              0x20 0x42    
+   \              0x69 0x6E    
+   \              0x64 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Security Core">`:
+   \   00000000   0x53 0x65          DC8 "Security Core"
+   \              0x63 0x75    
+   \              0x72 0x69    
+   \              0x74 0x79    
+   \              0x20 0x43    
+   \              0x6F 0x72    
+   \              0x65 0x00    
+   \   0000000E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Security Link Keys">`:
+   \   00000000   0x53 0x65          DC8 "Security Link Keys"
+   \              0x63 0x75    
+   \              0x72 0x69    
+   \              0x74 0x79    
+   \              0x20 0x4C    
+   \              0x69 0x6E    
+   \              0x6B 0x20    
+   \              0x4B 0x65    
+   \              0x79 0x73    
+   \              0x00         
+   \   00000013   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Alarm">`:
+   \   00000000   0x41 0x6C          DC8 "Alarm"
+   \              0x61 0x72    
+   \              0x6D 0x00    
+   \   00000006   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "CBKE 163K1">`:
+   \   00000000   0x43 0x42          DC8 "CBKE 163K1"
+   \              0x4B 0x45    
+   \              0x20 0x31    
+   \              0x36 0x33    
+   \              0x4B 0x31    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "CBKE DSA Sign">`:
+   \   00000000   0x43 0x42          DC8 "CBKE DSA Sign"
+   \              0x4B 0x45    
+   \              0x20 0x44    
+   \              0x53 0x41    
+   \              0x20 0x53    
+   \              0x69 0x67    
+   \              0x6E 0x00    
+   \   0000000E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ECC">`:
+   \   00000000   0x45 0x43          DC8 "ECC"
+   \              0x43 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "CBKE DSA Verify">`:
+   \   00000000   0x43 0x42          DC8 "CBKE DSA Verify"
+   \              0x4B 0x45    
+   \              0x20 0x44    
+   \              0x53 0x41    
+   \              0x20 0x56    
+   \              0x65 0x72    
+   \              0x69 0x66    
+   \              0x79 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Packet Validate">`:
+   \   00000000   0x50 0x61          DC8 "Packet Validate"
+   \              0x63 0x6B    
+   \              0x65 0x74    
+   \              0x20 0x56    
+   \              0x61 0x6C    
+   \              0x69 0x64    
+   \              0x61 0x74    
+   \              0x65 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "Install Code">`:
+   \   00000000   0x49 0x6E          DC8 "Install Code"
+   \              0x73 0x74    
+   \              0x61 0x6C    
+   \              0x6C 0x20    
+   \              0x43 0x6F    
+   \              0x64 0x65    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ZLL">`:
+   \   00000000   0x5A 0x4C          DC8 "ZLL"
+   \              0x4C 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "CBKE 283K1">`:
+   \   00000000   0x43 0x42          DC8 "CBKE 283K1"
+   \              0x4B 0x45    
+   \              0x20 0x32    
+   \              0x38 0x33    
+   \              0x4B 0x31    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ECC 283K1">`:
+   \   00000000   0x45 0x43          DC8 "ECC 283K1"
+   \              0x43 0x20    
+   \              0x32 0x38    
+   \              0x33 0x4B    
+   \              0x31 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "CBKE core">`:
+   \   00000000   0x43 0x42          DC8 "CBKE core"
+   \              0x4B 0x45    
+   \              0x20 0x63    
+   \              0x6F 0x72    
+   \              0x65 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "NCP">`:
+   \   00000000   0x4E 0x43          DC8 "NCP"
+   \              0x50 0x00    
+
+   \                                 In section .rodata, align 1, keep-with-next
+   \                     `?<Constant "">`:
+   \   00000000   0x00               DC8 ""
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  isLibraryPresent
+              8 -> emberGetLibraryStatus
+       40  printAllLibraryStatus
+             40 -> emberGetLibraryStatus
+             40 -> emberSerialPrintfLine
+             40 -> emberSerialWaitSend
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      12  ?<Constant "  Disabled">
+      12  ?<Constant "  Enabled">
+      20  ?<Constant "  End Device Only">
+      24  ?<Constant "  Have Router Support">
+       8  ?<Constant " NOT">
+       1  ?<Constant "">
+      24  ?<Constant "%p library%p present">
+       8  ?<Constant "Alarm">
+       8  ?<Constant "Binding">
+      12  ?<Constant "CBKE 163K1">
+      12  ?<Constant "CBKE 283K1">
+      16  ?<Constant "CBKE DSA Sign">
+      16  ?<Constant "CBKE DSA Verify">
+      12  ?<Constant "CBKE core">
+      12  ?<Constant "ECC 283K1">
+       4  ?<Constant "ECC">
+      16  ?<Constant "End Device Bind">
+      40  ?<Constant "Error retrieving info...">
+      16  ?<Constant "Install Code">
+       4  ?<Constant "NCP">
+      16  ?<Constant "Packet Validate">
+      16  ?<Constant "Security Core">
+      20  ?<Constant "Security Link Keys">
+       4  ?<Constant "ZLL">
+      12  ?<Constant "Zigbee Pro">
+       4  ??DataTable25
+       4  ??DataTable25_1
+       4  ??DataTable25_2
+      18  isLibraryPresent
+      68  libraryNames
+     136  printAllLibraryStatus
+
+ 
+  68 bytes in section .data
+ 205 bytes in section .rodata
+ 306 bytes in section .text
+ 
+ 306 bytes of CODE  memory
+ 205 bytes of CONST memory
+  68 bytes of DATA  memory
+
+Errors: none
+Warnings: none

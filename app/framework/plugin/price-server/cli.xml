@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<cli>
+  <group id="plugin-price-server" name="Plugin Commands: Price Server">
+    <description>
+      The identify plugin contributes a CLI command to the application framework to be used for printing information related to identification. 
+    </description>
+  </group>
+  <command cli="plugin price-server print" functionName="emAfPriceServerCliPrint" group="plugin-price-server">
+    <description>
+      Print the price info for the provided endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The relevant endpoint" />
+  </command>
+  <command cli="plugin price-server tprint" functionName="emAfPriceServerCliTPrint" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Print the tariff table for the provided endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The relevant endpoint" />
+  </command>
+  <command cli="plugin price-server pmprint" functionName="emAfPriceServerCliPmPrint" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Print the price matrix table for the provided endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The relevant endpoint" />
+  </command>
+  <command cli="plugin price-server clear" functionName="emAfPriceServerCliClear" group="plugin-price-server">
+    <description>
+      Clears out the currently set price for the supplied endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The relevant endpoint" />
+  </command>
+  <command cli="plugin price-server tclear" functionName="emAfPriceServerCliTClear" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Clears out the currently set tariff for the supplied endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The relevant endpoint" />
+  </command>
+  <command cli="plugin price-server pmclear" functionName="emAfPriceServerCliPmClear" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Clears out the price matrix table for the supplied endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The relevant endpoint" />
+  </command>
+  <command cli="plugin price-server who" functionName="emAfPriceServerCliWho" group="plugin-price-server">
+    <description>
+      Sets identifying information about the price.
+    </description>
+    <arg name="provId" type="INT32U" description="provider id" />
+    <arg name="label" type="OCTET_STRING" description="rate label" />
+    <arg name="eventId" type="INT32U" description="issuer event id" />
+  </command>
+  <command cli="plugin price-server twho" functionName="emAfPriceServerCliTWho" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Sets identifying information about the tariff.
+    </description>
+    <arg name="provId"   type="INT32U"       description="provider id"      />
+    <arg name="label"    type="OCTET_STRING" description="tariff label"     />
+    <arg name="eventId"  type="INT32U"       description="issuer event id"  />
+    <arg name="tariffId" type="INT32U"       description="issuer tariff id" />
+  </command>
+  <command cli="plugin price-server what" functionName="emAfPriceServerCliWhat" group="plugin-price-server">
+    <description>
+      Indicates what units the price is presented in.
+    </description>
+    <arg name="unitOfMeas" type="INT8U" description="unit of measure" />
+    <arg name="curr" type="INT16U" description="currency" />
+    <arg name="ptd" type="INT8U" description="price trailing digit and tier" />
+    <arg name="prt" type="INT8U" description="number of price tiers and tier" />
+    <arg name="bt" type="INT8U" description="number of block thresholds" />
+  </command>
+  <command cli="plugin price-server twhat" functionName="emAfPriceServerCliTWhat" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Indicates what units the tariff is presented in.
+    </description>
+    <arg name="type" type="INT8U" description="tariff type or charging scheme" />
+    <arg name="unitOfMeas" type="INT8U" description="unit of measure" />
+    <arg name="curr" type="INT16U" description="currency" />
+    <arg name="ptd" type="INT8U" description="price trailing digit" />
+    <arg name="prt" type="INT8U" description="number of price tiers in use" />
+    <arg name="btu" type="INT8U" description="number of block thresholds in use" />
+    <arg name="blockMode" type="INT8U" description="tier block mode" />
+  </command>
+  <command cli="plugin price-server when" functionName="emAfPriceServerCliWhen" group="plugin-price-server">
+    <description>
+      Sets start time and duration for the price.
+    </description>
+    <arg name="startTime" type="INT32U" description="start time for the price" />
+    <arg name="duration" type="INT16U" description="duration for the price" />
+  </command>
+  <command cli="plugin price-server twhen" functionName="emAfPriceServerCliTWhen" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Sets start time for the tariff.
+    </description>
+    <arg name="startTime" type="INT32U" description="start time for the tariff" />
+  </command>
+  <command cli="plugin price-server price" functionName="emAfPriceServerCliPrice" group="plugin-price-server">
+    <description>
+      Set the single price held within the price plugin server
+    </description>
+    <arg name="price" type="INT32U" description="price" />
+    <arg name="ratio" type="INT8U" description="ratio" />
+    <arg name="genPrice" type="INT32U" description="generation price" />
+    <arg name="genRatio" type="INT8U" description="generation price ratio" />
+  </command>
+  <command cli="plugin price-server tariff" functionName="emAfPriceServerCliTariff" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the single tariff held within the price plugin server
+    </description>
+    <arg name="standingCharge" type="INT32U" description="standing charge"            />
+    <arg name="btm"            type="INT32U" description="block threshold multiplier" />
+    <arg name="btd"            type="INT32U" description="block threshold divisor"    />
+  </command>
+  <command cli="plugin price-server alternate" functionName="emAfPriceServerCliAlternate" group="plugin-price-server">
+    <description>
+      Set the alternate values for the price.
+    </description>
+    <arg name="alternateCostDelivered" type="INT32U" description="alternate cost delivered" />
+    <arg name="alternateCostUnit" type="INT8U" description="alternate cost unit" />
+    <arg name="alternateCostTrailingDigit" type="INT8U" description="alternate cost trailing digit" />
+  </command>
+  <command cli="plugin price-server ack" functionName="emAfPriceServerCliAck" group="plugin-price-server">
+    <description>
+      Turn price acknowledgement on or off depending on passed boolean value.
+    </description>
+    <arg name="req" type="INT8U" description="boolean acknowledgement required" />
+  </command>
+  <command cli="plugin price-server valid" functionName="emAfPriceServerCliValid" group="plugin-price-server">
+    <description>
+      Make a price at a given index valid.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="index"    type="INT8U" description="index in the price table" />
+  </command>
+  <command cli="plugin price-server invalid" functionName="emAfPriceServerCliValid" group="plugin-price-server">
+    <description>
+      Make a price at a given index invalid.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="index"    type="INT8U" description="index in the price table" />
+  </command>
+  <command cli="plugin price-server tinvalid" functionName="emAfPriceServerCliValid" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Make a tariff at a given index invalid.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="index"    type="INT8U" description="index in the tariff table" />
+  </command>
+  <command cli="plugin price-server tstatus" functionName="emAfPriceServerCliTStatus" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Update the status of the tariff at a given index (0 for current, 1 for future).
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint"     />
+    <arg name="index"    type="INT8U" description="index in the tariff table" />
+    <arg name="status"   type="INT8U" description="tariff status"             />
+  </command>
+  <command cli="plugin price-server get" functionName="emAfPriceServerCliGet" group="plugin-price-server">
+    <description>
+      Retrieve a price from a given index into the price buffer for editing.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="index"    type="INT8U" description="index of the price to retrieve" />
+  </command>
+  <command cli="plugin price-server tget" functionName="emAfPriceServerCliTGet" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Retrieve a price from a given index in to the tariff buffer for editing.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="index"    type="INT8U" description="index of the tariff to retrieve" />
+  </command>
+  <command cli="plugin price-server sprint" functionName="emAfPriceServerCliSprint" group="plugin-price-server">
+    <description>
+      Print the contents of the price buffer for the provided endpoint.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+  </command>
+  <command cli="plugin price-server tsprint" functionName="emAfPriceServerCliTSPrint" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Print the contents of the tariff buffer.
+    </description>
+  </command>
+  <command cli="plugin price-server publish" functionName="emAfPriceServerCliPublish" group="plugin-price-server">
+    <description>
+      Publish the current price. 
+    </description>
+    <arg name="nodeId" type="INT16U" description="the destination node id" />
+    <arg name="srcEndpoint" type="INT8U" description="the source endpoint" />
+    <arg name="dstEndpoint" type="INT8U" description="the destination endpoint" />
+    <arg name="priceIndex"    type="INT8U" description="index of the price to publish" />
+  </command>
+  <command cli="plugin price-server pm set-metadata" functionName="emAfPriceServerCliPmSetMetadata" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the metadata (wholesale) associated with the price matrix in the edit buffer. NOTE: the issuer tariff ID MUST correspond to a valid tariff in the tariff table.
+    </description>
+    <arg name="endpoint"       type="INT8U"    description="the relevant endpoint"                                        />
+    <arg name="providerId"     type="INT32U"   description="the commodity provider id"                                    />
+    <arg name="issuerEventId"  type="INT32U"   description="the issuer event id"                                          />
+    <arg name="issuerTariffId" type="INT32U"   description="the issuer tariff id"                                         />
+    <arg name="startTime"      type="UTC_TIME" description="the start time"                                               />
+    <arg name="status"         type="INT8U"    description="the status of the price matrix (1 for current, 2 for future)" />
+  </command>
+  <command cli="plugin price-server pm set-provider" functionName="emAfPriceServerCliPmSetProvider" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the provider ID associated with the price matrix in the edit buffer.
+    </description>
+    <arg name="providerId" type="INT32U" description="the commodity provider id" />
+  </command>
+  <command cli="plugin price-server pm set-event" functionName="emAfPriceServerCliPmSetEvent" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the issuer event ID associated with the price matrix in the edit buffer.
+    </description>
+    <arg name="issuerEventId" type="INT32U" description="the issuer event id" />
+  </command>
+  <command cli="plugin price-server pm set-tariff" functionName="emAfPriceServerCliPmSetTariff" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the issuer tariff ID associated with the price matrix in the edit buffer.
+    </description>
+    <arg name="issuerTariffId" type="INT32U" description="the issuer tariff id" />
+  </command>
+  <command cli="plugin price-server pm set-time" functionName="emAfPriceServerCliPmSetTime" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the start time associated with the price matrix in the edit buffer.
+    </description>
+    <arg name="startTime" type="UTC_TIME" description="the start time" />
+  </command>
+  <command cli="plugin price-server pm set-status" functionName="emAfPriceServerCliPmSetStatus" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Set the status of the price matrix in the edit buffer (1 for current, 2 for future).
+    </description>
+    <arg name="status" type="INT8U" description="the status of the price matrix (1 for current, 2 for future)" />
+  </command>
+  <command cli="plugin price-server pm get" functionName="emAfPriceServerCliPmGet" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Retrieve an entry from the price matrix table and place it in the edit buffer.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint"                 />
+    <arg name="index"    type="INT8U" description="the index into the price matrix table" />
+  </command>
+  <command cli="plugin price-server pm set" functionName="emAfPriceServerCliPmSet" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Publish the price matrix buffer to the specified entry in the price matrix table.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="index"    type="INT8U" description="the index in the price matrix table" />
+  </command>
+  <command cli="plugin price-server pm put" functionName="emAfPriceServerCliPmPut" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Populate an individual element of the price matrix with the provided price. The issuer tariff ID MUST be set and must correspond to a valid tariff in the tariff table before this command is invoked. If the charging type of the associated tariff is TOU only, or Block only, the second index is unused. If an out-of-bounds index is provided, the index will be clamped to the maximum index.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="tier"     type="INT8U"  description="the price tier"       />
+    <arg name="block"    type="INT8U"  description="the price block"      />
+    <arg name="price"    type="INT32U" description="the price"            />
+  </command>
+  <command cli="plugin price-server pm fill-tier" functionName="emAfPriceServerCliPmFillTier" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Convenience method to fill an entire tier with a given price.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="tier"  type="INT8U"  description="the price tier"  />
+    <arg name="price" type="INT32U" description="the price"       />
+  </command>
+  <command cli="plugin price-server pm fill-block" functionName="emAfPriceServerCliPmFillBlock" group="plugin-price-server" restriction="defined(EMBER_AF_PLUGIN_PRICE_SERVER_TARIFF_MATRIX_SUPPORT)">
+    <description>
+      Convenience method to fill a specified block within each tier with a given price.
+    </description>
+    <arg name="endpoint" type="INT8U" description="the relevant endpoint" />
+    <arg name="block"  type="INT8U"  description="the price block"  />
+    <arg name="price" type="INT32U" description="the price"       />
+  </command>
+</cli>

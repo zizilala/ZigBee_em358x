@@ -1,0 +1,183 @@
+
+em3xx_load version 4.3.1.0 build 65
+Connecting to ISA via IP address 192.168.2.14
+DLL version 1.1.30, compiled Jan 06 2014 17:56:00
+SerialWire interface selected
+SWJCLK speed is 500kHz
+Targeting EM357
+Parsing Simulated EEPROM from chip (read of MFB will take a moment...)
+Checking for 128k MFB, 1k Page, 8kB  SimEE1, LEFT  (0x0801E000) - not found.
+Checking for 128k MFB, 1k Page, 8kB  SimEE1, RIGHT (0x0801F000) - not found.
+Checking for 128k MFB, 1k Page, 4kB  SimEE1, LEFT  (0x0801F000) - not found.
+Checking for 128k MFB, 1k Page, 4kB  SimEE1, RIGHT (0x0801F800) - not found.
+Checking for 128k MFB, 2k Page, 8kB  SimEE1, LEFT  (0x0801E000) - not found.
+Checking for 128k MFB, 2k Page, 8kB  SimEE1, RIGHT (0x0801F000) - not found.
+Checking for 128k MFB, 2k Page, 4kB  SimEE1, LEFT  (0x0801F000) - not found.
+Checking for 128k MFB, 2k Page, 4kB  SimEE1, RIGHT (0x0801F800) - not found.
+Checking for 192k MFB, 2k Page, 32kB SimEE1, LEFT  (0x08028000) - not found.
+Checking for 192k MFB, 2k Page, 32kB SimEE1, RIGHT (0x0802C000) - not found.
+Checking for 192k MFB, 2k Page, 8kB  SimEE1, LEFT  (0x0802E000) - not found.
+Checking for 192k MFB, 2k Page, 8kB  SimEE1, RIGHT (0x0802F000) - found!
+Page Base  (@0000)
+Page Counter Value = FFFE
+Page Count = 2
+SimEE Version = 2
+Stored Token Count = 30
+Creator: FF01, Info 0101 -> IsCnt = 0, SizeB =   2, Array Size =   1  (infoWord: 007F)
+Creator: E123, Info 9B01 -> IsCnt = 1, SizeB =   4, Array Size =   1  (infoWord: 01FF)
+Creator: E475, Info 0881 -> IsCnt = 0, SizeB =  17, Array Size =   1  (infoWord: 027F)
+Creator: E263, Info 9A01 -> IsCnt = 1, SizeB =   2, Array Size =   1  (infoWord: 03FF)
+Creator: E563, Info 9B01 -> IsCnt = 1, SizeB =   4, Array Size =   1  (infoWord: 04FF)
+Creator: E162, Info 0101 -> IsCnt = 0, SizeB =   2, Array Size =   1  (infoWord: 057F)
+Creator: EB79, Info 0881 -> IsCnt = 0, SizeB =  17, Array Size =   1  (infoWord: 067F)
+Creator: EE64, Info 0801 -> IsCnt = 0, SizeB =  16, Array Size =   1  (infoWord: 077F)
+Creator: E124, Info 0D01 -> IsCnt = 0, SizeB =  26, Array Size =   1  (infoWord: 087F)
+Creator: E125, Info 0401 -> IsCnt = 0, SizeB =   8, Array Size =   1  (infoWord: 097F)
+Creator: E126, Info 0501 -> IsCnt = 0, SizeB =  10, Array Size =   1  (infoWord: 0A7F)
+Creator: D245, Info 0210 -> IsCnt = 0, SizeB =   4, Array Size =  16  (infoWords: 0B00 - 0B0F)
+Creator: E210, Info 0880 -> IsCnt = 0, SizeB =  17, Array Size =   0
+Creator: E211, Info 0800 -> IsCnt = 0, SizeB =  16, Array Size =   0
+Creator: E212, Info 0880 -> IsCnt = 0, SizeB =  17, Array Size =   0
+Creator: E213, Info 0D00 -> IsCnt = 0, SizeB =  26, Array Size =   0
+Creator: E214, Info 0400 -> IsCnt = 0, SizeB =   8, Array Size =   0
+Creator: E215, Info 0500 -> IsCnt = 0, SizeB =  10, Array Size =   0
+Creator: E220, Info 9B01 -> IsCnt = 1, SizeB =   4, Array Size =   1  (infoWord: 12FF)
+Creator: E274, Info 0682 -> IsCnt = 0, SizeB =  13, Array Size =   2  (infoWords: 1300 - 1301)
+Creator: FF0D, Info 0586 -> IsCnt = 0, SizeB =  11, Array Size =   6  (infoWords: 1400 - 1405)
+Creator: E456, Info 0C80 -> IsCnt = 0, SizeB =  25, Array Size =   0
+Creator: E500, Info 2E00 -> IsCnt = 0, SizeB =  92, Array Size =   0
+Creator: E501, Info 0801 -> IsCnt = 0, SizeB =  16, Array Size =   1  (infoWord: 177F)
+Creator: E502, Info 1401 -> IsCnt = 0, SizeB =  40, Array Size =   1  (infoWord: 187F)
+Creator: B000, Info 0081 -> IsCnt = 0, SizeB =   1, Array Size =   1  (infoWord: 197F)
+Creator: B001, Info 0101 -> IsCnt = 0, SizeB =   2, Array Size =   1  (infoWord: 1A7F)
+Creator: B002, Info 0401 -> IsCnt = 0, SizeB =   8, Array Size =   1  (infoWord: 1B7F)
+Creator: B003, Info 0081 -> IsCnt = 0, SizeB =   1, Array Size =   1  (infoWord: 1C7F)
+Creator: 8725, Info 0A05 -> IsCnt = 0, SizeB =  20, Array Size =   5  (infoWords: 1D00 - 1D04)
+Total Token Storage =  431 words of 1024 max, indexSkip =  59
+To translate these addresses to real addresses: ((x-0x0)*2)+0x08000000
+[CREA[Idx] (@ADDR:Siz)] Info.Data Words...
+[FF01      (@003F:  2)] 007F.03FC
+[E123.cnt  (@0041: 54)] 01FF.0000.0000.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF
+[E475      (@005D: 17)] 027F.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[E263.cnt  (@0067: 52)] 03FF.0000.0000.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF
+[E563.cnt  (@0082: 54)] 04FF.0000.0000.FF00.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF
+[E162      (@009E:  2)] 057F.0000
+[EB79      (@00A0: 17)] 067F.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[EE64      (@00AA: 16)] 077F.FFFF.00FF.0000.0000.0000.0000.0000.0000
+[E124      (@00B3: 26)] 087F.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[E125      (@00C1:  8)] 097F.0000.0000.FFFF.0000
+[E126      (@00C6: 10)] 0A7F.FFFF.FFFF.FFFF.FFFF.FFFF
+[D245[  0] (@00CC:  4)] 0B00.807F.807F
+[D245[  1] (@00CF:  4)] 0B01.807F.807F
+[D245[  2] (@00D2:  4)] 0B02.807F.807F
+[D245[  3] (@00D5:  4)] 0B03.807F.807F
+[D245[  4] (@00D8:  4)] 0B04.807F.807F
+[D245[  5] (@00DB:  4)] 0B05.807F.807F
+[D245[  6] (@00DE:  4)] 0B06.807F.807F
+[D245[  7] (@00E1:  4)] 0B07.807F.807F
+[D245[  8] (@00E4:  4)] 0B08.807F.807F
+[D245[  9] (@00E7:  4)] 0B09.807F.807F
+[D245[ 10] (@00EA:  4)] 0B0A.807F.807F
+[D245[ 11] (@00ED:  4)] 0B0B.807F.807F
+[D245[ 12] (@00F0:  4)] 0B0C.807F.807F
+[D245[ 13] (@00F3:  4)] 0B0D.807F.807F
+[D245[ 14] (@00F6:  4)] 0B0E.807F.807F
+[D245[ 15] (@00F9:  4)] 0B0F.807F.807F
+[E220.cnt  (@00FC: 54)] 12FF.0000.0000.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF
+[E274[  0] (@0118: 13)] 1300.0000.0000.0000.0000.0000.0000.0000
+[E274[  1] (@0120: 13)] 1301.0000.0000.0000.0000.0000.0000.0000
+[FF0D[  0] (@0128: 11)] 1400.0000.0000.0000.0000.0000.0000
+[FF0D[  1] (@012F: 11)] 1401.0000.0000.0000.0000.0000.0000
+[FF0D[  2] (@0136: 11)] 1402.0000.0000.0000.0000.0000.0000
+[FF0D[  3] (@013D: 11)] 1403.0000.0000.0000.0000.0000.0000
+[FF0D[  4] (@0144: 11)] 1404.0000.0000.0000.0000.0000.0000
+[FF0D[  5] (@014B: 11)] 1405.0000.0000.0000.0000.0000.0000
+[E501      (@0152: 16)] 177F.0001.0000.0000.0000.0000.0000.0000.0000
+[E502      (@015B: 40)] 187F.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[B000      (@0170:  1)] 197F.0000
+[B001      (@0172:  2)] 1A7F.0115
+[B002      (@0174:  8)] 1B7F.0000.0000.0000.0000
+[B003      (@0179:  1)] 1C7F.00FF
+[8725[  0] (@017B: 20)] 1D00.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[8725[  1] (@0186: 20)] 1D01.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[8725[  2] (@0191: 20)] 1D02.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[8725[  3] (@019C: 20)] 1D03.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[8725[  4] (@01A7: 20)] 1D04.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+[D245[  0] (@01B2:  4)] 0B00.3A1A.181A
+[B000      (@01B5:  1)] 197F.BC01
+[D245[  3] (@01B7:  4)] 0B03.391B.1A1B
+[D245[  4] (@01BA:  4)] 0B04.371B.1A1B
+[E124      (@01BD: 26)] 087F.0000.0000.0000.0000.0000.695A.4267.6565.6C41.696C.6E61.6563.3930
+[E124      (@01CB: 26)] 087F.0000.0BD1.0002.A300.0022.695A.4267.6565.6C41.696C.6E61.6563.3930
+[EB79      (@01D9: 17)] 067F.B9E3.63AF.C73C.8E1A.0C5D.08D3.01CF.039E.0000
+[E125      (@01E3:  8)] 097F.F800.07FF.0000.0001
+[E124      (@01E8: 26)] 087F.1064.0BD1.0002.A300.0022.695A.4267.6565.6C41.696C.6E61.6563.3930
+[EE64      (@01F6: 16)] 077F.43FF.0F08.0402.08AC.D2D3.D1DC.4BB7.1B48
+Page Free  (@01FF)
+Page Top   (@07FF)
+Print image token data with simulated tokdump
+[CREA[Idx] (@ADDR:Siz)] Data Bytes...
+[FF01      (@0040:  2)] FC 03
+[E123.cnt  (@0042:  4)] 00 00 00 00
+[E475      (@005E: 17)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[E263.cnt  (@0068:  2)] 02 00
+[E563.cnt  (@0083:  4)] 01 00 00 00
+[E162      (@009F:  2)] 00 00
+[EB79      (@01DA: 17)] E3 B9 AF 63 3C C7 1A 8E 5D 0C D3 08 CF 01 9E 03 00
+[EE64      (@01F7: 16)] FF 43 08 0F 02 04 AC 08 D3 D2 DC D1 B7 4B 48 1B
+[E124      (@01E9: 26)] 64 10 D1 0B 02 00 00 A3 22 00 5A 69 67 42 65 65 41 6C 6C 69 61 6E 63 65 30 39
+[E125      (@01E4:  8)] 00 F8 FF 07 00 00 01 00
+[E126      (@00C7: 10)] FF FF FF FF FF FF FF FF FF FF
+[D245[  0] (@01B3:  4)] 1A 3A 1A 18
+[D245[  1] (@00D0:  4)] 7F 80 7F 80
+[D245[  2] (@00D3:  4)] 7F 80 7F 80
+[D245[  3] (@01B8:  4)] 1B 39 1B 1A
+[D245[  4] (@01BB:  4)] 1B 37 1B 1A
+[D245[  5] (@00DC:  4)] 7F 80 7F 80
+[D245[  6] (@00DF:  4)] 7F 80 7F 80
+[D245[  7] (@00E2:  4)] 7F 80 7F 80
+[D245[  8] (@00E5:  4)] 7F 80 7F 80
+[D245[  9] (@00E8:  4)] 7F 80 7F 80
+[D245[ 10] (@00EB:  4)] 7F 80 7F 80
+[D245[ 11] (@00EE:  4)] 7F 80 7F 80
+[D245[ 12] (@00F1:  4)] 7F 80 7F 80
+[D245[ 13] (@00F4:  4)] 7F 80 7F 80
+[D245[ 14] (@00F7:  4)] 7F 80 7F 80
+[D245[ 15] (@00FA:  4)] 7F 80 7F 80
+[E220.cnt  (@00FD:  4)] 00 00 00 00
+[E274[  0] (@0119: 13)] 00 00 00 00 00 00 00 00 00 00 00 00 00
+[E274[  1] (@0121: 13)] 00 00 00 00 00 00 00 00 00 00 00 00 00
+[FF0D[  0] (@0129: 11)] 00 00 00 00 00 00 00 00 00 00 00
+[FF0D[  1] (@0130: 11)] 00 00 00 00 00 00 00 00 00 00 00
+[FF0D[  2] (@0137: 11)] 00 00 00 00 00 00 00 00 00 00 00
+[FF0D[  3] (@013E: 11)] 00 00 00 00 00 00 00 00 00 00 00
+[FF0D[  4] (@0145: 11)] 00 00 00 00 00 00 00 00 00 00 00
+[FF0D[  5] (@014C: 11)] 00 00 00 00 00 00 00 00 00 00 00
+[E501      (@0153: 16)] 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[E502      (@015C: 40)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[B000      (@01B6:  1)] 01
+[B001      (@0173:  2)] 15 01
+[B002      (@0175:  8)] 00 00 00 00 00 00 00 00
+[B003      (@017A:  1)] FF
+[8725[  0] (@017C: 20)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[8725[  1] (@0187: 20)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[8725[  2] (@0192: 20)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[8725[  3] (@019D: 20)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[8725[  4] (@01A8: 20)] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Checking for 192k MFB, 2k Page, 4kB  SimEE1, LEFT  (0x0802F000) - not found.
+Checking for 192k MFB, 2k Page, 4kB  SimEE1, RIGHT (0x0802F800) - not found.
+Checking for 512k MFB, 2k Page, 8kB  SimEE1, LEFT  (0x0803E800) - not found.
+Checking for 512k MFB, 2k Page, 8kB  SimEE1, RIGHT (0x0803F800) - not found.
+Checking for 512k MFB, 2k Page, 8kB  SimEE1, LEFT  (0x0807E000) - not found.
+Checking for 512k MFB, 2k Page, 8kB  SimEE1, RIGHT (0x0807F000) - not found.
+
+Checking for 192k MFB, 2k Page, 36kB SimEE2, base  (0x08027000) - not found.
+
+
+Checking for 512k MFB, 2k Page, 36kB SimEE2, base  (0x0803B000) - not found.
+
+
+Checking for 512k MFB, 2k Page, 36kB SimEE2, base  (0x08077000) - not found.
+
+
+DONE

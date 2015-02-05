@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<cli>
+  <group id="plugin-tou-calendar-common" name="Plugin Commands: TOU Calendar Common">
+    <description>
+      The TOU calendar common plugin commands provide commands to view and manipulate the local copy of the TOU calendar.
+    </description>
+  </group>
+  <command cli="plugin tou-calendar-common select" functionName="emberAfPluginTouCalendarCommonSelectCommand" group="plugin-tou-calendar-common">
+    <description>
+      Selects a calendar to be printed.
+    </description>
+    <arg name="index" type="INT8U" description="The index of the calendar to be selected." />
+  </command>
+  <command cli="plugin tou-calendar-common print summary" functionName="emberAfPluginTouCalendarCommonPrintSummaryCommand" group="plugin-tou-calendar-common">
+    <description>
+      Prints the local TOU calendar summary at the previously selected index.
+    </description>
+  </command>
+  <command cli="plugin tou-calendar-common print days" functionName="emberAfPluginTouCalendarCommonPrintDaysCommand" group="plugin-tou-calendar-common">
+    <description>
+      Prints the local TOU calendar's days
+    </description>
+  </command>
+  <command cli="plugin tou-calendar-common print special-days" functionName="emberAfPluginTouCalendarCommonPrintDaysCommand" group="plugin-tou-calendar-common">
+    <description>
+      Prints the local TOU calendar's special days.
+    </description>
+  </command>
+  <command cli="plugin tou-calendar-common print seasons" functionName="emberAfPluginTouCalendarCommonPrintSeasonsCommand" group="plugin-tou-calendar-common">
+    <description>
+      Prints the local TOU calendar's seasons.
+    </description>
+  </command>
+  <command cli="plugin tou-calendar-common test-init" functionName="emberAfPluginTouCalendarCommonSetupTestCalendarsCommand" group="plugin-tou-calendar-common">
+    <description>
+      Initializes a test calendar with dummy data.
+    </description>
+  </command>
+
+</cli>

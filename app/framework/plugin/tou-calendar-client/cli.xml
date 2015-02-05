@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<cli>
+  <group id="plugin-tou-calendar-client" name="Plugin Commands: TOU Calendar Client">
+    <description>
+      The Time-of-Use (TOU) Calendar Client plugin contributes several commands to the application framework's CLI.  These commands are used for interacting with calendars.
+    </description>
+  </group>
+  <command cli="plugin tou-calendar-client clear" functionName="emberAfPluginTouCalendarClientClearCommand" group="plugin-tou-calendar-client">
+    <description>
+      Clear the calendars.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The endpoint." />
+  </command>
+  <command cli="plugin tou-calendar-client print" functionName="emberAfPluginTouCalendarClientPrintCommand" group="plugin-tou-calendar-client">
+    <description>
+      Print the calendars.
+    </description>
+    <arg name="endpoint" type="INT8U" description="The endpoint." />
+  </command>
+</cli>

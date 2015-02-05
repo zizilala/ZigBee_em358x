@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<callback prefix="emberAf" postfix="Callback">
+  <function id="POLL_COMPLETED" name="Poll Completed" returnType="void">
+    <description>
+      This function is called by the End Device Support plugin after a poll is completed.
+    </description>
+    <arg name="status" type="EmberStatus" description="Return status of a completed poll operation"/>
+    <codeForStub/>
+  </function>
+</callback>

@@ -1,0 +1,726 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:52 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\end-device-support.c                    #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\end-device-support.c -D                 #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"end-device-support.c\"" -lC         #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\en #
+#                    d-device-support\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\ap #
+#                    p\builder\DoorSensor_SM6011\ -I                          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \end-device-support.lst                                  #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \end-device-support.o                                    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\end-device-support\end-device-support.c
+      1          // *****************************************************************************
+      2          // * end-device-support.c
+      3          // *
+      4          // * Code common to SOC and host to handle managing polling
+      5          // *
+      6          // * Copyright 2013 Silicon Laboratories, Inc.                              *80*
+      7          // *****************************************************************************
+      8          
+      9          #include "app/framework/include/af.h"
+     10          #include "callback.h"
+     11          #include "app/framework/util/util.h"
+     12          #include "app/framework/util/common.h"
+     13          #include "app/framework/util/af-event.h"
+     14          
+     15          #include "app/framework/plugin/end-device-support/end-device-support.h"
+     16          
+     17          #if defined(EMBER_SCRIPTED_TEST)
+     18            #include "app/framework/util/af-event-test.h"
+     19          
+     20            #define EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_LONG_POLL_INTERVAL_SECONDS 15
+     21            #define EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_SHORT_POLL_INTERVAL_SECONDS 1
+     22          #endif
+     23          
+     24          // *****************************************************************************
+     25          // Globals
+     26          
+     27          typedef struct {
+     28            EmberAfApplicationTask currentAppTasks;
+     29            EmberAfApplicationTask wakeTimeoutBitmask;
+     30            int32u longPollIntervalMs;
+     31            int16u shortPollIntervalMs;
+     32            int16u wakeTimeoutMs;
+     33            int16u lastAppTaskScheduleTime;
+     34            EmberAfEventPollControl pollControl;
+     35          } State;
+
+   \                                 In section .bss, align 4
+     36          static State states[EMBER_SUPPORTED_NETWORKS];
+   \                     states:
+   \   00000000                      DS8 20
+     37          
+     38          
+     39          #if defined(EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_ENABLE_POLL_COMPLETED_CALLBACK)
+     40            #define ENABLE_POLL_COMPLETED_CALLBACK_DEFAULT TRUE
+     41          #else
+     42            #define ENABLE_POLL_COMPLETED_CALLBACK_DEFAULT FALSE
+     43          #endif
+
+   \                                 In section .bss, align 1
+     44          boolean emAfEnablePollCompletedCallback = ENABLE_POLL_COMPLETED_CALLBACK_DEFAULT;
+   \                     emAfEnablePollCompletedCallback:
+   \   00000000                      DS8 1
+     45          
+     46          #ifndef EMBER_AF_HAS_END_DEVICE_NETWORK
+     47            #error "End device support only allowed on end devices."
+     48          #endif
+     49          
+     50          // *****************************************************************************
+     51          // Functions
+     52          
+
+   \                                 In section .text, align 2, keep-with-next
+     53          void emberAfPluginEndDeviceSupportInitCallback(void)
+     54          {
+     55            int8u i;
+     56            for (i = 0; i < EMBER_SUPPORTED_NETWORKS; i++) {
+   \                     emberAfPluginEndDeviceSupportInitCallback:
+   \   00000000   0x2000             MOVS     R0,#+0
+   \   00000002   0x....             LDR.N    R1,??DataTable15
+     57              states[i].currentAppTasks = 0;
+   \                     ??emberAfPluginEndDeviceSupportInitCallback_0:
+   \   00000004   0x2214             MOVS     R2,#+20
+   \   00000006   0x4342             MULS     R2,R2,R0
+   \   00000008   0x2300             MOVS     R3,#+0
+   \   0000000A   0x5053             STR      R3,[R2, R1]
+     58              states[i].wakeTimeoutBitmask = EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_WAKE_TIMEOUT_BITMASK;
+   \   0000000C   0x1852             ADDS     R2,R2,R1
+   \   0000000E   0x2318             MOVS     R3,#+24
+   \   00000010   0x6053             STR      R3,[R2, #+4]
+     59              states[i].longPollIntervalMs = (EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_LONG_POLL_INTERVAL_SECONDS
+     60                                              * MILLISECOND_TICKS_PER_SECOND);
+   \   00000012   0xF44F 0x2396      MOV      R3,#+307200
+   \   00000016   0x6093             STR      R3,[R2, #+8]
+     61              states[i].shortPollIntervalMs = (EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_SHORT_POLL_INTERVAL_SECONDS
+     62                                               * MILLISECOND_TICKS_PER_SECOND);
+   \   00000018   0xF44F 0x6380      MOV      R3,#+1024
+   \   0000001C   0x8193             STRH     R3,[R2, #+12]
+     63              states[i].wakeTimeoutMs = (EMBER_AF_PLUGIN_END_DEVICE_SUPPORT_WAKE_TIMEOUT_SECONDS
+     64                                         * MILLISECOND_TICKS_PER_SECOND);
+   \   0000001E   0xF44F 0x6340      MOV      R3,#+3072
+   \   00000022   0x81D3             STRH     R3,[R2, #+14]
+     65              states[i].lastAppTaskScheduleTime = 0;
+   \   00000024   0x2300             MOVS     R3,#+0
+   \   00000026   0x8213             STRH     R3,[R2, #+16]
+     66              states[i].pollControl = EMBER_AF_LONG_POLL;
+   \   00000028   0x7493             STRB     R3,[R2, #+18]
+     67            }
+   \   0000002A   0x1C40             ADDS     R0,R0,#+1
+   \   0000002C   0x2801             CMP      R0,#+1
+   \   0000002E   0xDBE9             BLT.N    ??emberAfPluginEndDeviceSupportInitCallback_0
+     68          }
+   \   00000030   0x4770             BX       LR               ;; return
+     69          
+
+   \                                 In section .text, align 2, keep-with-next
+     70          void emberAfAddToCurrentAppTasksCallback(EmberAfApplicationTask tasks)
+     71          {
+   \                     emberAfAddToCurrentAppTasksCallback:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     72            if (emAfCurrentNetwork->type == EM_AF_NETWORK_TYPE_ZIGBEE_PRO
+     73                && EMBER_SLEEPY_END_DEVICE <= emAfCurrentNetwork->variant.pro.nodeType) {
+   \   00000004   0x....             LDR.N    R0,??DataTable15_1
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x7801             LDRB     R1,[R0, #+0]
+   \   0000000A   0xB989             CBNZ.N   R1,??emberAfAddToCurrentAppTasksCallback_0
+   \   0000000C   0x7840             LDRB     R0,[R0, #+1]
+   \   0000000E   0x2804             CMP      R0,#+4
+   \   00000010   0xD30E             BCC.N    ??emberAfAddToCurrentAppTasksCallback_0
+     74              State *state = &states[emberGetCurrentNetwork()];
+   \   00000012   0x.... 0x....      BL       emberGetCurrentNetwork
+   \   00000016   0x2114             MOVS     R1,#+20
+   \   00000018   0x....             LDR.N    R2,??DataTable15
+   \   0000001A   0xFB01 0x2500      MLA      R5,R1,R0,R2
+     75              state->currentAppTasks |= tasks;
+   \   0000001E   0x6828             LDR      R0,[R5, #+0]
+   \   00000020   0x4320             ORRS     R0,R4,R0
+   \   00000022   0x6028             STR      R0,[R5, #+0]
+     76              if (tasks & state->wakeTimeoutBitmask) {
+   \   00000024   0x6868             LDR      R0,[R5, #+4]
+   \   00000026   0x4204             TST      R4,R0
+   \   00000028   0xD002             BEQ.N    ??emberAfAddToCurrentAppTasksCallback_0
+     77                state->lastAppTaskScheduleTime = halCommonGetInt16uMillisecondTick();
+   \   0000002A   0x.... 0x....      BL       halCommonGetInt16uMillisecondTick
+   \   0000002E   0x8228             STRH     R0,[R5, #+16]
+     78              }
+     79            }
+     80          }
+   \                     ??emberAfAddToCurrentAppTasksCallback_0:
+   \   00000030   0xBD31             POP      {R0,R4,R5,PC}    ;; return
+     81          
+
+   \                                 In section .text, align 2, keep-with-next
+     82          void emberAfRemoveFromCurrentAppTasksCallback(EmberAfApplicationTask tasks)
+     83          {
+   \                     emberAfRemoveFromCurrentAppTasksCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x.... 0x....      BL       ?Subroutine0
+     84            State *state = &states[emberGetCurrentNetwork()];
+   \                     ??CrossCallReturnLabel_5:
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+     85            state->currentAppTasks &= (~tasks);
+   \   0000000E   0x6801             LDR      R1,[R0, #+0]
+   \   00000010   0x43A1             BICS     R1,R1,R4
+   \   00000012   0x6001             STR      R1,[R0, #+0]
+     86          }
+   \   00000014   0xBD10             POP      {R4,PC}          ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x4604             MOV      R4,R0
+   \   00000002   0x.... 0x....      B.W      emberGetCurrentNetwork
+     87          
+
+   \                                 In section .text, align 2, keep-with-next
+     88          int32u emberAfGetCurrentAppTasksCallback(void)
+     89          {
+   \                     emberAfGetCurrentAppTasksCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     90            State *state = &states[emberGetCurrentNetwork()];
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+     91            return state->currentAppTasks;
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x6800             LDR      R0,[R0, #+0]
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+     92          }
+     93          
+
+   \                                 In section .text, align 2, keep-with-next
+     94          int32u emberAfGetLongPollIntervalMsCallback(void)
+     95          {
+   \                     emberAfGetLongPollIntervalMsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     96            State *state = &states[emberGetCurrentNetwork()];
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+     97            return state->longPollIntervalMs;
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x6880             LDR      R0,[R0, #+8]
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+     98          }
+     99          
+
+   \                                 In section .text, align 2, keep-with-next
+    100          int32u emberAfGetLongPollIntervalQsCallback(void)
+    101          {
+   \                     emberAfGetLongPollIntervalQsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    102            return (emberAfGetLongPollIntervalMsCallback()
+    103                    / MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \   00000002   0x.... 0x....      BL       emberAfGetLongPollIntervalMsCallback
+   \   00000006   0x0A00             LSRS     R0,R0,#+8
+   \   00000008   0xBD02             POP      {R1,PC}          ;; return
+    104          }
+    105          
+
+   \                                 In section .text, align 2, keep-with-next
+    106          void emberAfSetLongPollIntervalMsCallback(int32u longPollIntervalMs)
+    107          {
+   \                     emberAfSetLongPollIntervalMsCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x.... 0x....      BL       ?Subroutine0
+    108            State *state = &states[emberGetCurrentNetwork()];
+    109            state->longPollIntervalMs = longPollIntervalMs;
+   \                     ??CrossCallReturnLabel_4:
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x6084             STR      R4,[R0, #+8]
+    110          }
+   \   00000010   0xBD10             POP      {R4,PC}          ;; return
+    111          
+
+   \                                 In section .text, align 2, keep-with-next
+    112          void emberAfSetLongPollIntervalQsCallback(int32u longPollIntervalQs)
+    113          {
+    114            emberAfSetLongPollIntervalMsCallback(longPollIntervalQs
+    115                                                 * MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \                     emberAfSetLongPollIntervalQsCallback:
+   \   00000000   0x0200             LSLS     R0,R0,#+8
+   \   00000002   0x....             B.N      emberAfSetLongPollIntervalMsCallback
+    116          }
+    117          
+
+   \                                 In section .text, align 2, keep-with-next
+    118          int16u emberAfGetShortPollIntervalMsCallback(void)
+    119          {
+   \                     emberAfGetShortPollIntervalMsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    120            State *state = &states[emberGetCurrentNetwork()];
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+    121            return state->shortPollIntervalMs;
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x8980             LDRH     R0,[R0, #+12]
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+    122          }
+    123          
+
+   \                                 In section .text, align 2, keep-with-next
+    124          int16u emberAfGetShortPollIntervalQsCallback(void)
+    125          {
+   \                     emberAfGetShortPollIntervalQsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    126            return (emberAfGetShortPollIntervalMsCallback()
+    127                    / MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \   00000002   0x.... 0x....      BL       emberAfGetShortPollIntervalMsCallback
+   \   00000006   0x0A00             LSRS     R0,R0,#+8
+   \   00000008   0xBD02             POP      {R1,PC}          ;; return
+    128          }
+    129          
+
+   \                                 In section .text, align 2, keep-with-next
+    130          void emberAfSetShortPollIntervalMsCallback(int16u shortPollIntervalMs)
+    131          {
+   \                     emberAfSetShortPollIntervalMsCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x.... 0x....      BL       ?Subroutine0
+    132            State *state = &states[emberGetCurrentNetwork()];
+    133            state->shortPollIntervalMs = shortPollIntervalMs;
+   \                     ??CrossCallReturnLabel_3:
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x8184             STRH     R4,[R0, #+12]
+    134          }
+   \   00000010   0xBD10             POP      {R4,PC}          ;; return
+    135          
+
+   \                                 In section .text, align 2, keep-with-next
+    136          void emberAfSetShortPollIntervalQsCallback(int16u shortPollIntervalQs)
+    137          {
+    138            emberAfSetShortPollIntervalMsCallback(shortPollIntervalQs
+    139                                                  * MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \                     emberAfSetShortPollIntervalQsCallback:
+   \   00000000   0x0600             LSLS     R0,R0,#+24
+   \   00000002   0x0C00             LSRS     R0,R0,#+16
+   \   00000004   0x....             B.N      emberAfSetShortPollIntervalMsCallback
+    140          }
+    141          
+    142          #ifdef EZSP_HOST
+    143            #define emberOkToLongPoll() TRUE
+    144          #endif
+    145          
+
+   \                                 In section .text, align 2, keep-with-next
+    146          int32u emberAfGetCurrentPollIntervalMsCallback(void)
+    147          {
+    148            if (emAfCurrentNetwork->type == EM_AF_NETWORK_TYPE_ZIGBEE_PRO
+    149                && EMBER_SLEEPY_END_DEVICE <= emAfCurrentNetwork->variant.pro.nodeType) {
+   \                     emberAfGetCurrentPollIntervalMsCallback:
+   \   00000000   0x....             LDR.N    R0,??DataTable15_1
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0x7801             LDRB     R1,[R0, #+0]
+   \   00000006   0x2900             CMP      R1,#+0
+   \   00000008   0xBF18             IT       NE 
+   \   0000000A   0x.... 0x....      BNE.W    emberAfGetLongPollIntervalMsCallback
+   \   0000000E   0xB510             PUSH     {R4,LR}
+   \   00000010   0x7840             LDRB     R0,[R0, #+1]
+   \   00000012   0x2804             CMP      R0,#+4
+   \   00000014   0xD31F             BCC.N    ??emberAfGetCurrentPollIntervalMsCallback_0
+    150              State *state = &states[emberGetCurrentNetwork()];
+   \   00000016   0x.... 0x....      BL       emberGetCurrentNetwork
+   \   0000001A   0x2114             MOVS     R1,#+20
+   \   0000001C   0x....             LDR.N    R2,??DataTable15
+   \   0000001E   0xFB01 0x2400      MLA      R4,R1,R0,R2
+    151              if (elapsedTimeInt16u(state->lastAppTaskScheduleTime,
+    152                                    halCommonGetInt16uMillisecondTick())
+    153                  > state->wakeTimeoutMs) {
+   \   00000022   0x.... 0x....      BL       halCommonGetInt16uMillisecondTick
+   \   00000026   0x89E1             LDRH     R1,[R4, #+14]
+   \   00000028   0x8A22             LDRH     R2,[R4, #+16]
+   \   0000002A   0x1A80             SUBS     R0,R0,R2
+   \   0000002C   0xB280             UXTH     R0,R0
+   \   0000002E   0x4281             CMP      R1,R0
+   \   00000030   0xD203             BCS.N    ??emberAfGetCurrentPollIntervalMsCallback_1
+    154                state->currentAppTasks &= ~state->wakeTimeoutBitmask;
+   \   00000032   0x6820             LDR      R0,[R4, #+0]
+   \   00000034   0x6861             LDR      R1,[R4, #+4]
+   \   00000036   0x4388             BICS     R0,R0,R1
+   \   00000038   0x6020             STR      R0,[R4, #+0]
+    155              }
+    156              if (!emberOkToLongPoll()
+    157                  || state->currentAppTasks != 0
+    158                  || emberAfGetCurrentPollControlCallback() == EMBER_AF_SHORT_POLL) {
+   \                     ??emberAfGetCurrentPollIntervalMsCallback_1:
+   \   0000003A   0x.... 0x....      BL       emberPendingAckedMessages
+   \   0000003E   0x2800             CMP      R0,#+0
+   \   00000040   0xBF04             ITT      EQ 
+   \   00000042   0x6820             LDREQ    R0,[R4, #+0]
+   \   00000044   0x2800             CMPEQ    R0,#+0
+   \   00000046   0xD103             BNE.N    ??emberAfGetCurrentPollIntervalMsCallback_2
+   \   00000048   0x.... 0x....      BL       emberAfGetCurrentPollControlCallback
+   \   0000004C   0x2801             CMP      R0,#+1
+   \   0000004E   0xD102             BNE.N    ??emberAfGetCurrentPollIntervalMsCallback_0
+    159                return emberAfGetShortPollIntervalMsCallback();
+   \                     ??emberAfGetCurrentPollIntervalMsCallback_2:
+   \   00000050   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000054   0x....             B.N      emberAfGetShortPollIntervalMsCallback
+    160              }
+    161            }
+    162            return emberAfGetLongPollIntervalMsCallback();
+   \                     ??emberAfGetCurrentPollIntervalMsCallback_0:
+   \   00000056   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000005A   0x....             B.N      emberAfGetLongPollIntervalMsCallback
+    163          }
+    164          
+
+   \                                 In section .text, align 2, keep-with-next
+    165          int32u emberAfGetCurrentPollIntervalQsCallback(void)
+    166          {
+   \                     emberAfGetCurrentPollIntervalQsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    167            return (emberAfGetCurrentPollIntervalMsCallback()
+    168                    / MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \   00000002   0x.... 0x....      BL       emberAfGetCurrentPollIntervalMsCallback
+   \   00000006   0x0A00             LSRS     R0,R0,#+8
+   \   00000008   0xBD02             POP      {R1,PC}          ;; return
+    169          }
+    170          
+
+   \                                 In section .text, align 2, keep-with-next
+    171          int16u emberAfGetWakeTimeoutMsCallback(void)
+    172          {
+   \                     emberAfGetWakeTimeoutMsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    173            State *state = &states[emberGetCurrentNetwork()];
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+    174            return state->wakeTimeoutMs;
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x89C0             LDRH     R0,[R0, #+14]
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+    175          }
+    176          
+
+   \                                 In section .text, align 2, keep-with-next
+    177          int16u emberAfGetWakeTimeoutQsCallback(void)
+    178          {
+   \                     emberAfGetWakeTimeoutQsCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    179            return (emberAfGetWakeTimeoutMsCallback()
+    180                    / MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \   00000002   0x.... 0x....      BL       emberAfGetWakeTimeoutMsCallback
+   \   00000006   0x0A00             LSRS     R0,R0,#+8
+   \   00000008   0xBD02             POP      {R1,PC}          ;; return
+    181          }
+    182          
+
+   \                                 In section .text, align 2, keep-with-next
+    183          void emberAfSetWakeTimeoutMsCallback(int16u wakeTimeoutMs)
+    184          {
+   \                     emberAfSetWakeTimeoutMsCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x.... 0x....      BL       ?Subroutine0
+    185            State *state = &states[emberGetCurrentNetwork()];
+    186            state->wakeTimeoutMs = wakeTimeoutMs;
+   \                     ??CrossCallReturnLabel_2:
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x81C4             STRH     R4,[R0, #+14]
+    187          }
+   \   00000010   0xBD10             POP      {R4,PC}          ;; return
+    188          
+
+   \                                 In section .text, align 2, keep-with-next
+    189          void emberAfSetWakeTimeoutQsCallback(int16u wakeTimeoutQs)
+    190          {
+    191            emberAfSetWakeTimeoutMsCallback(wakeTimeoutQs
+    192                                            * MILLISECOND_TICKS_PER_QUARTERSECOND);
+   \                     emberAfSetWakeTimeoutQsCallback:
+   \   00000000   0x0600             LSLS     R0,R0,#+24
+   \   00000002   0x0C00             LSRS     R0,R0,#+16
+   \   00000004   0x....             B.N      emberAfSetWakeTimeoutMsCallback
+    193          }
+    194          
+
+   \                                 In section .text, align 2, keep-with-next
+    195          EmberAfApplicationTask emberAfGetWakeTimeoutBitmaskCallback(void)
+    196          {
+   \                     emberAfGetWakeTimeoutBitmaskCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    197            State *state = &states[emberGetCurrentNetwork()];
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+    198            return state->wakeTimeoutBitmask;
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x6840             LDR      R0,[R0, #+4]
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+    199          }
+    200          
+
+   \                                 In section .text, align 2, keep-with-next
+    201          void emberAfSetWakeTimeoutBitmaskCallback(EmberAfApplicationTask tasks)
+    202          {
+   \                     emberAfSetWakeTimeoutBitmaskCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x.... 0x....      BL       ?Subroutine0
+    203            State *state = &states[emberGetCurrentNetwork()];
+    204            state->wakeTimeoutBitmask = tasks;
+   \                     ??CrossCallReturnLabel_1:
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x6044             STR      R4,[R0, #+4]
+    205          }
+   \   00000010   0xBD10             POP      {R4,PC}          ;; return
+    206          
+
+   \                                 In section .text, align 2, keep-with-next
+    207          EmberAfEventPollControl emberAfGetCurrentPollControlCallback(void)
+    208          {
+   \                     emberAfGetCurrentPollControlCallback:
+   \   00000000   0xE92D 0x43F8      PUSH     {R3-R9,LR}
+    209            int8u networkIndex = emberGetCurrentNetwork();
+   \   00000004   0x.... 0x....      BL       emberGetCurrentNetwork
+   \   00000008   0x4680             MOV      R8,R0
+    210            EmberAfEventPollControl pollControl = states[networkIndex].pollControl;
+   \   0000000A   0x2014             MOVS     R0,#+20
+   \   0000000C   0x....             LDR.N    R1,??DataTable15
+   \   0000000E   0xFB00 0x1008      MLA      R0,R0,R8,R1
+   \   00000012   0x7C85             LDRB     R5,[R0, #+18]
+    211          #ifdef EMBER_AF_GENERATED_EVENT_CONTEXT
+    212            int8u i;
+    213            for (i = 0; i < emAfAppEventContextLength; i++) {
+   \   00000014   0x2600             MOVS     R6,#+0
+   \   00000016   0x.... 0x....      LDR.W    R9,??DataTable15_2
+   \   0000001A   0x....             LDR.N    R4,??DataTable15_3
+   \   0000001C   0xE010             B.N      ??emberAfGetCurrentPollControlCallback_0
+    214              EmberAfEventContext *context = &emAfAppEventContext[i];
+   \                     ??emberAfGetCurrentPollControlCallback_1:
+   \   0000001E   0xB2F6             UXTB     R6,R6
+   \   00000020   0x200C             MOVS     R0,#+12
+   \   00000022   0xFB00 0x9706      MLA      R7,R0,R6,R9
+    215              if (networkIndex == emberAfNetworkIndexFromEndpoint(context->endpoint)
+    216                  && emberEventControlGetActive(*context->eventControl)
+    217                  && pollControl < context->pollControl) {
+   \   00000026   0x7838             LDRB     R0,[R7, #+0]
+   \   00000028   0x.... 0x....      BL       emberAfNetworkIndexFromEndpoint
+   \   0000002C   0x4580             CMP      R8,R0
+   \   0000002E   0xD106             BNE.N    ??emberAfGetCurrentPollControlCallback_2
+   \   00000030   0x68B8             LDR      R0,[R7, #+8]
+   \   00000032   0x7800             LDRB     R0,[R0, #+0]
+   \   00000034   0xB118             CBZ.N    R0,??emberAfGetCurrentPollControlCallback_2
+   \   00000036   0x7978             LDRB     R0,[R7, #+5]
+   \   00000038   0x4285             CMP      R5,R0
+   \   0000003A   0xBF38             IT       CC 
+   \   0000003C   0x4605             MOVCC    R5,R0
+    218                pollControl = context->pollControl;
+    219              }
+    220            }
+   \                     ??emberAfGetCurrentPollControlCallback_2:
+   \   0000003E   0x1C76             ADDS     R6,R6,#+1
+   \                     ??emberAfGetCurrentPollControlCallback_0:
+   \   00000040   0xB2F0             UXTB     R0,R6
+   \   00000042   0x8821             LDRH     R1,[R4, #+0]
+   \   00000044   0x4288             CMP      R0,R1
+   \   00000046   0xD3EA             BCC.N    ??emberAfGetCurrentPollControlCallback_1
+    221          #endif
+    222            return pollControl;
+   \   00000048   0x4628             MOV      R0,R5
+   \   0000004A   0xE8BD 0x83F2      POP      {R1,R4-R9,PC}    ;; return
+    223          }
+    224          
+
+   \                                 In section .text, align 2, keep-with-next
+    225          EmberAfEventPollControl emberAfGetDefaultPollControlCallback(void)
+    226          {
+   \                     emberAfGetDefaultPollControlCallback:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    227            State *state = &states[emberGetCurrentNetwork()];
+   \   00000002   0x.... 0x....      BL       emberGetCurrentNetwork
+    228            return state->pollControl;
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x7C80             LDRB     R0,[R0, #+18]
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+    229          }
+    230          
+
+   \                                 In section .text, align 2, keep-with-next
+    231          void emberAfSetDefaultPollControlCallback(EmberAfEventPollControl pollControl)
+    232          {
+   \                     emberAfSetDefaultPollControlCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x.... 0x....      BL       ?Subroutine0
+    233            State *state = &states[emberGetCurrentNetwork()];
+    234            state->pollControl = pollControl;
+   \                     ??CrossCallReturnLabel_0:
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x....             LDR.N    R2,??DataTable15
+   \   0000000A   0xFB01 0x2000      MLA      R0,R1,R0,R2
+   \   0000000E   0x7484             STRB     R4,[R0, #+18]
+    235          }
+   \   00000010   0xBD10             POP      {R4,PC}          ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable15:
+   \   00000000   0x........         DC32     states
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable15_1:
+   \   00000000   0x........         DC32     emAfCurrentNetwork
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable15_2:
+   \   00000000   0x........         DC32     emAfAppEventContext
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable15_3:
+   \   00000000   0x........         DC32     emAfAppEventContextLength
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       16  emberAfAddToCurrentAppTasksCallback
+             16 -> emberGetCurrentNetwork
+             16 -> halCommonGetInt16uMillisecondTick
+        8  emberAfGetCurrentAppTasksCallback
+              8 -> emberGetCurrentNetwork
+       32  emberAfGetCurrentPollControlCallback
+             32 -> emberAfNetworkIndexFromEndpoint
+             32 -> emberGetCurrentNetwork
+        8  emberAfGetCurrentPollIntervalMsCallback
+              8 -> emberAfGetCurrentPollControlCallback
+              0 -> emberAfGetLongPollIntervalMsCallback
+              0 -> emberAfGetShortPollIntervalMsCallback
+              8 -> emberGetCurrentNetwork
+              8 -> emberPendingAckedMessages
+              8 -> halCommonGetInt16uMillisecondTick
+        8  emberAfGetCurrentPollIntervalQsCallback
+              8 -> emberAfGetCurrentPollIntervalMsCallback
+        8  emberAfGetDefaultPollControlCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfGetLongPollIntervalMsCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfGetLongPollIntervalQsCallback
+              8 -> emberAfGetLongPollIntervalMsCallback
+        8  emberAfGetShortPollIntervalMsCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfGetShortPollIntervalQsCallback
+              8 -> emberAfGetShortPollIntervalMsCallback
+        8  emberAfGetWakeTimeoutBitmaskCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfGetWakeTimeoutMsCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfGetWakeTimeoutQsCallback
+              8 -> emberAfGetWakeTimeoutMsCallback
+        0  emberAfPluginEndDeviceSupportInitCallback
+        8  emberAfRemoveFromCurrentAppTasksCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfSetDefaultPollControlCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfSetLongPollIntervalMsCallback
+              8 -> emberGetCurrentNetwork
+        0  emberAfSetLongPollIntervalQsCallback
+              0 -> emberAfSetLongPollIntervalMsCallback
+        8  emberAfSetShortPollIntervalMsCallback
+              8 -> emberGetCurrentNetwork
+        0  emberAfSetShortPollIntervalQsCallback
+              0 -> emberAfSetShortPollIntervalMsCallback
+        8  emberAfSetWakeTimeoutBitmaskCallback
+              8 -> emberGetCurrentNetwork
+        8  emberAfSetWakeTimeoutMsCallback
+              8 -> emberGetCurrentNetwork
+        0  emberAfSetWakeTimeoutQsCallback
+              0 -> emberAfSetWakeTimeoutMsCallback
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable15
+       4  ??DataTable15_1
+       4  ??DataTable15_2
+       4  ??DataTable15_3
+       6  ?Subroutine0
+       1  emAfEnablePollCompletedCallback
+      50  emberAfAddToCurrentAppTasksCallback
+      18  emberAfGetCurrentAppTasksCallback
+      78  emberAfGetCurrentPollControlCallback
+      92  emberAfGetCurrentPollIntervalMsCallback
+      10  emberAfGetCurrentPollIntervalQsCallback
+      18  emberAfGetDefaultPollControlCallback
+      18  emberAfGetLongPollIntervalMsCallback
+      10  emberAfGetLongPollIntervalQsCallback
+      18  emberAfGetShortPollIntervalMsCallback
+      10  emberAfGetShortPollIntervalQsCallback
+      18  emberAfGetWakeTimeoutBitmaskCallback
+      18  emberAfGetWakeTimeoutMsCallback
+      10  emberAfGetWakeTimeoutQsCallback
+      50  emberAfPluginEndDeviceSupportInitCallback
+      22  emberAfRemoveFromCurrentAppTasksCallback
+      18  emberAfSetDefaultPollControlCallback
+      18  emberAfSetLongPollIntervalMsCallback
+       4  emberAfSetLongPollIntervalQsCallback
+      18  emberAfSetShortPollIntervalMsCallback
+       6  emberAfSetShortPollIntervalQsCallback
+      18  emberAfSetWakeTimeoutBitmaskCallback
+      18  emberAfSetWakeTimeoutMsCallback
+       6  emberAfSetWakeTimeoutQsCallback
+      20  states
+
+ 
+  21 bytes in section .bss
+ 568 bytes in section .text
+ 
+ 568 bytes of CODE memory
+  21 bytes of DATA memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,188 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:40 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\address-table-management.c                   #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\address-table-management.c -D                #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"address-table-management.c\"" -lC   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\bui #
+#                    lder\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\app\builder\DoorSensor_SM6011\..\..\..\ -I           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \address-table-management.lst                            #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \address-table-management.o                              #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\address-table\address-table-management.c
+      1          // *****************************************************************************
+      2          // * address-table-management.c
+      3          // *
+      4          // * This code provides support for managing the address table.
+      5          // *
+      6          // * Copyright 2012 by Ember Corporation. All rights reserved.              *80*
+      7          // *****************************************************************************
+      8          
+      9          #include "app/framework/include/af.h"
+     10          #include "address-table-management.h"
+     11          
+
+   \                                 In section .text, align 2, keep-with-next
+     12          EmberStatus emberAfSendUnicastToEui64(EmberEUI64 destination,
+     13                                                EmberApsFrame *apsFrame,
+     14                                                int16u messageLength,
+     15                                                int8u *message)
+     16          {
+   \                     emberAfSendUnicastToEui64:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0xB082             SUB      SP,SP,#+8
+   \   00000004   0x460C             MOV      R4,R1
+   \   00000006   0x4615             MOV      R5,R2
+   \   00000008   0x461E             MOV      R6,R3
+     17            int8u index = emberAfPluginAddressTableLookupByEui64(destination);
+   \   0000000A   0x.... 0x....      BL       emberAfPluginAddressTableLookupByEui64
+     18          
+     19            if (index == EMBER_NULL_ADDRESS_TABLE_INDEX)
+   \   0000000E   0x28FF             CMP      R0,#+255
+   \   00000010   0xD101             BNE.N    ??emberAfSendUnicastToEui64_0
+     20              return EMBER_INVALID_CALL;
+   \   00000012   0x2070             MOVS     R0,#+112
+   \   00000014   0xBD76             POP      {R1,R2,R4-R6,PC}
+     21          
+     22            return emberAfSendUnicast(EMBER_OUTGOING_VIA_ADDRESS_TABLE,
+     23                                      index,
+     24                                      apsFrame,
+     25                                      messageLength,
+     26                                      message);
+   \                     ??emberAfSendUnicastToEui64_0:
+   \   00000016   0x9600             STR      R6,[SP, #+0]
+   \   00000018   0x462B             MOV      R3,R5
+   \   0000001A   0x4622             MOV      R2,R4
+   \   0000001C   0x4601             MOV      R1,R0
+   \   0000001E   0x2001             MOVS     R0,#+1
+   \   00000020   0x.... 0x....      BL       emberAfSendUnicast
+   \   00000024   0xBD76             POP      {R1,R2,R4-R6,PC}  ;; return
+     27          }
+     28          
+
+   \                                 In section .text, align 2, keep-with-next
+     29          EmberStatus emberAfSendCommandUnicastToEui64(EmberEUI64 destination)
+     30          {
+     31            return emberAfSendUnicastToEui64(destination,
+     32                                             emAfCommandApsFrame,
+     33                                             *emAfResponseLengthPtr,
+     34                                             emAfZclBuffer);
+   \                     emberAfSendCommandUnicastToEui64:
+   \   00000000   0x....             LDR.N    R1,??DataTable0
+   \   00000002   0x680B             LDR      R3,[R1, #+0]
+   \   00000004   0x....             LDR.N    R1,??DataTable0_1
+   \   00000006   0x6809             LDR      R1,[R1, #+0]
+   \   00000008   0x880A             LDRH     R2,[R1, #+0]
+   \   0000000A   0x....             LDR.N    R1,??DataTable0_2
+   \   0000000C   0x6809             LDR      R1,[R1, #+0]
+   \   0000000E   0x....             B.N      emberAfSendUnicastToEui64
+     35          }
+     36          
+
+   \                                 In section .text, align 2, keep-with-next
+     37          EmberStatus emberAfGetCurrentSenderEui64(EmberEUI64 address)
+     38          {
+   \                     emberAfGetCurrentSenderEui64:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     39            int8u index = emberAfGetAddressIndex();
+   \   00000004   0x.... 0x....      BL       emberAfGetAddressIndex
+     40            if (index == EMBER_NULL_ADDRESS_TABLE_INDEX)
+   \   00000008   0x28FF             CMP      R0,#+255
+   \   0000000A   0xD101             BNE.N    ??emberAfGetCurrentSenderEui64_0
+     41              return EMBER_INVALID_CALL;
+   \   0000000C   0x2070             MOVS     R0,#+112
+   \   0000000E   0xBD10             POP      {R4,PC}
+     42            else {
+     43              return emberAfPluginAddressTableLookupByIndex(index, address);
+   \                     ??emberAfGetCurrentSenderEui64_0:
+   \   00000010   0x4621             MOV      R1,R4
+   \   00000012   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000016   0x.... 0x....      B.W      emberAfPluginAddressTableLookupByIndex
+     44            }
+     45          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable0:
+   \   00000000   0x........         DC32     emAfZclBuffer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable0_1:
+   \   00000000   0x........         DC32     emAfResponseLengthPtr
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable0_2:
+   \   00000000   0x........         DC32     emAfCommandApsFrame
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emberAfGetCurrentSenderEui64
+              8 -> emberAfGetAddressIndex
+              0 -> emberAfPluginAddressTableLookupByIndex
+        0  emberAfSendCommandUnicastToEui64
+              0 -> emberAfSendUnicastToEui64
+       24  emberAfSendUnicastToEui64
+             24 -> emberAfPluginAddressTableLookupByEui64
+             24 -> emberAfSendUnicast
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable0
+       4  ??DataTable0_1
+       4  ??DataTable0_2
+      26  emberAfGetCurrentSenderEui64
+      16  emberAfSendCommandUnicastToEui64
+      38  emberAfSendUnicastToEui64
+
+ 
+ 92 bytes in section .text
+ 
+ 92 bytes of CODE memory
+
+Errors: none
+Warnings: none

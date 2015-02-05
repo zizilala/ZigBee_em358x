@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<callback prefix="emberAf" postfix="Callback">
+  <function id="EZ_MODE_CLIENT_COMPLETE" name="Client Complete" returnType="void">
+    <description> 
+      This function is called by the EZ-Mode Commissioning plugin when client commissioning completes.
+    </description>
+    <arg name="bindingIndex" type="int8u" description="The binding index that was created or ::EMBER_NULL_BINDING if an error occurred." />
+    <codeForStub />
+  </function>
+</callback>

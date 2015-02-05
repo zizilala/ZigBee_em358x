@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<cli>
+  <group id="ias-zone-server" name="Plugin Commands: IAS Zone Server">
+    <description>This plugin provides a set of CLI commands for managing the local IAS Zone server.</description>
+  </group>
+</cli>

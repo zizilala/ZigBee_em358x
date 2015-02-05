@@ -1,0 +1,241 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:41 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\DoorSensor_SM6011_callbacks.c                     #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\DoorSensor_SM6011_callbacks.c -D                  #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"DoorSensor_SM6011_callbacks.c\""    #
+#                    -lC C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM #
+#                    6011\ --diag_suppress Pa050 -o                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --debug --endian=little --cpu=Cortex-M3 -e --fpu=None  #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.4\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\D #
+#                    oorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\ap #
+#                    p\builder\DoorSensor_SM6011\ -I                          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \DoorSensor_SM6011_callbacks.lst                         #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \DoorSensor_SM6011_callbacks.o                           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_SM6011\DoorSensor_SM6011_callbacks.c
+      1          //
+      2          
+      3          // This callback file is created for your convenience. You may add application
+      4          // code to this file. If you regenerate this file over a previous version, the
+      5          // previous version will be overwritten and any code you have added will be
+      6          // lost.
+      7          
+      8          #include "app/framework/include/af.h"
+      9          
+     10          // Typedef
+     11          typedef enum
+     12          {
+     13                E_STATE_INIT = 0,
+     14                E_STATE_SCANNING,
+     15                E_STATE_RUNNING
+     16          }te_EmberState;
+     17          
+     18          // Variable of Golbal
+     19          //static boolean toggleLED1 = TRUE;
+     20          static int8u emberState = E_STATE_INIT;
+     21          
+     22          
+
+   \                                 In section .text, align 2, keep-with-next
+     23          void emberAfMainInitCallback(void)   
+     24          {
+     25              //static int16u lastBlinkTime = 0;
+     26              //int16u newTime;
+     27             
+     28              //emberSerialPrintf(">>Using UART 1 running emberAfMainInitCallback()<<\r\n"); 
+     29              emberAfCorePrint(">>Running emberAfMainInitCallback()<<\r\n");      //By Ray 150120
+   \                     emberAfMainInitCallback:
+   \   00000000   0x.... 0x....      ADR.W    R1,`?<Constant ">>Running emberAfMain...">`
+   \   00000004   0x2001             MOVS     R0,#+1
+   \   00000006   0x.... 0x....      B.W      emberAfPrint
+     30          
+     31              if(emberState == E_STATE_INIT){
+     32          
+     33              }
+     34          
+     35              //newTime = halCommonGetInt16uMillisecondTick();
+     36          
+     37                //every 500ms to check LED if needed to toggle
+     38          //    if( toggleLED1 && elapsedTimeInt16u(lastBlinkTime, newTime) > 500 /*ms*/) 
+     39          //    {
+     40          //        halToggleLed(BOARDLED1);
+     41          //        lastBlinkTime = newTime;
+     42          //    }
+     43          }
+     44          
+     45          //	void emberAfHalButtonIsrCallback(int8u button, int8u state)
+     46          //	{ 
+     47          //	    boolean bSend = FALSE;
+     48          //	    //int value;
+     49          //	    EmberNodeType nodeType; 
+     50          //	    EmberNetworkParameters netParameters;
+     51          //	    
+     52          //	    EmberStatus status = emberAfGetNetworkParameters(&nodeType, &netParameters); 
+     53          //	
+     54          //	    if(button == BUTTON0){  //BUTTON0 is TAMPER_SW By Ray 150122
+     55          //	        emberAfCorePrint(">> BUTTON0 is TAMPER_SW By Ray <<\r\n");
+     56          //	        bSend = TRUE;        
+     57          //	    }else if(button == BUTTON1){ //BUTTON1 is MAGNETIC_SW By Ray 150122
+     58          //	        emberAfCorePrint(">> BUTTON1 is MAGNETIC_SW By Ray <<\r\n");
+     59          //	        bSend = TRUE; 
+     60          //	    }
+     61          //	
+     62          //	    
+     63          //	    if(bSend){
+     64          //	        emberAfCorePrint(">>channel [%d] pwr [%d] panID [0x%2x]<<\r\n",
+     65          //	                            netParameters.radioChannel,
+     66          //	                            netParameters.radioTxPower,
+     67          //	                            netParameters.panId
+     68          //	                           );
+     69          //	    }
+     70          //	}
+     71          
+     72          
+     73          /** @brief Finished
+     74           *
+     75           * This callback is fired when the network-find plugin is finished with the
+     76           * forming or joining process.  The result of the operation will be returned in
+     77           * the status parameter.
+     78           *
+     79           * @param status   Ver.: always
+     80           */
+
+   \                                 In section .text, align 2, keep-with-next
+     81          void emberAfPluginNetworkFindFinishedCallback(EmberStatus status)
+     82          {
+     83          }
+   \                     emberAfPluginNetworkFindFinishedCallback:
+   \   00000000   0x4770             BX       LR               ;; return
+     84          
+     85          /** @brief Get Radio Power For Channel
+     86           *
+     87           * This callback is called by the framework when it is setting the radio power
+     88           * during the discovery process. The framework will set the radio power
+     89           * depending on what is returned by this callback.
+     90           *
+     91           * @param channel   Ver.: always
+     92           */
+
+   \                                 In section .text, align 2, keep-with-next
+     93          int8s emberAfPluginNetworkFindGetRadioPowerForChannelCallback(int8u channel)
+     94          {
+     95            return EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_POWER;
+   \                     emberAfPluginNetworkFindGetRadioPowerForChannelCallback:
+   \   00000000   0x2003             MOVS     R0,#+3
+   \   00000002   0x4770             BX       LR               ;; return
+     96          }
+     97          
+     98          /** @brief Join
+     99           *
+    100           * This callback is called by the plugin when a joinable network has been found.
+    101           *  If the application returns TRUE, the plugin will attempt to join the
+    102           * network.  Otherwise, the plugin will ignore the network and continue
+    103           * searching.  Applications can use this callback to implement a network
+    104           * blacklist.
+    105           *
+    106           * @param networkFound   Ver.: always
+    107           * @param lqi   Ver.: always
+    108           * @param rssi   Ver.: always
+    109           */
+
+   \                                 In section .text, align 2, keep-with-next
+    110          boolean emberAfPluginNetworkFindJoinCallback(EmberZigbeeNetwork * networkFound,
+    111                                                       int8u lqi,
+    112                                                       int8s rssi)
+    113          {
+    114            return TRUE;
+   \                     emberAfPluginNetworkFindJoinCallback:
+   \   00000000   0x2001             MOVS     R0,#+1
+   \   00000002   0x4770             BX       LR               ;; return
+    115          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant ">>Running emberAfMain...">`:
+   \   00000000   0x3E 0x3E          DC8 ">>Running emberAfMainInitCallback()<<\015\012"
+   \              0x52 0x75    
+   \              0x6E 0x6E    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x65 0x6D    
+   \              0x62 0x65    
+   \              0x72 0x41    
+   \              0x66 0x4D    
+   \              0x61 0x69    
+   \              0x6E 0x49    
+   \              0x6E 0x69    
+   \              0x74 0x43    
+   \              0x61 0x6C    
+   \              0x6C 0x62    
+   \              0x61 0x63    
+   \              0x6B 0x28    
+   \              0x29 0x3C    
+   \              0x3C 0x0D    
+   \              0x0A 0x00    
+    116          
+    117          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        0  emberAfMainInitCallback
+             0 -> emberAfPrint
+        0  emberAfPluginNetworkFindFinishedCallback
+        0  emberAfPluginNetworkFindGetRadioPowerForChannelCallback
+        0  emberAfPluginNetworkFindJoinCallback
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      40  ?<Constant ">>Running emberAfMain...">
+      10  emberAfMainInitCallback
+       2  emberAfPluginNetworkFindFinishedCallback
+       4  emberAfPluginNetworkFindGetRadioPowerForChannelCallback
+       4  emberAfPluginNetworkFindJoinCallback
+
+ 
+ 60 bytes in section .text
+ 
+ 60 bytes of CODE memory
+
+Errors: none
+Warnings: none

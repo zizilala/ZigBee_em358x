@@ -1,0 +1,390 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:58 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    entify-feedback\identify-feedback.c                      #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    entify-feedback\identify-feedback.c -D                   #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"identify-feedback.c\"" -lC          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    entify-feedback\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \identify-feedback.lst                                   #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \identify-feedback.o                                     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\identify-feedback\identify-feedback.c
+      1          // *******************************************************************
+      2          // * identify-feedback.c
+      3          // *
+      4          // *
+      5          // * Copyright 2012 by Ember Corporation. All rights reserved.              *80*
+      6          // *******************************************************************
+      7          
+      8          // this file contains all the common includes for clusters in the util
+      9          #include "app/framework/include/af.h"
+     10          
+     11          #include "app/framework/util/common.h"
+     12          #if !defined(EZSP_HOST)
+     13          #include "hal/hal.h"
+     14          #endif // !defined(EZSP_HOST)
+     15          
+
+   \                                 In section .bss, align 4
+     16          static boolean identifyTable[EMBER_AF_IDENTIFY_CLUSTER_SERVER_ENDPOINT_COUNT];
+   \                     identifyTable:
+   \   00000000                      DS8 1
+   \   00000001                      DS8 3
+     17          
+     18          EmberEventControl emberAfPluginIdentifyFeedbackProvideFeedbackEventControl;
+   \                     emberAfPluginIdentifyFeedbackProvideFeedbackEventControl:
+   \   00000004                      DS8 8
+     19          
+     20          void emberAfPluginIdentifyFeedbackProvideFeedbackEventHandler(void);
+     21          
+
+   \                                 In section .text, align 2, keep-with-next
+     22          void emberAfPluginIdentifyFeedbackProvideFeedbackEventHandler(void)
+     23          {
+   \                     emberAfPluginIdentifyFeedbackProvideFeedbackEventHandler:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     24          #if !defined(EZSP_HOST)
+     25          #ifdef EMBER_AF_PLUGIN_IDENTIFY_FEEDBACK_LED_FEEDBACK
+     26            halToggleLed(BOARDLED0);
+   \   00000002   0x2006             MOVS     R0,#+6
+   \   00000004   0x.... 0x....      BL       halToggleLed
+     27            halToggleLed(BOARDLED1);
+   \   00000008   0x2017             MOVS     R0,#+23
+   \   0000000A   0x.... 0x....      BL       halToggleLed
+     28            halToggleLed(BOARDLED2);
+   \   0000000E   0x2015             MOVS     R0,#+21
+   \   00000010   0x.... 0x....      BL       halToggleLed
+     29            halToggleLed(BOARDLED3);
+   \   00000014   0x2015             MOVS     R0,#+21
+   \   00000016   0x.... 0x....      BL       halToggleLed
+     30          #endif // EMBER_AF_PLUGIN_IDENTIFY_FEEDBACK_LED_FEEDBACK
+     31          
+     32          #ifdef EMBER_AF_PLUGIN_IDENTIFY_FEEDBACK_BUZZER_FEEDBACK
+     33            halStackIndicatePresence();
+     34          #endif // EMBER_AF_PLUGIN_IDENTIFY_FEEDBACK_BUZZER_FEEDBACK
+     35          #endif
+     36          
+     37            emberEventControlSetDelayMS(emberAfPluginIdentifyFeedbackProvideFeedbackEventControl,
+     38                                        MILLISECOND_TICKS_PER_SECOND);
+   \   0000001A   0xF44F 0x6180      MOV      R1,#+1024
+   \   0000001E   0x....             LDR.N    R0,??DataTable6
+   \   00000020   0xE8BD 0x4004      POP      {R2,LR}
+   \   00000024   0x.... 0x....      B.W      emEventControlSetDelayMS
+     39          }
+     40          
+
+   \                                 In section .text, align 2, keep-with-next
+     41          void emberAfPluginIdentifyStartFeedbackCallback(int8u endpoint,
+     42                                                          int16u identifyTime)
+     43          {
+   \                     emberAfPluginIdentifyStartFeedbackCallback:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0x4604             MOV      R4,R0
+   \   00000004   0x460D             MOV      R5,R1
+     44            int8u ep = emberAfFindClusterServerEndpointIndex(endpoint, ZCL_IDENTIFY_CLUSTER_ID);
+   \   00000006   0x2103             MOVS     R1,#+3
+   \   00000008   0x.... 0x....      BL       emberAfFindClusterServerEndpointIndex
+   \   0000000C   0x4606             MOV      R6,R0
+     45          
+     46            if(ep == 0xFF) {
+   \   0000000E   0x2EFF             CMP      R6,#+255
+   \   00000010   0xD107             BNE.N    ??emberAfPluginIdentifyStartFeedbackCallback_0
+     47              emberAfIdentifyClusterPrintln("ERR: invalid endpoint supplied for identification.");
+   \   00000012   0x.... 0x....      ADR.W    R1,`?<Constant "ERR: invalid endpoint...">`
+   \   00000016   0xF44F 0x7090      MOV      R0,#+288
+   \   0000001A   0xE8BD 0x4070      POP      {R4-R6,LR}
+   \   0000001E   0x.... 0x....      B.W      emberAfPrintln
+     48              return;
+     49            }
+     50          
+     51            emberAfIdentifyClusterPrintln("Starting identifying on endpoint 0x%x, identify time is %d sec", 
+     52                                          endpoint, 
+     53                                          identifyTime);
+   \                     ??emberAfPluginIdentifyStartFeedbackCallback_0:
+   \   00000022   0x462B             MOV      R3,R5
+   \   00000024   0x4622             MOV      R2,R4
+   \   00000026   0x.... 0x....      ADR.W    R1,`?<Constant "Starting identifying ...">`
+   \   0000002A   0xF44F 0x7090      MOV      R0,#+288
+   \   0000002E   0x.... 0x....      BL       emberAfPrintln
+     54          
+     55            identifyTable[ep] = TRUE;
+   \   00000032   0x....             LDR.N    R0,??DataTable6_1
+   \   00000034   0x2101             MOVS     R1,#+1
+   \   00000036   0x5431             STRB     R1,[R6, R0]
+     56            emberEventControlSetDelayMS(emberAfPluginIdentifyFeedbackProvideFeedbackEventControl,
+     57                                        MILLISECOND_TICKS_PER_SECOND);
+   \   00000038   0xF44F 0x6180      MOV      R1,#+1024
+   \   0000003C   0x1D00             ADDS     R0,R0,#+4
+   \   0000003E   0xE8BD 0x4070      POP      {R4-R6,LR}
+   \   00000042   0x.... 0x....      B.W      emEventControlSetDelayMS
+     58          }
+     59          
+
+   \                                 In section .text, align 2, keep-with-next
+     60          void emberAfPluginIdentifyStopFeedbackCallback(int8u endpoint)
+     61          {
+   \                     emberAfPluginIdentifyStopFeedbackCallback:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     62            int8u ep = emberAfFindClusterServerEndpointIndex(endpoint, ZCL_IDENTIFY_CLUSTER_ID);
+   \   00000004   0x2103             MOVS     R1,#+3
+   \   00000006   0x.... 0x....      BL       emberAfFindClusterServerEndpointIndex
+   \   0000000A   0x4605             MOV      R5,R0
+     63            int8u i;
+     64          
+     65            if(ep == 0xFF) {
+   \   0000000C   0x2DFF             CMP      R5,#+255
+   \   0000000E   0xD107             BNE.N    ??emberAfPluginIdentifyStopFeedbackCallback_0
+     66              emberAfIdentifyClusterPrintln("ERR: invalid endpoint supplied for identification.");
+   \   00000010   0x.... 0x....      ADR.W    R1,`?<Constant "ERR: invalid endpoint...">`
+   \   00000014   0xF44F 0x7090      MOV      R0,#+288
+   \   00000018   0xE8BD 0x4034      POP      {R2,R4,R5,LR}
+   \   0000001C   0x.... 0x....      B.W      emberAfPrintln
+     67              return;
+     68            }
+     69          
+     70            emberAfIdentifyClusterPrintln("Stopping identifying on endpoint 0x%x", endpoint);
+   \                     ??emberAfPluginIdentifyStopFeedbackCallback_0:
+   \   00000020   0x4622             MOV      R2,R4
+   \   00000022   0x.... 0x....      ADR.W    R1,`?<Constant "Stopping identifying ...">`
+   \   00000026   0xF44F 0x7090      MOV      R0,#+288
+   \   0000002A   0x.... 0x....      BL       emberAfPrintln
+     71          
+     72            identifyTable[ep] = FALSE;
+   \   0000002E   0x....             LDR.N    R4,??DataTable6_1
+   \   00000030   0x2000             MOVS     R0,#+0
+   \   00000032   0x5528             STRB     R0,[R5, R4]
+     73          
+     74            for(i = 0; i < EMBER_AF_IDENTIFY_CLUSTER_SERVER_ENDPOINT_COUNT; i++) {
+     75              if(identifyTable[i]) {
+   \   00000034   0x7820             LDRB     R0,[R4, #+0]
+   \   00000036   0xB938             CBNZ.N   R0,??emberAfPluginIdentifyStopFeedbackCallback_1
+     76                return;
+     77              }
+     78            }
+     79          
+     80            emberAfIdentifyClusterPrintln("No endpoints identifying; stopping identification feedback.");
+   \   00000038   0x.... 0x....      ADR.W    R1,`?<Constant "No endpoints identify...">`
+   \   0000003C   0xF44F 0x7090      MOV      R0,#+288
+   \   00000040   0x.... 0x....      BL       emberAfPrintln
+     81            emberEventControlSetInactive(emberAfPluginIdentifyFeedbackProvideFeedbackEventControl);
+   \   00000044   0x2000             MOVS     R0,#+0
+   \   00000046   0x7120             STRB     R0,[R4, #+4]
+     82          }
+   \                     ??emberAfPluginIdentifyStopFeedbackCallback_1:
+   \   00000048   0xBD31             POP      {R0,R4,R5,PC}    ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6:
+   \   00000000   0x........         DC32     identifyTable+0x4
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_1:
+   \   00000000   0x........         DC32     identifyTable
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "ERR: invalid endpoint...">`:
+   \   00000000   0x45 0x52          DC8 45H, 52H, 52H, 3AH, 20H, 69H, 6EH, 76H
+   \              0x52 0x3A    
+   \              0x20 0x69    
+   \              0x6E 0x76    
+   \   00000008   0x61 0x6C          DC8 61H, 6CH, 69H, 64H, 20H, 65H, 6EH, 64H
+   \              0x69 0x64    
+   \              0x20 0x65    
+   \              0x6E 0x64    
+   \   00000010   0x70 0x6F          DC8 70H, 6FH, 69H, 6EH, 74H, 20H, 73H, 75H
+   \              0x69 0x6E    
+   \              0x74 0x20    
+   \              0x73 0x75    
+   \   00000018   0x70 0x70          DC8 70H, 70H, 6CH, 69H, 65H, 64H, 20H, 66H
+   \              0x6C 0x69    
+   \              0x65 0x64    
+   \              0x20 0x66    
+   \   00000020   0x6F 0x72          DC8 6FH, 72H, 20H, 69H, 64H, 65H, 6EH, 74H
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \   00000028   0x69 0x66          DC8 69H, 66H, 69H, 63H, 61H, 74H, 69H, 6FH
+   \              0x69 0x63    
+   \              0x61 0x74    
+   \              0x69 0x6F    
+   \   00000030   0x6E 0x2E          DC8 6EH, 2EH, 0
+   \              0x00         
+   \   00000033   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Starting identifying ...">`:
+   \   00000000   0x53 0x74          DC8 53H, 74H, 61H, 72H, 74H, 69H, 6EH, 67H
+   \              0x61 0x72    
+   \              0x74 0x69    
+   \              0x6E 0x67    
+   \   00000008   0x20 0x69          DC8 20H, 69H, 64H, 65H, 6EH, 74H, 69H, 66H
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \   00000010   0x79 0x69          DC8 79H, 69H, 6EH, 67H, 20H, 6FH, 6EH, 20H
+   \              0x6E 0x67    
+   \              0x20 0x6F    
+   \              0x6E 0x20    
+   \   00000018   0x65 0x6E          DC8 65H, 6EH, 64H, 70H, 6FH, 69H, 6EH, 74H
+   \              0x64 0x70    
+   \              0x6F 0x69    
+   \              0x6E 0x74    
+   \   00000020   0x20 0x30          DC8 20H, 30H, 78H, 25H, 78H, 2CH, 20H, 69H
+   \              0x78 0x25    
+   \              0x78 0x2C    
+   \              0x20 0x69    
+   \   00000028   0x64 0x65          DC8 64H, 65H, 6EH, 74H, 69H, 66H, 79H, 20H
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \              0x79 0x20    
+   \   00000030   0x74 0x69          DC8 74H, 69H, 6DH, 65H, 20H, 69H, 73H, 20H
+   \              0x6D 0x65    
+   \              0x20 0x69    
+   \              0x73 0x20    
+   \   00000038   0x25 0x64          DC8 25H, 64H, 20H, 73H, 65H, 63H, 0
+   \              0x20 0x73    
+   \              0x65 0x63    
+   \              0x00         
+   \   0000003F   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Stopping identifying ...">`:
+   \   00000000   0x53 0x74          DC8 "Stopping identifying on endpoint 0x%x"
+   \              0x6F 0x70    
+   \              0x70 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \              0x79 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x6F    
+   \              0x6E 0x20    
+   \              0x65 0x6E    
+   \              0x64 0x70    
+   \              0x6F 0x69    
+   \              0x6E 0x74    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x00    
+   \   00000026   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "No endpoints identify...">`:
+   \   00000000   0x4E 0x6F          DC8 4EH, 6FH, 20H, 65H, 6EH, 64H, 70H, 6FH
+   \              0x20 0x65    
+   \              0x6E 0x64    
+   \              0x70 0x6F    
+   \   00000008   0x69 0x6E          DC8 69H, 6EH, 74H, 73H, 20H, 69H, 64H, 65H
+   \              0x74 0x73    
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \   00000010   0x6E 0x74          DC8 6EH, 74H, 69H, 66H, 79H, 69H, 6EH, 67H
+   \              0x69 0x66    
+   \              0x79 0x69    
+   \              0x6E 0x67    
+   \   00000018   0x3B 0x20          DC8 3BH, 20H, 73H, 74H, 6FH, 70H, 70H, 69H
+   \              0x73 0x74    
+   \              0x6F 0x70    
+   \              0x70 0x69    
+   \   00000020   0x6E 0x67          DC8 6EH, 67H, 20H, 69H, 64H, 65H, 6EH, 74H
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \   00000028   0x69 0x66          DC8 69H, 66H, 69H, 63H, 61H, 74H, 69H, 6FH
+   \              0x69 0x63    
+   \              0x61 0x74    
+   \              0x69 0x6F    
+   \   00000030   0x6E 0x20          DC8 6EH, 20H, 66H, 65H, 65H, 64H, 62H, 61H
+   \              0x66 0x65    
+   \              0x65 0x64    
+   \              0x62 0x61    
+   \   00000038   0x63 0x6B          DC8 63H, 6BH, 2EH, 0
+   \              0x2E 0x00    
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emberAfPluginIdentifyFeedbackProvideFeedbackEventHandler
+              0 -> emEventControlSetDelayMS
+              8 -> halToggleLed
+       16  emberAfPluginIdentifyStartFeedbackCallback
+              0 -> emEventControlSetDelayMS
+             16 -> emberAfFindClusterServerEndpointIndex
+              0 -> emberAfPrintln
+             16 -> emberAfPrintln
+       16  emberAfPluginIdentifyStopFeedbackCallback
+             16 -> emberAfFindClusterServerEndpointIndex
+              0 -> emberAfPrintln
+             16 -> emberAfPrintln
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      52  ?<Constant "ERR: invalid endpoint...">
+      60  ?<Constant "No endpoints identify...">
+      64  ?<Constant "Starting identifying ...">
+      40  ?<Constant "Stopping identifying ...">
+       4  ??DataTable6
+       4  ??DataTable6_1
+      40  emberAfPluginIdentifyFeedbackProvideFeedbackEventHandler
+      70  emberAfPluginIdentifyStartFeedbackCallback
+      74  emberAfPluginIdentifyStopFeedbackCallback
+      12  identifyTable
+          emberAfPluginIdentifyFeedbackProvideFeedbackEventControl
+
+ 
+  12 bytes in section .bss
+ 408 bytes in section .text
+ 
+ 408 bytes of CODE memory
+  12 bytes of DATA memory
+
+Errors: none
+Warnings: none

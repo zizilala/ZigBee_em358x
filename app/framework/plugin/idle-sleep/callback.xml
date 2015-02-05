@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<callback prefix="emberAf" postfix="Callback">
+  <function id="OK_TO_SLEEP" name="Ok To Sleep" returnType="boolean">
+    <description>
+      This function is called by the Idle/Sleep plugin before sleeping.  The application should return TRUE if the device may sleep or FALSE otherwise.
+    </description>
+    <arg name="durationMs" type="int32u" description="The maximum duration in milliseconds that the device will sleep." />
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>
+  <function id="WAKE_UP" name="Wake Up" returnType="void">
+    <description>
+      This function is called by the Idle/Sleep plugin after sleeping.
+    </description>
+    <arg name="durationMs" type="int32u" description="The duration in milliseconds that the device slept." />
+    <codeForStub />
+  </function>
+  <function id="OK_TO_IDLE" name="Ok To Idle" returnType="boolean">
+    <description>
+      This function is called by the Idle/Sleep plugin before idling.  The application should return TRUE if the device may idle or FALSE otherwise.
+    </description>
+    <codeForStub>
+      return TRUE;
+    </codeForStub>
+  </function>
+  <function id="ACTIVE" name="Active" returnType="void">
+    <description>
+      This function is called by the Idle/Sleep plugin after idling.
+    </description>
+    <codeForStub />
+  </function>
+</callback>

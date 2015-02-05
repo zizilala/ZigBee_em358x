@@ -1,0 +1,633 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:50 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ee #
+#                    prom\eeprom-cli.c                                        #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ee #
+#                    prom\eeprom-cli.c -D "GENERATED_TOKEN_HEADER=\"app/build #
+#                    er/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D    #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"eeprom-cli.c\"" -lC                 #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ee #
+#                    prom\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\Do #
+#                    orSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\ -I                  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \eeprom-cli.lst                                          #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \eeprom-cli.o                                            #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\eeprom\eeprom-cli.c
+      1          // eeprom-cli.c
+      2          
+      3          #include PLATFORM_HEADER     // Micro and compiler specific typedefs and macros
+      4          
+      5          #include "app/framework/include/af.h"
+      6          #include "app/framework/plugin/eeprom/eeprom.h"
+      7          
+      8          
+      9          //------------------------------------------------------------------------------
+     10          // Globals
+     11          
+     12          #define DATA_BLOCK 64
+     13          
+     14          #if !defined(EMBER_AF_GENERATE_CLI)
+     15          
+     16          void emAfEepromDataPrintCommand(void);
+     17          void emAfEepromStatusCommand(void);
+     18          void emAfEepromInfoCommand(void);
+     19          
+     20          PGM_P pluginEepromDataPrintCommandArguments[] = {
+     21            "The offset within the EEPROM to print.",
+     22            NULL
+     23          };
+     24          
+     25          EmberCommandEntry emberAfPluginEepromCommands[] = {
+     26            emberCommandEntryActionWithDetails("data-print", emAfEepromDataPrintCommand, "w", "Print raw bytes stored in the EEPROM", pluginEepromDataPrintCommandArguments),
+     27            emberCommandEntryActionWithDetails("status", emAfEepromStatusCommand, "", "Print the state of the EEPROM driver.", NULL),
+     28            emberCommandEntryActionWithDetails("info", emAfEepromInfoCommand, "", "Print detailed info about the EEPROM part.", NULL),
+     29            emberCommandEntryTerminator()
+     30          };
+     31          #endif
+     32          
+     33          //------------------------------------------------------------------------------
+     34          
+     35          
+
+   \                                 In section .text, align 2, keep-with-next
+     36          void emAfEepromDataPrintCommand(void)
+     37          {
+   \                     emAfEepromDataPrintCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB090             SUB      SP,SP,#+64
+     38            int32u offset = emberUnsignedCommandArgument(0);
+   \   00000004   0x2000             MOVS     R0,#+0
+   \   00000006   0x.... 0x....      BL       emberUnsignedCommandArgument
+   \   0000000A   0x4604             MOV      R4,R0
+     39            int8u data[DATA_BLOCK];
+     40            int8u status = emberAfPluginEepromRead(offset, data, DATA_BLOCK);
+   \   0000000C   0x2240             MOVS     R2,#+64
+   \   0000000E   0xA900             ADD      R1,SP,#+0
+   \   00000010   0x.... 0x....      BL       emberAfPluginEepromRead
+     41          
+     42            if (status) {
+   \   00000014   0xB138             CBZ.N    R0,??emAfEepromDataPrintCommand_0
+     43            	emberAfCorePrintln("Error:  Failed to read from EEPROM at 0x%4X, status: %d",
+     44            		                 offset,
+     45            		                 status);
+   \   00000016   0x4603             MOV      R3,R0
+   \   00000018   0x4622             MOV      R2,R4
+   \   0000001A   0x.... 0x....      ADR.W    R1,`?<Constant "Error:  Failed to rea...">`
+   \   0000001E   0x2001             MOVS     R0,#+1
+   \   00000020   0x.... 0x....      BL       emberAfPrintln
+     46            	return;
+   \   00000024   0xE004             B.N      ??emAfEepromDataPrintCommand_1
+     47            }
+     48          
+     49            emberAfPrint8ByteBlocks(DATA_BLOCK >> 3,
+     50                                    data,
+     51                                    TRUE); // CR between blocks?
+   \                     ??emAfEepromDataPrintCommand_0:
+   \   00000026   0x2201             MOVS     R2,#+1
+   \   00000028   0xA900             ADD      R1,SP,#+0
+   \   0000002A   0x2008             MOVS     R0,#+8
+   \   0000002C   0x.... 0x....      BL       emberAfPrint8ByteBlocks
+     52          }
+   \                     ??emAfEepromDataPrintCommand_1:
+   \   00000030   0xB010             ADD      SP,SP,#+64
+   \   00000032   0xBD10             POP      {R4,PC}          ;; return
+     53          
+
+   \                                 In section .text, align 2, keep-with-next
+     54          void emAfEepromStatusCommand(void)
+     55          {
+   \                     emAfEepromStatusCommand:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+     56          	int8u i;
+     57            emberAfCorePrintln("EEPROM Initialized: %c",
+     58                               (emAfIsEepromInitialized()
+     59                                ? 'y' 
+     60                                : 'n'));
+   \   00000002   0x.... 0x....      BL       emAfIsEepromInitialized
+   \   00000006   0x2800             CMP      R0,#+0
+   \   00000008   0xBF14             ITE      NE 
+   \   0000000A   0x2279             MOVNE    R2,#+121
+   \   0000000C   0x226E             MOVEQ    R2,#+110
+   \   0000000E   0x.... 0x....      ADR.W    R1,`?<Constant "EEPROM Initialized: %c">`
+   \   00000012   0x.... 0x....      BL       ?Subroutine0
+     61            // NOTE:  Calling emberAfPluginEepromBusy() will actually initialize the
+     62            // EEPROM, so we avoid triggering a side-effect during this 'status' command.
+     63            emberAfCorePrintln("EEPROM Busy: %c",
+     64                               (!emAfIsEepromInitialized()
+     65                                ? '?'
+     66                                : (emberAfPluginEepromBusy() 
+     67                                   ? 'y' 
+     68                                   : 'n')));
+   \                     ??CrossCallReturnLabel_8:
+   \   00000016   0x.... 0x....      BL       emAfIsEepromInitialized
+   \   0000001A   0xB908             CBNZ.N   R0,??emAfEepromStatusCommand_0
+   \   0000001C   0x223F             MOVS     R2,#+63
+   \   0000001E   0xE005             B.N      ??emAfEepromStatusCommand_1
+   \                     ??emAfEepromStatusCommand_0:
+   \   00000020   0x.... 0x....      BL       emberAfPluginEepromBusy
+   \   00000024   0x2800             CMP      R0,#+0
+   \   00000026   0xBF14             ITE      NE 
+   \   00000028   0x2279             MOVNE    R2,#+121
+   \   0000002A   0x226E             MOVEQ    R2,#+110
+   \                     ??emAfEepromStatusCommand_1:
+   \   0000002C   0x.... 0x....      ADR.W    R1,`?<Constant "EEPROM Busy: %c">`
+   \   00000030   0x.... 0x....      BL       ?Subroutine0
+     69            emberAfCorePrintln("Partial Word Storage Count: %d",
+     70                            		EMBER_AF_PLUGIN_EEPROM_PARTIAL_WORD_STORAGE_COUNT);
+   \                     ??CrossCallReturnLabel_7:
+   \   00000034   0x2202             MOVS     R2,#+2
+   \   00000036   0x.... 0x....      ADR.W    R1,`?<Constant "Partial Word Storage ...">`
+   \   0000003A   0x.... 0x....      BL       ?Subroutine0
+     71          
+     72            for (i = 0; i < EMBER_AF_PLUGIN_EEPROM_PARTIAL_WORD_STORAGE_COUNT; i++) {
+   \                     ??CrossCallReturnLabel_6:
+   \   0000003E   0x.... 0x....      ADR.W    R4,`?<Constant "Address: 0x%4X, Parti...">`
+   \   00000042   0x....             LDR.N    R5,??DataTable16
+     73              emberAfCorePrintln("Address: 0x%4X, Partial Word: 0x%X", 
+     74                                 emAfEepromSavedPartialWrites[i].address,
+     75                                 emAfEepromSavedPartialWrites[i].data);
+   \   00000044   0x792B             LDRB     R3,[R5, #+4]
+   \   00000046   0x682A             LDR      R2,[R5, #+0]
+   \   00000048   0x4621             MOV      R1,R4
+   \   0000004A   0x2001             MOVS     R0,#+1
+   \   0000004C   0x.... 0x....      BL       emberAfPrintln
+   \   00000050   0x7B2B             LDRB     R3,[R5, #+12]
+   \   00000052   0x68AA             LDR      R2,[R5, #+8]
+   \   00000054   0x4621             MOV      R1,R4
+   \   00000056   0x2001             MOVS     R0,#+1
+   \   00000058   0xB001             ADD      SP,SP,#+4
+   \   0000005A   0xE8BD 0x4030      POP      {R4,R5,LR}
+   \   0000005E   0x.... 0x....      B.W      emberAfPrintln
+     76            }
+     77          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x2001             MOVS     R0,#+1
+   \   00000002   0x.... 0x....      B.W      emberAfPrintln
+     78          
+
+   \                                 In section .text, align 2, keep-with-next
+     79          void emAfEepromInfoCommand(void)
+     80          {
+   \                     emAfEepromInfoCommand:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+     81            const HalEepromInformationType* part = emberAfPluginEepromInfo();
+   \   00000002   0x.... 0x....      BL       emberAfPluginEepromInfo
+   \   00000006   0x4604             MOV      R4,R0
+     82            emberAfCorePrintln("\nEEPROM Info");
+   \   00000008   0x.... 0x....      ADR.W    R1,`?<Constant "\\nEEPROM Info">`
+   \   0000000C   0x2001             MOVS     R0,#+1
+   \   0000000E   0x.... 0x....      BL       emberAfPrintln
+     83            if (part == NULL) {
+   \   00000012   0xB934             CBNZ.N   R4,??emAfEepromInfoCommand_0
+     84              emberAfCorePrintln("Not available (older bootloader)"); 
+   \   00000014   0x.... 0x....      ADR.W    R1,`?<Constant "Not available (older ...">`
+   \   00000018   0x2001             MOVS     R0,#+1
+   \   0000001A   0xE8BD 0x4070      POP      {R4-R6,LR}
+   \   0000001E   0x.... 0x....      B.W      emberAfPrintln
+     85            } else {
+     86              int8u wordSize = emberAfPluginEepromGetWordSize();
+   \                     ??emAfEepromInfoCommand_0:
+   \   00000022   0x.... 0x....      BL       emberAfPluginEepromGetWordSize
+   \   00000026   0x4605             MOV      R5,R0
+     87              boolean confirmedWordSize = FALSE;
+   \   00000028   0x2600             MOVS     R6,#+0
+     88              if (part->version >= EEPROM_INFO_MIN_VERSION_WITH_WORD_SIZE_SUPPORT) {
+   \   0000002A   0x8820             LDRH     R0,[R4, #+0]
+   \   0000002C   0xF5B0 0x7F81      CMP      R0,#+258
+   \   00000030   0xBF28             IT       CS 
+   \   00000032   0x2601             MOVCS    R6,#+1
+     89                confirmedWordSize = TRUE;
+     90              }
+     91              emberAfCorePrintln("Part Description:          %p", part->partDescription);
+   \   00000034   0x6922             LDR      R2,[R4, #+16]
+   \   00000036   0x.... 0x....      ADR.W    R1,`?<Constant "Part Description:    ...">`
+   \   0000003A   0x.... 0x....      BL       ?Subroutine0
+     92              emberAfCorePrintln("Capabilities:              0x%2X", part->capabilitiesMask);
+   \                     ??CrossCallReturnLabel_5:
+   \   0000003E   0x8862             LDRH     R2,[R4, #+2]
+   \   00000040   0x.... 0x....      ADR.W    R1,`?<Constant "Capabilities:        ...">`
+   \   00000044   0x.... 0x....      BL       ?Subroutine0
+     93              emberAfCorePrintln("Page Erase time (ms):      %d", part->pageEraseMs);
+   \                     ??CrossCallReturnLabel_4:
+   \   00000048   0x88A2             LDRH     R2,[R4, #+4]
+   \   0000004A   0x.... 0x....      ADR.W    R1,`?<Constant "Page Erase time (ms):...">`
+   \   0000004E   0x.... 0x....      BL       ?Subroutine0
+     94              emberAfCorePrintln("Part Erase time (ms):      %d", part->partEraseMs);
+   \                     ??CrossCallReturnLabel_3:
+   \   00000052   0x88E2             LDRH     R2,[R4, #+6]
+   \   00000054   0x.... 0x....      ADR.W    R1,`?<Constant "Part Erase time (ms):...">`
+   \   00000058   0x.... 0x....      BL       ?Subroutine0
+     95              emberAfCorePrintln("Page size (bytes):         %l", part->pageSize);
+   \                     ??CrossCallReturnLabel_2:
+   \   0000005C   0x68A2             LDR      R2,[R4, #+8]
+   \   0000005E   0x.... 0x....      ADR.W    R1,`?<Constant "Page size (bytes):   ...">`
+   \   00000062   0x.... 0x....      BL       ?Subroutine0
+     96              emberAfCorePrintln("Part size (bytes):         %l", part->partSize);
+   \                     ??CrossCallReturnLabel_1:
+   \   00000066   0x68E2             LDR      R2,[R4, #+12]
+   \   00000068   0x.... 0x....      ADR.W    R1,`?<Constant "Part size (bytes):   ...">`
+   \   0000006C   0x.... 0x....      BL       ?Subroutine0
+     97              emberAfCorePrintln("Word size (bytes):         %d (%p)", 
+     98                         wordSize,
+     99                         (confirmedWordSize
+    100                          ? "confirmed" 
+    101                          : "assumed"));
+   \                     ??CrossCallReturnLabel_0:
+   \   00000070   0x2E00             CMP      R6,#+0
+   \   00000072   0xBF14             ITE      NE 
+   \   00000074   0x.... 0x....      ADRNE.W  R3,`?<Constant "confirmed">`
+   \   00000078   0x.... 0x....      ADREQ.W  R3,`?<Constant "assumed">`
+   \   0000007C   0x462A             MOV      R2,R5
+   \   0000007E   0x.... 0x....      ADR.W    R1,`?<Constant "Word size (bytes):   ...">`
+   \   00000082   0x2001             MOVS     R0,#+1
+   \   00000084   0xE8BD 0x4070      POP      {R4-R6,LR}
+   \   00000088   0x.... 0x....      B.W      emberAfPrintln
+    102            }
+    103          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable16:
+   \   00000000   0x........         DC32     emAfEepromSavedPartialWrites
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Error:  Failed to rea...">`:
+   \   00000000   0x45 0x72          DC8 45H, 72H, 72H, 6FH, 72H, 3AH, 20H, 20H
+   \              0x72 0x6F    
+   \              0x72 0x3A    
+   \              0x20 0x20    
+   \   00000008   0x46 0x61          DC8 46H, 61H, 69H, 6CH, 65H, 64H, 20H, 74H
+   \              0x69 0x6C    
+   \              0x65 0x64    
+   \              0x20 0x74    
+   \   00000010   0x6F 0x20          DC8 6FH, 20H, 72H, 65H, 61H, 64H, 20H, 66H
+   \              0x72 0x65    
+   \              0x61 0x64    
+   \              0x20 0x66    
+   \   00000018   0x72 0x6F          DC8 72H, 6FH, 6DH, 20H, 45H, 45H, 50H, 52H
+   \              0x6D 0x20    
+   \              0x45 0x45    
+   \              0x50 0x52    
+   \   00000020   0x4F 0x4D          DC8 4FH, 4DH, 20H, 61H, 74H, 20H, 30H, 78H
+   \              0x20 0x61    
+   \              0x74 0x20    
+   \              0x30 0x78    
+   \   00000028   0x25 0x34          DC8 25H, 34H, 58H, 2CH, 20H, 73H, 74H, 61H
+   \              0x58 0x2C    
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \   00000030   0x74 0x75          DC8 74H, 75H, 73H, 3AH, 20H, 25H, 64H, 0
+   \              0x73 0x3A    
+   \              0x20 0x25    
+   \              0x64 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "EEPROM Initialized: %c">`:
+   \   00000000   0x45 0x45          DC8 "EEPROM Initialized: %c"
+   \              0x50 0x52    
+   \              0x4F 0x4D    
+   \              0x20 0x49    
+   \              0x6E 0x69    
+   \              0x74 0x69    
+   \              0x61 0x6C    
+   \              0x69 0x7A    
+   \              0x65 0x64    
+   \              0x3A 0x20    
+   \              0x25 0x63    
+   \              0x00         
+   \   00000017   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "EEPROM Busy: %c">`:
+   \   00000000   0x45 0x45          DC8 "EEPROM Busy: %c"
+   \              0x50 0x52    
+   \              0x4F 0x4D    
+   \              0x20 0x42    
+   \              0x75 0x73    
+   \              0x79 0x3A    
+   \              0x20 0x25    
+   \              0x63 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Partial Word Storage ...">`:
+   \   00000000   0x50 0x61          DC8 "Partial Word Storage Count: %d"
+   \              0x72 0x74    
+   \              0x69 0x61    
+   \              0x6C 0x20    
+   \              0x57 0x6F    
+   \              0x72 0x64    
+   \              0x20 0x53    
+   \              0x74 0x6F    
+   \              0x72 0x61    
+   \              0x67 0x65    
+   \              0x20 0x43    
+   \              0x6F 0x75    
+   \              0x6E 0x74    
+   \              0x3A 0x20    
+   \              0x25 0x64    
+   \              0x00         
+   \   0000001F   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Address: 0x%4X, Parti...">`:
+   \   00000000   0x41 0x64          DC8 "Address: 0x%4X, Partial Word: 0x%X"
+   \              0x64 0x72    
+   \              0x65 0x73    
+   \              0x73 0x3A    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x34 0x58    
+   \              0x2C 0x20    
+   \              0x50 0x61    
+   \              0x72 0x74    
+   \              0x69 0x61    
+   \              0x6C 0x20    
+   \              0x57 0x6F    
+   \              0x72 0x64    
+   \              0x3A 0x20    
+   \              0x30 0x78    
+   \              0x25 0x58    
+   \              0x00         
+   \   00000023   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "\\nEEPROM Info">`:
+   \   00000000   0x0A 0x45          DC8 "\012EEPROM Info"
+   \              0x45 0x50    
+   \              0x52 0x4F    
+   \              0x4D 0x20    
+   \              0x49 0x6E    
+   \              0x66 0x6F    
+   \              0x00         
+   \   0000000D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Not available (older ...">`:
+   \   00000000   0x4E 0x6F          DC8 "Not available (older bootloader)"
+   \              0x74 0x20    
+   \              0x61 0x76    
+   \              0x61 0x69    
+   \              0x6C 0x61    
+   \              0x62 0x6C    
+   \              0x65 0x20    
+   \              0x28 0x6F    
+   \              0x6C 0x64    
+   \              0x65 0x72    
+   \              0x20 0x62    
+   \              0x6F 0x6F    
+   \              0x74 0x6C    
+   \              0x6F 0x61    
+   \              0x64 0x65    
+   \              0x72 0x29    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Part Description:    ...">`:
+   \   00000000   0x50 0x61          DC8 "Part Description:          %p"
+   \              0x72 0x74    
+   \              0x20 0x44    
+   \              0x65 0x73    
+   \              0x63 0x72    
+   \              0x69 0x70    
+   \              0x74 0x69    
+   \              0x6F 0x6E    
+   \              0x3A 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x25    
+   \              0x70 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Capabilities:        ...">`:
+   \   00000000   0x43 0x61          DC8 "Capabilities:              0x%2X"
+   \              0x70 0x61    
+   \              0x62 0x69    
+   \              0x6C 0x69    
+   \              0x74 0x69    
+   \              0x65 0x73    
+   \              0x3A 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x32 0x58    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Page Erase time (ms):...">`:
+   \   00000000   0x50 0x61          DC8 "Page Erase time (ms):      %d"
+   \              0x67 0x65    
+   \              0x20 0x45    
+   \              0x72 0x61    
+   \              0x73 0x65    
+   \              0x20 0x74    
+   \              0x69 0x6D    
+   \              0x65 0x20    
+   \              0x28 0x6D    
+   \              0x73 0x29    
+   \              0x3A 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x25    
+   \              0x64 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Part Erase time (ms):...">`:
+   \   00000000   0x50 0x61          DC8 "Part Erase time (ms):      %d"
+   \              0x72 0x74    
+   \              0x20 0x45    
+   \              0x72 0x61    
+   \              0x73 0x65    
+   \              0x20 0x74    
+   \              0x69 0x6D    
+   \              0x65 0x20    
+   \              0x28 0x6D    
+   \              0x73 0x29    
+   \              0x3A 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x25    
+   \              0x64 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Page size (bytes):   ...">`:
+   \   00000000   0x50 0x61          DC8 "Page size (bytes):         %l"
+   \              0x67 0x65    
+   \              0x20 0x73    
+   \              0x69 0x7A    
+   \              0x65 0x20    
+   \              0x28 0x62    
+   \              0x79 0x74    
+   \              0x65 0x73    
+   \              0x29 0x3A    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x25    
+   \              0x6C 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Part size (bytes):   ...">`:
+   \   00000000   0x50 0x61          DC8 "Part size (bytes):         %l"
+   \              0x72 0x74    
+   \              0x20 0x73    
+   \              0x69 0x7A    
+   \              0x65 0x20    
+   \              0x28 0x62    
+   \              0x79 0x74    
+   \              0x65 0x73    
+   \              0x29 0x3A    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x25    
+   \              0x6C 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Word size (bytes):   ...">`:
+   \   00000000   0x57 0x6F          DC8 "Word size (bytes):         %d (%p)"
+   \              0x72 0x64    
+   \              0x20 0x73    
+   \              0x69 0x7A    
+   \              0x65 0x20    
+   \              0x28 0x62    
+   \              0x79 0x74    
+   \              0x65 0x73    
+   \              0x29 0x3A    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x25    
+   \              0x64 0x20    
+   \              0x28 0x25    
+   \              0x70 0x29    
+   \              0x00         
+   \   00000023   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "confirmed">`:
+   \   00000000   0x63 0x6F          DC8 "confirmed"
+   \              0x6E 0x66    
+   \              0x69 0x72    
+   \              0x6D 0x65    
+   \              0x64 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "assumed">`:
+   \   00000000   0x61 0x73          DC8 "assumed"
+   \              0x73 0x75    
+   \              0x6D 0x65    
+   \              0x64 0x00    
+    104          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       72  emAfEepromDataPrintCommand
+             72 -> emberAfPluginEepromRead
+             72 -> emberAfPrint8ByteBlocks
+             72 -> emberAfPrintln
+             72 -> emberUnsignedCommandArgument
+       16  emAfEepromInfoCommand
+             16 -> emberAfPluginEepromGetWordSize
+             16 -> emberAfPluginEepromInfo
+              0 -> emberAfPrintln
+             16 -> emberAfPrintln
+       16  emAfEepromStatusCommand
+             16 -> emAfIsEepromInitialized
+             16 -> emberAfPluginEepromBusy
+              0 -> emberAfPrintln
+             16 -> emberAfPrintln
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      36  ?<Constant "Address: 0x%4X, Parti...">
+      36  ?<Constant "Capabilities:        ...">
+      16  ?<Constant "EEPROM Busy: %c">
+      24  ?<Constant "EEPROM Initialized: %c">
+      56  ?<Constant "Error:  Failed to rea...">
+      36  ?<Constant "Not available (older ...">
+      32  ?<Constant "Page Erase time (ms):...">
+      32  ?<Constant "Page size (bytes):   ...">
+      32  ?<Constant "Part Description:    ...">
+      32  ?<Constant "Part Erase time (ms):...">
+      32  ?<Constant "Part size (bytes):   ...">
+      32  ?<Constant "Partial Word Storage ...">
+      36  ?<Constant "Word size (bytes):   ...">
+      16  ?<Constant "\nEEPROM Info">
+       8  ?<Constant "assumed">
+      12  ?<Constant "confirmed">
+       4  ??DataTable16
+       6  ?Subroutine0
+      52  emAfEepromDataPrintCommand
+     140  emAfEepromInfoCommand
+      98  emAfEepromStatusCommand
+
+ 
+ 768 bytes in section .text
+ 
+ 768 bytes of CODE memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,249 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:38 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\address-table-soc.c                          #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\address-table-soc.c -D                       #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"address-table-soc.c\"" -lC          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\bui #
+#                    lder\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\app\builder\DoorSensor_SM6011\..\..\..\ -I           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \address-table-soc.lst                                   #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \address-table-soc.o                                     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\address-table\address-table-soc.c
+      1          // *****************************************************************************
+      2          // * address-table-soc.c
+      3          // *
+      4          // * This code provides support for managing the address table.
+      5          // *
+      6          // * Copyright 2012 by Ember Corporation. All rights reserved.              *80*
+      7          // *****************************************************************************
+      8          
+      9          #include "app/framework/include/af.h"
+     10          #include "address-table-management.h"
+     11          
+
+   \                                 In section .text, align 2, keep-with-next
+     12          void emberAfPluginAddressTableInitCallback(void)
+     13          {
+     14          }
+   \                     emberAfPluginAddressTableInitCallback:
+   \   00000000   0x4770             BX       LR               ;; return
+     15          
+
+   \                                 In section .text, align 2, keep-with-next
+     16          int8u emberAfPluginAddressTableAddEntry(EmberEUI64 entry)
+     17          {
+   \                     emberAfPluginAddressTableAddEntry:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     18            int8u index = emberAfPluginAddressTableLookupByEui64(entry);
+   \   00000004   0x.... 0x....      BL       emberAfPluginAddressTableLookupByEui64
+     19          
+     20            if (index != EMBER_NULL_ADDRESS_TABLE_INDEX)
+   \   00000008   0x28FF             CMP      R0,#+255
+   \   0000000A   0xD112             BNE.N    ??emberAfPluginAddressTableAddEntry_0
+     21              return index;
+     22          
+     23            for(index=0; index<EMBER_AF_PLUGIN_ADDRESS_TABLE_SIZE; index++){
+   \   0000000C   0x2500             MOVS     R5,#+0
+     24              if (emberGetAddressTableRemoteNodeId(index)
+     25                  == EMBER_TABLE_ENTRY_UNUSED_NODE_ID) {
+   \                     ??emberAfPluginAddressTableAddEntry_1:
+   \   0000000E   0x4628             MOV      R0,R5
+   \   00000010   0x.... 0x....      BL       emberGetAddressTableRemoteNodeId
+   \   00000014   0xF64F 0x71FF      MOVW     R1,#+65535
+   \   00000018   0x4288             CMP      R0,R1
+   \   0000001A   0xD105             BNE.N    ??emberAfPluginAddressTableAddEntry_2
+     26                emberSetAddressTableRemoteEui64(index, entry);
+   \   0000001C   0x4621             MOV      R1,R4
+   \   0000001E   0x4628             MOV      R0,R5
+   \   00000020   0x.... 0x....      BL       emberSetAddressTableRemoteEui64
+     27                return index;
+   \   00000024   0x4628             MOV      R0,R5
+   \   00000026   0xBD32             POP      {R1,R4,R5,PC}
+     28              }
+     29            }
+   \                     ??emberAfPluginAddressTableAddEntry_2:
+   \   00000028   0x1C6D             ADDS     R5,R5,#+1
+   \   0000002A   0xB2ED             UXTB     R5,R5
+   \   0000002C   0x2D02             CMP      R5,#+2
+   \   0000002E   0xD3EE             BCC.N    ??emberAfPluginAddressTableAddEntry_1
+     30          
+     31            return EMBER_NULL_ADDRESS_TABLE_INDEX;
+   \   00000030   0x20FF             MOVS     R0,#+255
+   \                     ??emberAfPluginAddressTableAddEntry_0:
+   \   00000032   0xBD32             POP      {R1,R4,R5,PC}    ;; return
+     32          }
+     33          
+
+   \                                 In section .text, align 2, keep-with-next
+     34          EmberStatus emberAfPluginAddressTableRemoveEntry(EmberEUI64 entry)
+     35          {
+   \                     emberAfPluginAddressTableRemoveEntry:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     36            int8u index = emberAfPluginAddressTableLookupByEui64(entry);
+   \   00000002   0x.... 0x....      BL       emberAfPluginAddressTableLookupByEui64
+     37          
+     38            if (index == EMBER_NULL_ADDRESS_TABLE_INDEX)
+   \   00000006   0x28FF             CMP      R0,#+255
+   \   00000008   0xD101             BNE.N    ??emberAfPluginAddressTableRemoveEntry_0
+     39              return EMBER_INVALID_CALL;
+   \   0000000A   0x2070             MOVS     R0,#+112
+   \   0000000C   0xBD02             POP      {R1,PC}
+     40          
+     41            emberSetAddressTableRemoteNodeId(index, EMBER_TABLE_ENTRY_UNUSED_NODE_ID);
+   \                     ??emberAfPluginAddressTableRemoveEntry_0:
+   \   0000000E   0xF64F 0x71FF      MOVW     R1,#+65535
+   \   00000012   0x.... 0x....      BL       emberSetAddressTableRemoteNodeId
+     42          
+     43            return EMBER_SUCCESS;
+   \   00000016   0x2000             MOVS     R0,#+0
+   \   00000018   0xBD02             POP      {R1,PC}          ;; return
+     44          }
+     45          
+
+   \                                 In section .text, align 2, keep-with-next
+     46          int8u emberAfPluginAddressTableLookupByEui64(EmberEUI64 entry)
+     47          {
+   \                     emberAfPluginAddressTableLookupByEui64:
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+   \   00000004   0x4604             MOV      R4,R0
+     48            int8u index;
+     49            for(index=0; index<EMBER_AF_PLUGIN_ADDRESS_TABLE_SIZE; index++) {
+   \   00000006   0x2500             MOVS     R5,#+0
+     50              EmberEUI64 temp;
+     51              emberGetAddressTableRemoteEui64(index, temp);
+   \                     ??emberAfPluginAddressTableLookupByEui64_0:
+   \   00000008   0xA900             ADD      R1,SP,#+0
+   \   0000000A   0x4628             MOV      R0,R5
+   \   0000000C   0x.... 0x....      BL       emberGetAddressTableRemoteEui64
+     52              if (MEMCOMPARE(entry, temp, EUI64_SIZE) == 0
+     53                  && emberGetAddressTableRemoteNodeId(index)
+     54                     != EMBER_TABLE_ENTRY_UNUSED_NODE_ID)
+   \   00000010   0x2208             MOVS     R2,#+8
+   \   00000012   0xA900             ADD      R1,SP,#+0
+   \   00000014   0x4620             MOV      R0,R4
+   \   00000016   0x.... 0x....      BL       halCommonMemCompare
+   \   0000001A   0xB940             CBNZ.N   R0,??emberAfPluginAddressTableLookupByEui64_1
+   \   0000001C   0x4628             MOV      R0,R5
+   \   0000001E   0x.... 0x....      BL       emberGetAddressTableRemoteNodeId
+   \   00000022   0xF64F 0x71FF      MOVW     R1,#+65535
+   \   00000026   0x4288             CMP      R0,R1
+   \   00000028   0xD001             BEQ.N    ??emberAfPluginAddressTableLookupByEui64_1
+     55                return index;
+   \   0000002A   0x4628             MOV      R0,R5
+   \   0000002C   0xBD3E             POP      {R1-R5,PC}
+     56            }
+   \                     ??emberAfPluginAddressTableLookupByEui64_1:
+   \   0000002E   0x1C6D             ADDS     R5,R5,#+1
+   \   00000030   0xB2ED             UXTB     R5,R5
+   \   00000032   0x2D02             CMP      R5,#+2
+   \   00000034   0xD3E8             BCC.N    ??emberAfPluginAddressTableLookupByEui64_0
+     57          
+     58            return EMBER_NULL_ADDRESS_TABLE_INDEX;
+   \   00000036   0x20FF             MOVS     R0,#+255
+   \   00000038   0xBD3E             POP      {R1-R5,PC}       ;; return
+     59          }
+     60          
+
+   \                                 In section .text, align 2, keep-with-next
+     61          EmberStatus emberAfPluginAddressTableLookupByIndex(int8u index,
+     62                                                             EmberEUI64 entry)
+     63          {
+   \                     emberAfPluginAddressTableLookupByIndex:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     64            if (index < EMBER_AF_PLUGIN_ADDRESS_TABLE_SIZE) {
+   \   00000002   0x2802             CMP      R0,#+2
+   \   00000004   0xD203             BCS.N    ??emberAfPluginAddressTableLookupByIndex_0
+     65              emberGetAddressTableRemoteEui64(index, entry);
+   \   00000006   0x.... 0x....      BL       emberGetAddressTableRemoteEui64
+     66              return EMBER_SUCCESS;
+   \   0000000A   0x2000             MOVS     R0,#+0
+   \   0000000C   0xBD02             POP      {R1,PC}
+     67            } else {
+     68              return EMBER_INVALID_CALL;
+   \                     ??emberAfPluginAddressTableLookupByIndex_0:
+   \   0000000E   0x2070             MOVS     R0,#+112
+   \   00000010   0xBD02             POP      {R1,PC}          ;; return
+     69            }
+     70          }
+     71          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       16  emberAfPluginAddressTableAddEntry
+             16 -> emberAfPluginAddressTableLookupByEui64
+             16 -> emberGetAddressTableRemoteNodeId
+             16 -> emberSetAddressTableRemoteEui64
+        0  emberAfPluginAddressTableInitCallback
+       24  emberAfPluginAddressTableLookupByEui64
+             24 -> emberGetAddressTableRemoteEui64
+             24 -> emberGetAddressTableRemoteNodeId
+             24 -> halCommonMemCompare
+        8  emberAfPluginAddressTableLookupByIndex
+              8 -> emberGetAddressTableRemoteEui64
+        8  emberAfPluginAddressTableRemoveEntry
+              8 -> emberAfPluginAddressTableLookupByEui64
+              8 -> emberSetAddressTableRemoteNodeId
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      52  emberAfPluginAddressTableAddEntry
+       2  emberAfPluginAddressTableInitCallback
+      58  emberAfPluginAddressTableLookupByEui64
+      18  emberAfPluginAddressTableLookupByIndex
+      26  emberAfPluginAddressTableRemoveEntry
+
+ 
+ 156 bytes in section .text
+ 
+ 156 bytes of CODE memory
+
+Errors: none
+Warnings: none

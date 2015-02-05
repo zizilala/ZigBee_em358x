@@ -1,0 +1,428 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:35 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    le-sleep\idle-sleep.c                                    #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    le-sleep\idle-sleep.c -D "GENERATED_TOKEN_HEADER=\"app/b #
+#                    uilder/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\""   #
+#                    -D "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D           #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"idle-sleep.c\"" -lC                 #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    le-sleep\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builde #
+#                    r\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\ -I              #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \idle-sleep.lst                                          #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \idle-sleep.o                                            #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\idle-sleep\idle-sleep.c
+      1          // Copyright 2013 Silicon Laboratories, Inc.
+      2          
+      3          #include "app/framework/include/af.h"
+      4          #include "app/framework/util/af-event.h"
+      5          #include "idle-sleep.h"
+      6          
+      7          #ifdef EZSP_HOST
+      8            #define MAX_SLEEP_VALUE_MS MAX_TIMER_MILLISECONDS_HOST
+      9          #else
+     10            #define MAX_SLEEP_VALUE_MS 0xFFFFFFFFUL
+     11          #endif
+     12          
+     13          #ifdef EMBER_AF_PLUGIN_IDLE_SLEEP_STAY_AWAKE_WHEN_NOT_JOINED
+     14            #define STAY_AWAKE_WHEN_NOT_JOINED_DEFAULT TRUE
+     15          #else
+     16            #define STAY_AWAKE_WHEN_NOT_JOINED_DEFAULT FALSE
+     17          #endif
+
+   \                                 In section .data, align 1
+     18          boolean emAfStayAwakeWhenNotJoined = STAY_AWAKE_WHEN_NOT_JOINED_DEFAULT;
+   \                     emAfStayAwakeWhenNotJoined:
+   \   00000000   0x01               DC8 1
+     19          
+     20          boolean emAfForceEndDeviceToStayAwake = FALSE;
+   \                     emAfForceEndDeviceToStayAwake:
+   \   00000001   0x00               DC8 0
+     21          
+     22          // NO PRINTFS.  This may be called in ISR context.
+
+   \                                 In section .text, align 2, keep-with-next
+     23          void emberAfForceEndDeviceToStayAwake(boolean stayAwake)
+     24          {
+     25            emAfForceEndDeviceToStayAwake = stayAwake;
+   \                     emberAfForceEndDeviceToStayAwake:
+   \   00000000   0x....             LDR.N    R1,??DataTable11
+   \   00000002   0x7048             STRB     R0,[R1, #+1]
+     26          }
+   \   00000004   0x4770             BX       LR               ;; return
+     27          
+     28          #ifdef EMBER_AF_PLUGIN_IDLE_SLEEP_USE_BUTTONS
+     29          void emberAfHalButtonIsrCallback(int8u button, int8u state)
+     30          {
+     31            if (state == BUTTON_PRESSED) {
+     32              emberAfForceEndDeviceToStayAwake(button == BUTTON0);
+     33            }
+     34          }
+     35          #endif
+     36          
+
+   \                                 In section .text, align 2, keep-with-next
+     37          void emAfPrintSleepDuration(int32u sleepDurationMS, int8u eventIndex)
+     38          {
+   \                     emAfPrintSleepDuration:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+   \   00000004   0x460D             MOV      R5,R1
+     39            emberAfDebugPrint("sleep ");
+   \   00000006   0x.... 0x....      ADR.W    R1,`?<Constant "sleep ">`
+   \   0000000A   0x2002             MOVS     R0,#+2
+   \   0000000C   0x.... 0x....      BL       emberAfPrint
+     40            if (sleepDurationMS == MAX_SLEEP_VALUE_MS) {
+   \   00000010   0xF114 0x0F01      CMN      R4,#+1
+   \   00000014   0xD105             BNE.N    ??emAfPrintSleepDuration_0
+     41              emberAfDebugPrintln("forever");
+   \   00000016   0x.... 0x....      ADR.W    R1,`?<Constant "forever">`
+   \   0000001A   0x2002             MOVS     R0,#+2
+   \   0000001C   0x.... 0x....      BL       emberAfPrintln
+   \   00000020   0xE00C             B.N      ??emAfPrintSleepDuration_1
+     42            } else {
+     43              emberAfDebugPrintln("%l ms (until %p Event)",
+     44                                  sleepDurationMS,
+     45                                  (eventIndex == 0xFF
+     46                                   ? "Stack"
+     47                                   : emAfEventStrings[eventIndex]));
+   \                     ??emAfPrintSleepDuration_0:
+   \   00000022   0x2DFF             CMP      R5,#+255
+   \   00000024   0xBF0E             ITEE     EQ 
+   \   00000026   0x.... 0x....      ADREQ.W  R3,`?<Constant "Stack">`
+   \   0000002A   0x....             LDRNE.N  R0,??DataTable11_1
+   \   0000002C   0xF850 0x3025      LDRNE    R3,[R0, R5, LSL #+2]
+   \   00000030   0x4622             MOV      R2,R4
+   \   00000032   0x.... 0x....      ADR.W    R1,`?<Constant "%l ms (until %p Event)">`
+   \   00000036   0x2002             MOVS     R0,#+2
+   \   00000038   0x.... 0x....      BL       emberAfPrintln
+     48            }
+     49          
+     50            // IMPORTANT:  At this point App Framework apps do blocking serial IO.
+     51            // This means that flush macros are no-ops and serial data is printed
+     52            // at the uart's rate.
+     53            // If there is serial data in the output queue prior to sleeping then we
+     54            // may inadvertently wake up unless we force the flush of the data here.
+     55            emberSerialWaitSend(APP_SERIAL);
+   \                     ??emAfPrintSleepDuration_1:
+   \   0000003C   0x2001             MOVS     R0,#+1
+   \   0000003E   0xE8BD 0x4032      POP      {R1,R4,R5,LR}
+   \   00000042   0x.... 0x....      B.W      emberSerialWaitSend
+     56          }
+     57          
+
+   \                                 In section .text, align 2, keep-with-next
+     58          void emAfPrintForceAwakeStatus(void)
+     59          {
+     60            if (emAfForceEndDeviceToStayAwake) {
+   \                     emAfPrintForceAwakeStatus:
+   \   00000000   0x....             LDR.N    R0,??DataTable11
+   \   00000002   0x7840             LDRB     R0,[R0, #+1]
+   \   00000004   0xB120             CBZ.N    R0,??emAfPrintForceAwakeStatus_0
+     61              emberAfDebugPrintln("Force to Stay awake: yes");
+   \   00000006   0x.... 0x....      ADR.W    R1,`?<Constant "Force to Stay awake: yes">`
+   \   0000000A   0x2002             MOVS     R0,#+2
+   \   0000000C   0x.... 0x....      B.W      emberAfPrintln
+     62            }
+     63          }
+   \                     ??emAfPrintForceAwakeStatus_0:
+   \   00000010   0x4770             BX       LR               ;; return
+     64          
+
+   \                                 In section .text, align 2, keep-with-next
+     65          boolean emAfOkToIdleOrSleep(void)
+     66          {
+   \                     emAfOkToIdleOrSleep:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     67            if (emAfForceEndDeviceToStayAwake) {
+   \   00000002   0x....             LDR.N    R0,??DataTable11
+   \   00000004   0x7841             LDRB     R1,[R0, #+1]
+   \   00000006   0xB9B9             CBNZ.N   R1,??emAfOkToIdleOrSleep_0
+     68              return FALSE;
+     69            }
+     70          
+     71            if (emAfStayAwakeWhenNotJoined) {
+   \   00000008   0x7800             LDRB     R0,[R0, #+0]
+   \   0000000A   0xB178             CBZ.N    R0,??emAfOkToIdleOrSleep_1
+     72              boolean awake = FALSE;
+   \   0000000C   0x2400             MOVS     R4,#+0
+     73              int8u i;
+     74              for (i = 0; !awake && i < EMBER_SUPPORTED_NETWORKS; i++) {
+   \   0000000E   0x2000             MOVS     R0,#+0
+   \   00000010   0xE009             B.N      ??emAfOkToIdleOrSleep_2
+     75                emberAfPushNetworkIndex(i);
+   \                     ??emAfOkToIdleOrSleep_3:
+   \   00000012   0x.... 0x....      BL       emberAfPushNetworkIndex
+     76                awake = (emberAfNetworkState() != EMBER_JOINED_NETWORK);
+   \   00000016   0x.... 0x....      BL       emberAfNetworkState
+   \   0000001A   0x2802             CMP      R0,#+2
+   \   0000001C   0xBF18             IT       NE 
+   \   0000001E   0x2401             MOVNE    R4,#+1
+     77                emberAfPopNetworkIndex();
+   \   00000020   0x.... 0x....      BL       emberAfPopNetworkIndex
+     78              }
+   \   00000024   0x2001             MOVS     R0,#+1
+   \                     ??emAfOkToIdleOrSleep_2:
+   \   00000026   0x4320             ORRS     R0,R0,R4
+   \   00000028   0xD0F3             BEQ.N    ??emAfOkToIdleOrSleep_3
+     79              if (awake) {
+   \   0000002A   0xB92C             CBNZ.N   R4,??emAfOkToIdleOrSleep_0
+     80                return FALSE;
+     81              }
+     82            }
+     83          
+     84            return (emberAfGetCurrentSleepControlCallback() != EMBER_AF_STAY_AWAKE);
+   \                     ??emAfOkToIdleOrSleep_1:
+   \   0000002C   0x.... 0x....      BL       emberAfGetCurrentSleepControlCallback
+   \   00000030   0x2802             CMP      R0,#+2
+   \   00000032   0xD001             BEQ.N    ??emAfOkToIdleOrSleep_0
+   \   00000034   0x2001             MOVS     R0,#+1
+   \   00000036   0xBD10             POP      {R4,PC}
+   \                     ??emAfOkToIdleOrSleep_0:
+   \   00000038   0x2000             MOVS     R0,#+0
+   \   0000003A   0xBD10             POP      {R4,PC}          ;; return
+     85          }
+     86          
+     87          
+
+   \                                 In section .bss, align 1
+     88          static EmberAfEventSleepControl defaultSleepControl = EMBER_AF_OK_TO_SLEEP;
+   \                     defaultSleepControl:
+   \   00000000                      DS8 1
+     89          
+
+   \                                 In section .text, align 2, keep-with-next
+     90          EmberAfEventSleepControl emberAfGetCurrentSleepControlCallback(void)
+     91          {
+   \                     emberAfGetCurrentSleepControlCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     92            EmberAfEventSleepControl sleepControl = defaultSleepControl;
+   \   00000002   0x....             LDR.N    R0,??DataTable11_2
+   \   00000004   0x7800             LDRB     R0,[R0, #+0]
+     93          #ifdef EMBER_AF_GENERATED_EVENT_CONTEXT
+     94            int8u i;
+     95            for (i = 0; i < emAfAppEventContextLength; i++) {
+   \   00000006   0x2100             MOVS     R1,#+0
+   \   00000008   0x....             LDR.N    R2,??DataTable11_3
+   \   0000000A   0xE00B             B.N      ??emberAfGetCurrentSleepControlCallback_0
+     96              EmberAfEventContext *context = &emAfAppEventContext[i];
+   \                     ??emberAfGetCurrentSleepControlCallback_1:
+   \   0000000C   0xB2C9             UXTB     R1,R1
+   \   0000000E   0x230C             MOVS     R3,#+12
+   \   00000010   0xFB03 0x2301      MLA      R3,R3,R1,R2
+     97              if (emberEventControlGetActive(*context->eventControl)
+     98                  && sleepControl < context->sleepControl) {
+   \   00000014   0x689C             LDR      R4,[R3, #+8]
+   \   00000016   0x7824             LDRB     R4,[R4, #+0]
+   \   00000018   0xB11C             CBZ.N    R4,??emberAfGetCurrentSleepControlCallback_2
+   \   0000001A   0x799C             LDRB     R4,[R3, #+6]
+   \   0000001C   0x42A0             CMP      R0,R4
+   \   0000001E   0xBF38             IT       CC 
+   \   00000020   0x4620             MOVCC    R0,R4
+     99                sleepControl = context->sleepControl;
+    100              }
+    101            }
+   \                     ??emberAfGetCurrentSleepControlCallback_2:
+   \   00000022   0x1C49             ADDS     R1,R1,#+1
+   \                     ??emberAfGetCurrentSleepControlCallback_0:
+   \   00000024   0xB2CB             UXTB     R3,R1
+   \   00000026   0x....             LDR.N    R4,??DataTable11_4
+   \   00000028   0x8824             LDRH     R4,[R4, #+0]
+   \   0000002A   0x42A3             CMP      R3,R4
+   \   0000002C   0xD3EE             BCC.N    ??emberAfGetCurrentSleepControlCallback_1
+    102          #endif
+    103            return sleepControl;
+   \   0000002E   0xBD10             POP      {R4,PC}          ;; return
+    104          }
+    105          
+
+   \                                 In section .text, align 2, keep-with-next
+    106          EmberAfEventSleepControl emberAfGetDefaultSleepControlCallback(void)
+    107          {
+    108            return defaultSleepControl;
+   \                     emberAfGetDefaultSleepControlCallback:
+   \   00000000   0x....             LDR.N    R0,??DataTable11_2
+   \   00000002   0x7800             LDRB     R0,[R0, #+0]
+   \   00000004   0x4770             BX       LR               ;; return
+    109          }
+    110          
+
+   \                                 In section .text, align 2, keep-with-next
+    111          void emberAfSetDefaultSleepControlCallback(EmberAfEventSleepControl sleepControl)
+    112          {
+    113            defaultSleepControl = sleepControl;
+   \                     emberAfSetDefaultSleepControlCallback:
+   \   00000000   0x....             LDR.N    R1,??DataTable11_2
+   \   00000002   0x7008             STRB     R0,[R1, #+0]
+    114          }
+   \   00000004   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable11:
+   \   00000000   0x........         DC32     emAfStayAwakeWhenNotJoined
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable11_1:
+   \   00000000   0x........         DC32     emAfEventStrings
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable11_2:
+   \   00000000   0x........         DC32     defaultSleepControl
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable11_3:
+   \   00000000   0x........         DC32     emAfAppEventContext
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable11_4:
+   \   00000000   0x........         DC32     emAfAppEventContextLength
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "sleep ">`:
+   \   00000000   0x73 0x6C          DC8 "sleep "
+   \              0x65 0x65    
+   \              0x70 0x20    
+   \              0x00         
+   \   00000007   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "forever">`:
+   \   00000000   0x66 0x6F          DC8 "forever"
+   \              0x72 0x65    
+   \              0x76 0x65    
+   \              0x72 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%l ms (until %p Event)">`:
+   \   00000000   0x25 0x6C          DC8 "%l ms (until %p Event)"
+   \              0x20 0x6D    
+   \              0x73 0x20    
+   \              0x28 0x75    
+   \              0x6E 0x74    
+   \              0x69 0x6C    
+   \              0x20 0x25    
+   \              0x70 0x20    
+   \              0x45 0x76    
+   \              0x65 0x6E    
+   \              0x74 0x29    
+   \              0x00         
+   \   00000017   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Stack">`:
+   \   00000000   0x53 0x74          DC8 "Stack"
+   \              0x61 0x63    
+   \              0x6B 0x00    
+   \   00000006   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Force to Stay awake: yes">`:
+   \   00000000   0x46 0x6F          DC8 "Force to Stay awake: yes"
+   \              0x72 0x63    
+   \              0x65 0x20    
+   \              0x74 0x6F    
+   \              0x20 0x53    
+   \              0x74 0x61    
+   \              0x79 0x20    
+   \              0x61 0x77    
+   \              0x61 0x6B    
+   \              0x65 0x3A    
+   \              0x20 0x79    
+   \              0x65 0x73    
+   \              0x00         
+   \   00000019   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emAfOkToIdleOrSleep
+              8 -> emberAfGetCurrentSleepControlCallback
+              8 -> emberAfNetworkState
+              8 -> emberAfPopNetworkIndex
+              8 -> emberAfPushNetworkIndex
+        0  emAfPrintForceAwakeStatus
+              0 -> emberAfPrintln
+       16  emAfPrintSleepDuration
+             16 -> emberAfPrint
+             16 -> emberAfPrintln
+              0 -> emberSerialWaitSend
+        0  emberAfForceEndDeviceToStayAwake
+        8  emberAfGetCurrentSleepControlCallback
+        0  emberAfGetDefaultSleepControlCallback
+        0  emberAfSetDefaultSleepControlCallback
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      24  ?<Constant "%l ms (until %p Event)">
+      28  ?<Constant "Force to Stay awake: yes">
+       8  ?<Constant "Stack">
+       8  ?<Constant "forever">
+       8  ?<Constant "sleep ">
+       4  ??DataTable11
+       4  ??DataTable11_1
+       4  ??DataTable11_2
+       4  ??DataTable11_3
+       4  ??DataTable11_4
+       1  defaultSleepControl
+      60  emAfOkToIdleOrSleep
+      18  emAfPrintForceAwakeStatus
+      70  emAfPrintSleepDuration
+       2  emAfStayAwakeWhenNotJoined
+          emAfForceEndDeviceToStayAwake
+       6  emberAfForceEndDeviceToStayAwake
+      48  emberAfGetCurrentSleepControlCallback
+       6  emberAfGetDefaultSleepControlCallback
+       6  emberAfSetDefaultSleepControlCallback
+
+ 
+   1 byte  in section .bss
+   2 bytes in section .data
+ 310 bytes in section .text
+ 
+ 310 bytes of CODE memory
+   3 bytes of DATA memory
+
+Errors: none
+Warnings: none

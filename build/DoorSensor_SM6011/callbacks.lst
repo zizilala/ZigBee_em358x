@@ -1,0 +1,163 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:33 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    cdc\callbacks.c                                          #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    cdc\callbacks.c -D "GENERATED_TOKEN_HEADER=\"app/builder #
+#                    /DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D      #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"callbacks.c\"" -lC                  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    cdc\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\Doo #
+#                    rSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\ #
+#                    builder\DoorSensor_SM6011\..\..\..\ -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \callbacks.lst                                           #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \callbacks.o                                             #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\cdc\callbacks.c
+      1          
+      2          #include PLATFORM_HEADER
+      3          #include "stack/include/ember.h"
+      4          #include "hal/hal.h"
+      5          #include "hal/micro/cortexm3/usb/em_usb.h"
+      6          #if defined(CORTEXM3_EM35X_USB) && EM_SERIAL3_ENABLED
+      7          #include "descriptors.h"
+      8          
+      9          /**************************************************************************//**
+     10           * @brief
+     11           *   Handle USB setup commands. Implements CDC class specific commands.
+     12           *
+     13           * @param[in] setup Pointer to the setup packet received.
+     14           *
+     15           * @return USB_STATUS_OK if command accepted.
+     16           *         USB_STATUS_REQ_UNHANDLED when command is unknown, the USB device
+     17           *         stack will handle the request.
+     18           *****************************************************************************/
+     19          int SetupCmd(const USB_Setup_TypeDef *setup)
+     20          {
+     21            int retVal = USB_STATUS_REQ_UNHANDLED;
+     22          
+     23            if ((setup->Type == USB_SETUP_TYPE_CLASS) &&
+     24                (setup->Recipient == USB_SETUP_RECIPIENT_INTERFACE))
+     25            {
+     26              switch (setup->bRequest)
+     27              {
+     28              case USB_CDC_GETLINECODING:
+     29          
+     30                #ifdef USB_DEBUG_CDC
+     31                DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "CDC_GETLINECODING -> \r\n");
+     32                #endif
+     33                /********************/
+     34                if ((setup->wValue == 0) &&
+     35                    (setup->wIndex == 0) &&               /* Interface no.            */
+     36                    (setup->wLength == 7) &&              /* Length of cdcLineCoding  */
+     37                    (setup->Direction == USB_SETUP_DIR_IN))
+     38                {
+     39                  /* Send current settings to USB host. */
+     40                  // USBD_Write(0, (void*) &cdcLineCoding, 7, NULL);
+     41                  USBD_Write(0,NULL,0,NULL);
+     42                  retVal = USB_STATUS_OK;
+     43                }
+     44                break;
+     45          
+     46              case USB_CDC_SETLINECODING:
+     47          
+     48                #ifdef USB_DEBUG_CDC
+     49                DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "CDC_SETLINECODING -> \r\n");
+     50                #endif
+     51                /********************/
+     52                if ((setup->wValue == 0) &&
+     53                    (setup->wIndex == 0) &&               /* Interface no.            */
+     54                    (setup->wLength == 7) &&              /* Length of cdcLineCoding  */
+     55                    (setup->Direction != USB_SETUP_DIR_IN))
+     56                {
+     57                  /* Get new settings from USB host. */
+     58                  // USBD_Read(0, (void*) &cdcLineCoding, 7, LineCodingReceived);
+     59          
+     60                  
+     61                  USBD_Write(0,NULL,0,NULL);
+     62          
+     63                  // USBD_Read(0,NULL,7,NULL);
+     64                  retVal = USB_STATUS_OK;
+     65                }
+     66                break;
+     67          
+     68              case USB_CDC_SETCTRLLINESTATE:
+     69                #ifdef USB_DEBUG_CDC
+     70                DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "CDC_SETLINESTATE -> \r\n");
+     71                #endif
+     72                /********************/
+     73                if ((setup->wIndex == 0) &&               /* Interface no.  */
+     74                    (setup->wLength == 0))                /* No data        */
+     75                {
+     76                  /* Do nothing ( Non compliant behaviour !! ) */
+     77                  USBD_Write(0,NULL,0,NULL);
+     78                  retVal = USB_STATUS_OK;
+     79                }
+     80                break;
+     81              }
+     82            }
+     83          
+     84            return retVal;
+     85          }
+     86          
+     87          void stateChange(USBD_State_TypeDef oldState, USBD_State_TypeDef newState)
+     88          {
+     89            /* Print state transition to debug output */
+     90            // emberSerialPrintf(SER232,"%s => %s\r\n", USBD_GetUsbStateName(oldState), USBD_GetUsbStateName(newState));
+     91            
+     92            if (newState == USBD_STATE_CONFIGURED)
+     93            {
+     94              /* Start waiting for the 'tick' messages */
+     95              // emberSerialPrintf(SER232,"starting read\r\n");
+     96              int8u t='\r';
+     97          
+     98              USBD_Read(EP_DATA_OUT, &t, 1, NULL);
+     99              
+    100            }
+    101          }
+    102          
+    103          #endif //CORTEXM3_EM35X_USB && EM_SERIAL3_ENABLED
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

@@ -1,0 +1,164 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:17 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\se #
+#                    nsor-iface\super-sleepy-enable.c                         #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\se #
+#                    nsor-iface\super-sleepy-enable.c -D                      #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"super-sleepy-enable.c\"" -lC        #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\se #
+#                    nsor-iface\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\buil #
+#                    der\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \super-sleepy-enable.lst                                 #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \super-sleepy-enable.o                                   #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\sensor-iface\super-sleepy-enable.c
+      1          #include "app/framework/include/af.h"
+      2          
+      3          typedef struct {
+      4            boolean waitForAck ;
+      5            boolean checkCca ;
+      6            int8u   ccaAttemptMax ;
+      7            int8u   backoffExponentMin ;
+      8            int8u   backoffExponentMax ;
+      9            int8u   minimumBackoff ;
+     10            boolean appendCrc ;
+     11          } RadioTransmitConfig ;
+     12            
+     13          extern boolean  emEraseChildTableOnJoin ;
+     14          extern int8u    emMacMaxAckRetries ;
+     15          extern int8u    emZigbeeMaxNetworkRetries ;
+     16          extern RadioTransmitConfig radioTransmitConfig ;
+     17          
+     18          extern boolean emRadioTruncateIncomingAckToPoll;
+     19          extern boolean emRadioManagePollTxRxTurnaround;
+     20          extern boolean emRadioAlwaysUseZeroBackoff;
+     21          
+
+   \                                 In section .text, align 4, keep-with-next
+     22          void initSuperSleepyDevice(void)
+     23          {
+     24            emEraseChildTableOnJoin   = FALSE ;
+   \                     initSuperSleepyDevice:
+   \   00000000   0x4807             LDR.N    R0,??initSuperSleepyDevice_0
+   \   00000002   0x2100             MOVS     R1,#+0
+   \   00000004   0x7001             STRB     R1,[R0, #+0]
+     25            emZigbeeMaxNetworkRetries = 0 ;
+   \   00000006   0x4807             LDR.N    R0,??initSuperSleepyDevice_0+0x4
+   \   00000008   0x7001             STRB     R1,[R0, #+0]
+     26            emMacMaxAckRetries        = 0 ;
+   \   0000000A   0x4807             LDR.N    R0,??initSuperSleepyDevice_0+0x8
+   \   0000000C   0x7001             STRB     R1,[R0, #+0]
+     27          #if 0
+     28            // Configure CSMA behavior
+     29            radioTransmitConfig.ccaAttemptMax = 4 ;
+     30            radioTransmitConfig.backoffExponentMin = 0 ;
+     31            radioTransmitConfig.backoffExponentMax = 1  ;
+     32            radioTransmitConfig.minimumBackoff = 0 ;
+     33          #endif
+     34          
+     35            //emZigbeeMaxNetworkRetries = 0 ;
+     36            //emMacMaxAckRetries        = 0 ;
+     37          
+     38            // This switch enables an operational mode in which the stack 
+     39            // turns off the radio after observing the Frame Pending bit set to 0 
+     40            // in the incoming ACK to a Data Poll.
+     41            emRadioTruncateIncomingAckToPoll = TRUE;
+   \   0000000E   0x4807             LDR.N    R0,??initSuperSleepyDevice_0+0xC
+   \   00000010   0x2101             MOVS     R1,#+1
+   \   00000012   0x7001             STRB     R1,[R0, #+0]
+     42           // This switch enables an operational mode in which the stack 
+     43            // turns off the radio immediately after transmitting a Data Poll 
+     44            // and turns it back on just before the ACK is expected to arrive.
+     45            emRadioManagePollTxRxTurnaround = TRUE;
+   \   00000014   0x4806             LDR.N    R0,??initSuperSleepyDevice_0+0x10
+   \   00000016   0x7001             STRB     R1,[R0, #+0]
+     46              
+     47            // Enabling the internal variable emRadioAlwaysUseZeroBackoff puts the 
+     48            //  MAC into a mode were only CSMA backoffs of zero are used.  
+     49            //  This is intended only to remove variability when doing power 
+     50            //  consumption measurements and eases comparison between different
+     51            //  scenarios.
+     52            // Enabling this variable in a normal application will have a negative
+     53            //  impact on overall network performance.
+     54            emRadioAlwaysUseZeroBackoff = TRUE;
+   \   00000018   0x4806             LDR.N    R0,??initSuperSleepyDevice_0+0x14
+   \   0000001A   0x7001             STRB     R1,[R0, #+0]
+     55          
+     56            //halSleep(SLEEPMODE_IDLE);
+     57            //halSleep(SLEEPMODE_WAKETIMER);
+     58            //halSleep(SLEEPMODE_MAINTAINTIMER);
+     59            //halSleep(SLEEPMODE_NOTIMER);
+     60          
+     61            //radioTransmitConfig.backoffExponentMin = 0 ;
+     62            //radioTransmitConfig.backoffExponentMax = 1  ;
+     63            //radioTransmitConfig.minimumBackoff = 0 ;
+     64          
+     65          }
+   \   0000001C   0x4770             BX       LR               ;; return
+   \   0000001E   0xBF00             Nop      
+   \                     ??initSuperSleepyDevice_0:
+   \   00000020   0x........         DC32     emEraseChildTableOnJoin
+   \   00000024   0x........         DC32     emZigbeeMaxNetworkRetries
+   \   00000028   0x........         DC32     emMacMaxAckRetries
+   \   0000002C   0x........         DC32     emRadioTruncateIncomingAckToPoll
+   \   00000030   0x........         DC32     emRadioManagePollTxRxTurnaround
+   \   00000034   0x........         DC32     emRadioAlwaysUseZeroBackoff
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        0  initSuperSleepyDevice
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      56  initSuperSleepyDevice
+
+ 
+ 56 bytes in section .text
+ 
+ 56 bytes of CODE memory
+
+Errors: none
+Warnings: none

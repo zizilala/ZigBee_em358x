@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<cli>
+  <group id="plugin-device-management-server" name="Plugin Commands: Device Management Server">
+    <description>
+      The device management server plugin contributes CLI commands to the application framework to be used for getting, setting, and displaying information relevant to the Smart Energy 1.2 Device Management Cluster.
+    </description>
+  </group>
+  <command cli="plugin device-management-server print" functionName="emAfDeviceManagementServerCliPrint" group="plugin-device-management-server">
+    <description>
+      Print the info relevant to device management.
+    </description>
+  </command>
+  <command cli="plugin device-management-server tenancy" functionName="emAfDeviceManagementServerCliTenancy" group="plugin-device-management-server">
+    <description>
+      Set the tenancy information.
+    </description>
+    <arg name="implementationDateTime" type="UTC_TIME" />
+    <arg name="tenancy"                type="INT32U"   />
+  </command>
+  <command cli="plugin device-management-server supplier" functionName="emAfDeviceManagementServerCliSupplier" group="plugin-device-management-server">
+    <description>
+      Set the supplier information.
+    </description>
+    <arg name="providerName"           type="OCTET_STRING" />
+    <arg name="proposedProviderId"     type="INT32U"       />
+    <arg name="implementationDateTime" type="UTC_TIME"     />
+    <arg name="providerChangeControl"  type="INT32U"       />
+  </command>
+  <command cli="plugin device-management-server supply" functionName="emAfDeviceManagementServerCliSupply" group="plugin-device-management-server">
+    <description>
+      Set the supply information.
+    </description>
+    <arg name="requestDateTime"               type="UTC_TIME" />
+    <arg name="implementationDateTime"        type="UTC_TIME" />
+    <arg name="supplyStatus"                  type="INT8U"    />
+    <arg name="originatorIdSupplyControlBits" type="INT8U"    />
+  </command>
+  <command cli="plugin device-management-server site-id" functionName="emAfDeviceManagementServerCliSiteId" group="plugin-device-management-server">
+    <description>
+      Set the site id information.
+    </description>
+    <arg name="siteId"     type="OCTET_STRING" />
+    <arg name="siteIdTime" type="UTC_TIME"     />
+  </command>
+  <command cli="plugin device-management-server supply-status" functionName="emAfDeviceManagementServerCliSupplyStatus" group="plugin-device-management-server">
+    <description>
+      Set the supply status.
+    </description>
+    <arg name="implementationDateTime" type="UTC_TIME" />
+    <arg name="supplyStatus"           type="INT8U"    />
+  </command>
+  <command cli="plugin device-management-server password" functionName="emAfDeviceManagementServerCliPassword" group="plugin-device-management-server">
+    <description>
+      Set the specified password.
+    </description>
+    <arg name="password"               type="OCTET_STRING" />
+    <arg name="implementationDateTime" type="UTC_TIME"     />
+    <arg name="durationInMinutes"      type="INT16U"       />
+    <arg name="passwordType"           type="INT8U"        />
+  </command>
+  <command cli="plugin device-management-server uft" functionName="emAfDeviceManagementServerCliUncontrolledFlowThreshold" group="plugin-device-management-server">
+    <description>
+      Set the uncontrolled flow threshold.
+    </description>
+    <arg name="uncontrolledFlowThreshold" type="INT16U" />
+    <arg name="multiplier"                type="INT16U" />
+    <arg name="divisor"                   type="INT16U" />
+    <arg name="measurementPeriod"         type="INT16U" />
+    <arg name="unitOfMeasure"             type="INT8U"  />
+    <arg name="stabilisationPeriod"       type="INT8U"  />
+  </command>
+</cli>

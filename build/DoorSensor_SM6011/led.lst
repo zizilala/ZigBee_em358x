@@ -1,0 +1,228 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:59 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\led. #
+#                    c                                                        #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\led. #
+#                    c -D "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM #
+#                    6011/DoorSensor_SM6011_tokens.h\"" -D                    #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"led.c\"" -lC                        #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\ -I  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \led.lst                                                 #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \led.o                                                   #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\led.c
+      1          /** @file hal/micro/cortexm3/led.c
+      2           *  @brief LED manipulation routines; stack and example APIs
+      3           *
+      4           * <!-- Author(s): Brooks Barrett -->
+      5           * <!-- Copyright 2007 by Ember Corporation. All rights reserved.       *80*-->
+      6           */
+      7          
+      8          #include PLATFORM_HEADER
+      9          #if !defined(MINIMAL_HAL) && defined(BOARD_HEADER)
+     10            // full hal needs the board header to get pulled in
+     11            #include "hal/micro/micro.h"
+     12            #include BOARD_HEADER
+     13          #endif
+     14          #include "hal/micro/led.h"
+     15          
+     16          #define GPIO_PxCLR_BASE (GPIO_PACLR_ADDR)
+     17          #define GPIO_PxSET_BASE (GPIO_PASET_ADDR)
+     18          #define GPIO_PxOUT_BASE (GPIO_PAOUT_ADDR)
+     19          // Each port is offset from the previous port by the same amount
+     20          #define GPIO_Px_OFFSET  (GPIO_PBCFGL_ADDR-GPIO_PACFGL_ADDR)
+     21          
+
+   \                                 In section .text, align 2, keep-with-next
+     22          void halSetLed(HalBoardLed led)
+     23          {
+     24          #if (!defined(MINIMAL_HAL) && !defined(BOOTLOADER) && defined(RHO_GPIO))
+     25            if(led == RHO_GPIO && halGetRadioHoldOff()) { // Avoid Radio HoldOff conflict
+     26              return;
+     27            }
+     28          #endif
+     29            if(led/8 < 3) {
+   \                     halSetLed:
+   \   00000000   0x08C1             LSRS     R1,R0,#+3
+   \   00000002   0x2903             CMP      R1,#+3
+   \   00000004   0xD208             BCS.N    ??halSetLed_0
+     30              *((volatile int32u *)(GPIO_PxCLR_BASE+(GPIO_Px_OFFSET*(led/8)))) = BIT(led&7);
+   \   00000006   0x10C1             ASRS     R1,R0,#+3
+   \   00000008   0x0249             LSLS     R1,R1,#+9
+   \   0000000A   0x....             LDR.N    R2,??DataTable2  ;; 0x4000b014
+   \   0000000C   0x2301             MOVS     R3,#+1
+   \   0000000E   0xF000 0x0007      AND      R0,R0,#0x7
+   \   00000012   0xFA03 0xF000      LSL      R0,R3,R0
+   \   00000016   0x5050             STR      R0,[R2, R1]
+     31            }
+     32          }
+   \                     ??halSetLed_0:
+   \   00000018   0x4770             BX       LR               ;; return
+     33          
+
+   \                                 In section .text, align 2, keep-with-next
+     34          void halClearLed(HalBoardLed led)
+     35          {
+     36          #if (!defined(MINIMAL_HAL) && !defined(BOOTLOADER) && defined(RHO_GPIO))
+     37            if(led == RHO_GPIO && halGetRadioHoldOff()) { // Avoid Radio HoldOff conflict
+     38              return;
+     39            }
+     40          #endif
+     41            if(led/8 < 3) {
+   \                     halClearLed:
+   \   00000000   0x08C1             LSRS     R1,R0,#+3
+   \   00000002   0x2903             CMP      R1,#+3
+   \   00000004   0xD208             BCS.N    ??halClearLed_0
+     42              *((volatile int32u *)(GPIO_PxSET_BASE+(GPIO_Px_OFFSET*(led/8)))) = BIT(led&7);
+   \   00000006   0x10C1             ASRS     R1,R0,#+3
+   \   00000008   0x0249             LSLS     R1,R1,#+9
+   \   0000000A   0x....             LDR.N    R2,??DataTable2_1  ;; 0x4000b010
+   \   0000000C   0x2301             MOVS     R3,#+1
+   \   0000000E   0xF000 0x0007      AND      R0,R0,#0x7
+   \   00000012   0xFA03 0xF000      LSL      R0,R3,R0
+   \   00000016   0x5050             STR      R0,[R2, R1]
+     43            }
+     44          }
+   \                     ??halClearLed_0:
+   \   00000018   0x4770             BX       LR               ;; return
+     45          
+
+   \                                 In section .text, align 2, keep-with-next
+     46          void halToggleLed(HalBoardLed led)
+     47          {
+   \                     halToggleLed:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     48          #if (!defined(MINIMAL_HAL) && !defined(BOOTLOADER) && defined(RHO_GPIO))
+     49            if(led == RHO_GPIO && halGetRadioHoldOff()) { // Avoid Radio HoldOff conflict
+     50              return;
+     51            }
+     52          #endif
+     53            //to avoid contention with other code using the other pins for other
+     54            //purposes, we disable interrupts since this is a read-modify-write
+     55            ATOMIC(
+     56              if(led/8 < 3) {
+     57                *((volatile int32u *)(GPIO_PxOUT_BASE+(GPIO_Px_OFFSET*(led/8)))) ^= BIT(led&7);
+     58              }
+     59            )
+   \   00000004   0x.... 0x....      BL       _disableBasePri
+   \   00000008   0x08E1             LSRS     R1,R4,#+3
+   \   0000000A   0x2903             CMP      R1,#+3
+   \   0000000C   0xD20A             BCS.N    ??halToggleLed_0
+   \   0000000E   0x10E1             ASRS     R1,R4,#+3
+   \   00000010   0x....             LDR.N    R2,??DataTable2_2  ;; 0x4000b00c
+   \   00000012   0xEB02 0x2141      ADD      R1,R2,R1, LSL #+9
+   \   00000016   0x680A             LDR      R2,[R1, #+0]
+   \   00000018   0x2301             MOVS     R3,#+1
+   \   0000001A   0xF004 0x0407      AND      R4,R4,#0x7
+   \   0000001E   0x40A3             LSLS     R3,R3,R4
+   \   00000020   0x405A             EORS     R2,R3,R2
+   \   00000022   0x600A             STR      R2,[R1, #+0]
+   \                     ??halToggleLed_0:
+   \   00000024   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000028   0x.... 0x....      B.W      _writeBasePri
+     60          }
+     61          
+     62          #ifndef MINIMAL_HAL
+
+   \                                 In section .text, align 2, keep-with-next
+     63          void halStackIndicateActivity(boolean turnOn)
+     64          {
+     65            if(turnOn) {
+   \                     halStackIndicateActivity:
+   \   00000000   0x2800             CMP      R0,#+0
+   \   00000002   0xBF1C             ITT      NE 
+   \   00000004   0x2006             MOVNE    R0,#+6
+   \   00000006   0x.... 0x....      BNE.W    halSetLed
+     66              halSetLed(BOARD_ACTIVITY_LED);
+     67            } else {
+     68              halClearLed(BOARD_ACTIVITY_LED);
+   \   0000000A   0x2006             MOVS     R0,#+6
+   \   0000000C   0x....             B.N      halClearLed
+     69            }
+     70          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable2:
+   \   00000000   0x4000B014         DC32     0x4000b014
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable2_1:
+   \   00000000   0x4000B010         DC32     0x4000b010
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable2_2:
+   \   00000000   0x4000B00C         DC32     0x4000b00c
+     71          #endif //MINIMAL_HAL
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        0  halClearLed
+        0  halSetLed
+        0  halStackIndicateActivity
+             0 -> halClearLed
+             0 -> halSetLed
+        8  halToggleLed
+             8 -> _disableBasePri
+             0 -> _writeBasePri
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable2
+       4  ??DataTable2_1
+       4  ??DataTable2_2
+      26  halClearLed
+      26  halSetLed
+      14  halStackIndicateActivity
+      44  halToggleLed
+
+ 
+ 122 bytes in section .text
+ 
+ 122 bytes of CODE memory
+
+Errors: none
+Warnings: none

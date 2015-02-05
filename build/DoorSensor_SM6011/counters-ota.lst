@@ -1,0 +1,170 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:23 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\co #
+#                    unters\counters-ota.c                                    #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\co #
+#                    unters\counters-ota.c -D "GENERATED_TOKEN_HEADER=\"app/b #
+#                    uilder/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\""   #
+#                    -D "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D           #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"counters-ota.c\"" -lC               #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\co #
+#                    unters\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\a #
+#                    pp\builder\DoorSensor_SM6011\..\..\..\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \counters-ota.lst                                        #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \counters-ota.o                                          #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\counters\counters-ota.c
+      1          // File: counters-ota.c
+      2          //
+      3          // Description: A library for retrieving Ember stack counters over the air.
+      4          // See counters-ota.h for documentation.
+      5          //
+      6          // Copyright 2008 by Ember Corporation.  All rights reserved.               *80*
+      7          
+      8          
+      9          
+     10          #include "app/framework/include/af.h"
+     11          #include "app/util/serial/command-interpreter2.h"
+     12          #include "app/util/common/common.h"
+     13          #include "counters.h"
+     14          #include "counters-ota.h"
+     15          
+     16          //Include counters-ota if enabled by the plugin
+     17          #if defined(EMBER_AF_PLUGIN_COUNTERS_OTA)
+     18          
+     19          static EmberStatus sendCluster(EmberNodeId destination, 
+     20                                         int16u clusterId,
+     21                                         EmberMessageBuffer payload)
+     22          {
+     23            EmberApsFrame apsFrame;
+     24            apsFrame.profileId = EMBER_PRIVATE_PROFILE_ID;
+     25            apsFrame.clusterId = clusterId;
+     26            apsFrame.sourceEndpoint = 0;
+     27            apsFrame.destinationEndpoint = 0;
+     28            apsFrame.options = (EMBER_APS_OPTION_RETRY 
+     29                                | EMBER_APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+     30            return emberSendUnicast(EMBER_OUTGOING_DIRECT,
+     31                                    destination,
+     32                                    &apsFrame,
+     33                                    payload);
+     34          }
+     35          
+     36          EmberStatus emberAfPluginCountersSendRequest(EmberNodeId destination, 
+     37                                                       boolean clearCounters)
+     38          {
+     39            return sendCluster(destination,
+     40                               (clearCounters 
+     41                                ? EMBER_REPORT_AND_CLEAR_COUNTERS_REQUEST
+     42                                : EMBER_REPORT_COUNTERS_REQUEST),
+     43                               EMBER_NULL_MESSAGE_BUFFER);
+     44          }
+     45          
+     46          boolean emberAfPluginCountersIsIncomingRequest(EmberApsFrame *apsFrame, EmberNodeId sender)
+     47          {
+     48            EmberMessageBuffer reply = EMBER_NULL_MESSAGE_BUFFER;
+     49            int8u length = 0;
+     50            int8u i;
+     51            int8u temp[3];
+     52          
+     53            if (apsFrame->profileId != EMBER_PRIVATE_PROFILE_ID
+     54                || (apsFrame->clusterId != EMBER_REPORT_COUNTERS_REQUEST
+     55                    && apsFrame->clusterId != EMBER_REPORT_AND_CLEAR_COUNTERS_REQUEST)) {
+     56              return FALSE;
+     57            }
+     58          
+     59            for (i = 0; i < EMBER_COUNTER_TYPE_COUNT; i++) {
+     60              int16u val = emberCounters[i];
+     61              if (val != 0) {
+     62                temp[0] = i;
+     63                temp[1] = LOW_BYTE(val);
+     64                temp[2] = HIGH_BYTE(val);
+     65                if (reply == EMBER_NULL_MESSAGE_BUFFER) {
+     66                  reply = emberAllocateStackBuffer();
+     67                  if (reply == EMBER_NULL_MESSAGE_BUFFER) {
+     68                    return TRUE;
+     69                  }
+     70                }
+     71                if (emberAppendToLinkedBuffers(reply, temp, 3) != EMBER_SUCCESS) {
+     72                  emberReleaseMessageBuffer(reply);
+     73                  return TRUE;
+     74                }
+     75                length += 3;
+     76              }
+     77              if (length + 3 > MAX_PAYLOAD_LENGTH
+     78                  || (length && 
+     79                      (i + 1 == EMBER_COUNTER_TYPE_COUNT))) {
+     80                // The response cluster is the request id with the high bit set.
+     81                sendCluster(sender, apsFrame->clusterId | 0x8000, reply);      
+     82                emberReleaseMessageBuffer(reply);
+     83                reply = EMBER_NULL_MESSAGE_BUFFER;
+     84                length = 0;
+     85              }
+     86            }
+     87          
+     88            return TRUE;
+     89          }
+     90          
+     91          boolean emberAfPluginCountersIsIncomingResponse(EmberApsFrame *apsFrame)
+     92          {
+     93            return (apsFrame->profileId == EMBER_PRIVATE_PROFILE_ID
+     94                    && (apsFrame->clusterId == EMBER_REPORT_AND_CLEAR_COUNTERS_RESPONSE
+     95                        || apsFrame->clusterId == EMBER_REPORT_COUNTERS_RESPONSE));
+     96          }
+     97          
+     98          boolean emberAfPluginCountersIsOutgoingResponse(EmberApsFrame *apsFrame,
+     99                                                          EmberStatus status)
+    100          {
+    101            boolean isResponse = emberIsIncomingCountersResponse(apsFrame);
+    102            if (isResponse
+    103                && apsFrame->clusterId == EMBER_REPORT_AND_CLEAR_COUNTERS_RESPONSE
+    104                && status == EMBER_SUCCESS) {
+    105              emberClearCounters();
+    106            }
+    107            return isResponse;  
+    108          }
+    109          
+    110          #endif //EMBER_AF_PLUGIN_COUNTERS_COUNTERSOTA
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

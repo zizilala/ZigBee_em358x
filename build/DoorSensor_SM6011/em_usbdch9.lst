@@ -1,0 +1,326 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:30 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    em_usbdch9.c                                             #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                    em_usbdch9.c -D "GENERATED_TOKEN_HEADER=\"app/builder/Do #
+#                    orSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"em_usbdch9.c\"" -lC                 #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\ #
+#                     -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSen #
+#                    sor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\buil #
+#                    der\DoorSensor_SM6011\..\..\..\ -I                       #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \em_usbdch9.lst                                          #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \em_usbdch9.o                                            #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\usb\em_usbdch9.c
+      1          /**************************************************************************//**
+      2           * @file
+      3           * @brief USB protocol stack library, USB chapter 9 command handler.
+      4           * @author Nathaniel Ting
+      5           * @version 3.20.3
+      6           * <!-- Copyright 2013 by Silicon Laboratories. All rights reserved.     *80*-->
+      7           *****************************************************************************/
+      8          
+      9          
+     10          #include PLATFORM_HEADER
+     11          #include "stack/include/ember.h"
+     12          #include "hal/hal.h"
+     13          
+     14          #if defined(CORTEXM3_EM35X_USB)
+     15          #include "em_usb.h"
+     16          #include "em_usbhal.h"
+     17          #include "em_usbtypes.h"
+     18          #include "em_usbd.h"
+     19          
+     20          /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
+     21          
+     22          static USB_Status_TypeDef ClearFeature     ( USBD_Device_TypeDef *pDev );
+     23          static USB_Status_TypeDef GetConfiguration ( USBD_Device_TypeDef *pDev );
+     24          static USB_Status_TypeDef GetDescriptor    ( USBD_Device_TypeDef *pDev );
+     25          static USB_Status_TypeDef GetInterface     ( USBD_Device_TypeDef *pDev );
+     26          static USB_Status_TypeDef GetStatus        ( USBD_Device_TypeDef *pDev );
+     27          static USB_Status_TypeDef SetAddress       ( USBD_Device_TypeDef *pDev );
+     28          static USB_Status_TypeDef SetConfiguration ( USBD_Device_TypeDef *pDev );
+     29          static USB_Status_TypeDef SetFeature       ( USBD_Device_TypeDef *pDev );
+     30          static USB_Status_TypeDef SetInterface     ( USBD_Device_TypeDef *pDev );
+     31          
+     32          
+     33          int USBDCH9_SetupCmd( USBD_Device_TypeDef *device )
+     34          {
+     35            int status;
+     36            device->setup = (USB_Setup_TypeDef *)usbBufferA.eps.ep0OUT;
+     37            USB_Setup_TypeDef *p = device->setup;
+     38          
+     39            #ifdef USB_DEBUG_CH9
+     40            int8u i;
+     41            for(i=0;i<8;i++) {
+     42              DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "%02X", usbBufferA.eps.ep0OUT[i]);
+     43            }
+     44            DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "\t");
+     45            #endif
+     46          
+     47            // DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "bmRequestType = %X\r\n" , p->bmRequestType);
+     48            // DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "bRequest =      %X\r\n" , p->bRequest);
+     49            // DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "wValue =        %X\r\n" , p->wValue);
+     50            // DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "wIndex =        %X\r\n" , p->wIndex);
+     51            // DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "wLength =       %X\r\n" , p->wLength);
+     52          
+     53            /* Vendor unique, Class or Standard setup commands override ? */
+     54            if ( device->callbacks->setupCmd )
+     55            {
+     56              status = device->callbacks->setupCmd( p );
+     57          
+     58              if ( status != USB_STATUS_REQ_UNHANDLED )
+     59              {
+     60                return status;
+     61              }
+     62            }
+     63          
+     64            status = USB_STATUS_REQ_ERR;
+     65          
+     66            if ( p->Type == USB_SETUP_TYPE_STANDARD )
+     67            {
+     68              switch ( p->bRequest )
+     69              {
+     70                case GET_DESCRIPTOR:
+     71                  #ifdef USB_DEBUG_CH9
+     72                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "GET_DESCRIPTOR -> \r\n");
+     73                  #endif
+     74                  status = GetDescriptor( device );
+     75                  break;
+     76          
+     77                /*Hardware Handled Standard Commands. Can be disabled.*/
+     78                case GET_STATUS:
+     79                  #ifdef USB_DEBUG_CH9
+     80                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "GET_STATUS -> \r\n");
+     81                  #endif
+     82                  status = GetStatus( device );
+     83                  break;
+     84          
+     85                case CLEAR_FEATURE:
+     86                  #ifdef USB_DEBUG_CH9
+     87                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "CLEAR_FEATURE -> \r\n");
+     88                  #endif
+     89                  status = ClearFeature( device );
+     90                  break;
+     91          
+     92                case SET_FEATURE:
+     93                  #ifdef USB_DEBUG_CH9
+     94                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "SET_FEATURE -> \r\n");
+     95                  #endif
+     96                  status = SetFeature( device );
+     97                  break;
+     98          
+     99                case SET_ADDRESS:
+    100                  #ifdef USB_DEBUG_CH9
+    101                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "SET_ADDRESS -> \r\n");
+    102                  #endif
+    103                  status = SetAddress( device );
+    104                  break;
+    105          
+    106          
+    107                case GET_CONFIGURATION:
+    108                  #ifdef USB_DEBUG_CH9
+    109                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "GET_CONFIGURATION -> \r\n");
+    110                  #endif
+    111                  status = GetConfiguration( device );
+    112                  break;
+    113          
+    114                case SET_CONFIGURATION:
+    115                  #ifdef USB_DEBUG_CH9
+    116                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "SET_CONFIGURATION -> \r\n");
+    117                  #endif
+    118                  status = SetConfiguration( device );
+    119                  break;
+    120          
+    121                case GET_INTERFACE:
+    122                  #ifdef USB_DEBUG_CH9
+    123                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "GET_INTERFACE -> \r\n");
+    124                  #endif
+    125                  status = GetInterface( device );
+    126                  break;
+    127          
+    128                case SET_INTERFACE:
+    129                  #ifdef USB_DEBUG_CH9
+    130                  DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "SET_INTERFACE -> \r\n");
+    131                  #endif
+    132                  status = SetInterface( device );
+    133                  break;
+    134          
+    135                case SYNCH_FRAME:     /* Synch frame is for isochronous endpoints */
+    136                case SET_DESCRIPTOR:  /* Set descriptor is optional */
+    137                default:
+    138                  break;
+    139              }
+    140            }
+    141          
+    142            return status;
+    143          }
+    144          
+    145          static USB_Status_TypeDef GetDescriptor( USBD_Device_TypeDef *pDev )
+    146          {
+    147            int index;
+    148            uint16_t length = 0;
+    149            const void *data = NULL;
+    150            USB_Setup_TypeDef *p = pDev->setup;
+    151            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    152          
+    153            if ( ( p->Recipient != USB_SETUP_RECIPIENT_DEVICE ) ||
+    154                 ( p->Direction != USB_SETUP_DIR_IN           )    )
+    155            {
+    156              return USB_STATUS_REQ_ERR;
+    157            }
+    158          
+    159            // identify descriptor request and return the appropriate descriptor
+    160            index = p->wValue & 0xFF;
+    161            switch ( p->wValue >> 8 )
+    162            {
+    163              case USB_DEVICE_DESCRIPTOR :
+    164                #ifdef USB_DEBUG3
+    165                DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "DeviceDescriptor \r\n");
+    166                #endif
+    167                if ( index != 0 )
+    168                {
+    169                  break;
+    170                }
+    171          
+    172                data   = pDev->deviceDescriptor;
+    173                length = pDev->deviceDescriptor->bLength;
+    174                break;
+    175          
+    176              case USB_CONFIG_DESCRIPTOR :
+    177                #ifdef USB_DEBUG3
+    178                DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "ConfigDescriptor \r\n");
+    179                #endif
+    180                if ( index != 0 )
+    181                {
+    182                  break;
+    183                }
+    184                data   = pDev->configDescriptor;
+    185                length = pDev->configDescriptor->wTotalLength;
+    186                USBD_SetUsbState(USBD_STATE_CONFIGURED);
+    187                break;
+    188          
+    189              case USB_STRING_DESCRIPTOR :
+    190                #ifdef USB_DEBUG3
+    191                DEBUG_BUFFER += sprintf(DEBUG_BUFFER, "StringDescriptor:%d \r\n",index);
+    192                #endif
+    193                if ( index < pDev->numberOfStrings )
+    194                {
+    195                  USB_StringDescriptor_TypeDef *s;
+    196                  s = ((USB_StringDescriptor_TypeDef**)pDev->stringDescriptors)[index];
+    197          
+    198                  data   = s;
+    199                  length = s->len;
+    200                }
+    201                break;
+    202            }
+    203          
+    204            // call USBD_Write to send data back over EPO, which will also update EP state
+    205            if ( length )
+    206            {
+    207              USBD_Write( 0, (void*)data, EFM32_MIN( length, p->wLength ), NULL );
+    208              retVal = USB_STATUS_OK;
+    209            }
+    210          
+    211            return retVal;
+    212          }
+    213          
+    214          
+    215          /* Hardware Handled Standard Commands */
+    216          static USB_Status_TypeDef ClearFeature( USBD_Device_TypeDef *pDev )
+    217          {
+    218            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    219            return retVal;
+    220          }
+    221          
+    222          static USB_Status_TypeDef GetConfiguration( USBD_Device_TypeDef *pDev )
+    223          {
+    224            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    225            return retVal;
+    226          }
+    227          
+    228          static USB_Status_TypeDef GetInterface( USBD_Device_TypeDef *pDev )
+    229          {
+    230            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    231            return retVal;
+    232          }
+    233          
+    234          static USB_Status_TypeDef GetStatus( USBD_Device_TypeDef *pDev )
+    235          {
+    236            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    237            return retVal;
+    238          }
+    239          
+    240          static USB_Status_TypeDef SetAddress( USBD_Device_TypeDef *pDev )
+    241          {
+    242            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    243            return retVal;
+    244          }
+    245          
+    246          static USB_Status_TypeDef SetConfiguration( USBD_Device_TypeDef *pDev )
+    247          {
+    248            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    249            return retVal;
+    250          }
+    251          
+    252          static USB_Status_TypeDef SetFeature( USBD_Device_TypeDef *pDev )
+    253          {
+    254            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    255            return retVal;
+    256          }
+    257          
+    258          static USB_Status_TypeDef SetInterface( USBD_Device_TypeDef *pDev )
+    259          {
+    260            USB_Status_TypeDef retVal = USB_STATUS_REQ_ERR;
+    261            return retVal;
+    262          }
+    263          
+    264          /** @endcond */
+    265          
+    266          #endif //CORTEXM3_EM35X_USB
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

@@ -1,0 +1,543 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:35 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    entify\identify.c                                        #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    entify\identify.c -D "GENERATED_TOKEN_HEADER=\"app/build #
+#                    er/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D    #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"identify.c\"" -lC                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    entify\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\a #
+#                    pp\builder\DoorSensor_SM6011\..\..\..\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \identify.lst                                            #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \identify.o                                              #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\identify\identify.c
+      1          // *******************************************************************
+      2          // * identify.c
+      3          // *
+      4          // *
+      5          // * Copyright 2007 by Ember Corporation. All rights reserved.              *80*
+      6          // *******************************************************************
+      7          
+      8          // this file contains all the common includes for clusters in the util
+      9          #include "app/framework/include/af.h"
+     10          #include "app/framework/util/common.h"
+     11          
+     12          typedef struct {
+     13            boolean identifying;
+     14            int16u identifyTime;
+     15          } EmAfIdentifyState;
+     16          
+
+   \                                 In section .bss, align 4
+     17          static EmAfIdentifyState stateTable[EMBER_AF_IDENTIFY_CLUSTER_SERVER_ENDPOINT_COUNT];
+   \                     stateTable:
+   \   00000000                      DS8 4
+     18          
+     19          static EmberAfStatus readIdentifyTime(int8u endpoint, int16u *identifyTime);
+     20          static EmberAfStatus writeIdentifyTime(int8u endpoint, int16u identifyTime);
+     21          static EmberStatus scheduleIdentifyTick(int8u endpoint);
+     22          
+     23          static EmAfIdentifyState *getIdentifyState(int8u endpoint);
+     24          
+     25          static EmAfIdentifyState *getIdentifyState(int8u endpoint)
+     26          {
+     27            int8u ep = emberAfFindClusterServerEndpointIndex(endpoint, ZCL_IDENTIFY_CLUSTER_ID);
+     28            return (ep == 0xFF ? NULL : &stateTable[ep]);
+     29          }
+     30          
+
+   \                                 In section .text, align 2, keep-with-next
+     31          void emberAfIdentifyClusterServerInitCallback(int8u endpoint)
+     32          {
+     33            scheduleIdentifyTick(endpoint);
+   \                     emberAfIdentifyClusterServerInitCallback:
+   \   00000000   0x....             B.N      scheduleIdentifyTick
+     34          }
+     35          
+
+   \                                 In section .text, align 2, keep-with-next
+     36          void emberAfIdentifyClusterServerTickCallback(int8u endpoint)
+     37          {
+   \                     emberAfIdentifyClusterServerTickCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB082             SUB      SP,SP,#+8
+   \   00000004   0x4604             MOV      R4,R0
+     38            int16u identifyTime;
+     39            if (readIdentifyTime(endpoint, &identifyTime) == EMBER_ZCL_STATUS_SUCCESS
+     40                && identifyTime > 0) {
+   \   00000006   0xA900             ADD      R1,SP,#+0
+   \   00000008   0x.... 0x....      BL       readIdentifyTime
+   \   0000000C   0xB938             CBNZ.N   R0,??emberAfIdentifyClusterServerTickCallback_0
+   \   0000000E   0xF8BD 0x0000      LDRH     R0,[SP, #+0]
+   \   00000012   0xB120             CBZ.N    R0,??emberAfIdentifyClusterServerTickCallback_0
+     41              // This tick writes the new attribute, which will trigger the Attribute
+     42              // Changed callback below, which in turn will schedule or cancel the tick.
+     43              // Because of this, the tick does not have to be scheduled here.
+     44              writeIdentifyTime(endpoint, identifyTime - 1);
+   \   00000014   0x1E41             SUBS     R1,R0,#+1
+   \   00000016   0xB289             UXTH     R1,R1
+   \   00000018   0x4620             MOV      R0,R4
+   \   0000001A   0x.... 0x....      BL       writeIdentifyTime
+     45            }
+     46          }
+   \                     ??emberAfIdentifyClusterServerTickCallback_0:
+   \   0000001E   0xBD13             POP      {R0,R1,R4,PC}    ;; return
+     47          
+
+   \                                 In section .text, align 2, keep-with-next
+     48          void emberAfIdentifyClusterServerAttributeChangedCallback(int8u endpoint,
+     49                                                                    EmberAfAttributeId attributeId)
+     50          {
+     51            if (attributeId == ZCL_IDENTIFY_TIME_ATTRIBUTE_ID) {
+   \                     emberAfIdentifyClusterServerAttributeChangedCallback:
+   \   00000000   0x2900             CMP      R1,#+0
+   \   00000002   0xBF08             IT       EQ 
+   \   00000004   0x.... 0x....      BEQ.W    scheduleIdentifyTick
+     52              scheduleIdentifyTick(endpoint);
+     53            }
+     54          }
+   \   00000008   0x4770             BX       LR               ;; return
+     55          
+
+   \                                 In section .text, align 2, keep-with-next
+     56          boolean emberAfIdentifyClusterIdentifyCallback(int16u time)
+     57          {
+   \                     emberAfIdentifyClusterIdentifyCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+     58            // This Identify callback writes the new attribute, which will trigger the
+     59            // Attribute Changed callback above, which in turn will schedule or cancel the
+     60            // tick.  Because of this, the tick does not have to be scheduled here.
+     61            emberAfIdentifyClusterPrintln("RX identify:IDENTIFY 0x%2x", time);
+   \   00000004   0x4622             MOV      R2,R4
+   \   00000006   0x.... 0x....      ADR.W    R1,`?<Constant "RX identify:IDENTIFY ...">`
+   \   0000000A   0x.... 0x....      BL       ?Subroutine1
+     62            emberAfSendImmediateDefaultResponse(writeIdentifyTime(emberAfCurrentEndpoint(), time));
+   \                     ??CrossCallReturnLabel_2:
+   \   0000000E   0x4621             MOV      R1,R4
+   \   00000010   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_3:
+   \   00000014   0x.... 0x....      BL       writeIdentifyTime
+   \   00000018   0x.... 0x....      BL       emberAfSendImmediateDefaultResponse
+     63            return TRUE;
+   \   0000001C   0x2001             MOVS     R0,#+1
+   \   0000001E   0xBD10             POP      {R4,PC}          ;; return
+     64          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine2:
+   \   00000000   0x....             LDR.N    R0,??DataTable7_1
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0x7940             LDRB     R0,[R0, #+5]
+   \   00000008   0x4770             BX       LR
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine1:
+   \   00000000   0xF44F 0x7090      MOV      R0,#+288
+   \   00000004   0x.... 0x....      B.W      emberAfPrintln
+     65          
+
+   \                                 In section .text, align 2, keep-with-next
+     66          boolean emberAfIdentifyClusterIdentifyQueryCallback(void)
+     67          {
+   \                     emberAfIdentifyClusterIdentifyQueryCallback:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+     68            EmberAfStatus status;
+     69            int16u identifyTime;
+     70          
+     71            emberAfIdentifyClusterPrintln("RX identify:QUERY");
+   \   00000004   0x.... 0x....      ADR.W    R1,`?<Constant "RX identify:QUERY">`
+   \   00000008   0xF44F 0x7090      MOV      R0,#+288
+   \   0000000C   0x.... 0x....      BL       emberAfPrintln
+     72          
+     73            // According to the 075123r02ZB, a device shall not send an Identify Query
+     74            // Response if it is not currently identifying.  Instead, or if reading the
+     75            // Identify Time attribute fails, send a Default Response.
+     76            status = readIdentifyTime(emberAfCurrentEndpoint(), &identifyTime);
+   \   00000010   0xA901             ADD      R1,SP,#+4
+   \   00000012   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_4:
+   \   00000016   0x.... 0x....      BL       readIdentifyTime
+     77            if (status != EMBER_ZCL_STATUS_SUCCESS || identifyTime == 0) {
+   \   0000001A   0xB910             CBNZ.N   R0,??emberAfIdentifyClusterIdentifyQueryCallback_0
+   \   0000001C   0xF8BD 0x1004      LDRH     R1,[SP, #+4]
+   \   00000020   0xB911             CBNZ.N   R1,??emberAfIdentifyClusterIdentifyQueryCallback_1
+     78              emberAfSendImmediateDefaultResponse(status);
+   \                     ??emberAfIdentifyClusterIdentifyQueryCallback_0:
+   \   00000022   0x.... 0x....      BL       emberAfSendImmediateDefaultResponse
+     79              return TRUE;
+   \   00000026   0xE008             B.N      ??emberAfIdentifyClusterIdentifyQueryCallback_2
+     80            }
+     81          
+     82            emberAfFillCommandIdentifyClusterIdentifyQueryResponse(identifyTime);
+   \                     ??emberAfIdentifyClusterIdentifyQueryCallback_1:
+   \   00000028   0x9100             STR      R1,[SP, #+0]
+   \   0000002A   0x....             ADR.N    R3,??DataTable7  ;; "v"
+   \   0000002C   0x2200             MOVS     R2,#+0
+   \   0000002E   0x2103             MOVS     R1,#+3
+   \   00000030   0x2009             MOVS     R0,#+9
+   \   00000032   0x.... 0x....      BL       emberAfFillExternalBuffer
+     83            emberAfSendResponse();
+   \   00000036   0x.... 0x....      BL       emberAfSendResponse
+     84            return TRUE;
+   \                     ??emberAfIdentifyClusterIdentifyQueryCallback_2:
+   \   0000003A   0x2001             MOVS     R0,#+1
+   \   0000003C   0xBD0E             POP      {R1-R3,PC}       ;; return
+     85          }
+     86          
+
+   \                                 In section .text, align 2, keep-with-next
+     87          EmberAfStatus readIdentifyTime(int8u endpoint, 
+     88                                         int16u *identifyTime)
+     89          {
+   \                     readIdentifyTime:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB084             SUB      SP,SP,#+16
+     90            EmberAfStatus status = emberAfReadAttribute(endpoint,
+     91                                                        ZCL_IDENTIFY_CLUSTER_ID,
+     92                                                        ZCL_IDENTIFY_TIME_ATTRIBUTE_ID,
+     93                                                        CLUSTER_MASK_SERVER,
+     94                                                        (int8u *)identifyTime,
+     95                                                        sizeof(*identifyTime),
+     96                                                        NULL); // data type
+   \   00000004   0x2200             MOVS     R2,#+0
+   \   00000006   0x9202             STR      R2,[SP, #+8]
+   \   00000008   0x2202             MOVS     R2,#+2
+   \   0000000A   0x9201             STR      R2,[SP, #+4]
+   \   0000000C   0x9100             STR      R1,[SP, #+0]
+   \   0000000E   0x2340             MOVS     R3,#+64
+   \   00000010   0x2200             MOVS     R2,#+0
+   \   00000012   0x2103             MOVS     R1,#+3
+   \   00000014   0x.... 0x....      BL       emberAfReadAttribute
+   \   00000018   0x0004             MOVS     R4,R0
+     97          #if defined(EMBER_AF_PRINT_ENABLE) && defined(EMBER_AF_PRINT_IDENTIFY_CLUSTER)
+     98            if (status != EMBER_ZCL_STATUS_SUCCESS) {
+   \   0000001A   0xD004             BEQ.N    ??CrossCallReturnLabel_1
+     99              emberAfIdentifyClusterPrintln("ERR: reading identify time %x", status);
+   \   0000001C   0x4622             MOV      R2,R4
+   \   0000001E   0x.... 0x....      ADR.W    R1,`?<Constant "ERR: reading identify...">`
+   \   00000022   0x.... 0x....      BL       ?Subroutine1
+    100            }
+    101          #endif //defined(EMBER_AF_PRINT_ENABLE) && defined(EMBER_AF_PRINT_IDENTIFY_CLUSTER)
+    102            return status;
+   \                     ??CrossCallReturnLabel_1:
+   \   00000026   0x....             B.N      ?Subroutine0
+    103          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x4620             MOV      R0,R4
+   \   00000002   0xB004             ADD      SP,SP,#+16
+   \   00000004   0xBD10             POP      {R4,PC}          ;; return
+    104          
+
+   \                                 In section .text, align 2, keep-with-next
+    105          static EmberAfStatus writeIdentifyTime(int8u endpoint, int16u identifyTime)
+    106          {
+   \                     writeIdentifyTime:
+   \   00000000   0xB512             PUSH     {R1,R4,LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+    107            EmberAfStatus status = emberAfWriteAttribute(endpoint,
+    108                                                         ZCL_IDENTIFY_CLUSTER_ID,
+    109                                                         ZCL_IDENTIFY_TIME_ATTRIBUTE_ID,
+    110                                                         CLUSTER_MASK_SERVER,
+    111                                                         (int8u *)&identifyTime,
+    112                                                         ZCL_INT16U_ATTRIBUTE_TYPE);
+   \   00000004   0x2121             MOVS     R1,#+33
+   \   00000006   0x9101             STR      R1,[SP, #+4]
+   \   00000008   0xA903             ADD      R1,SP,#+12
+   \   0000000A   0x9100             STR      R1,[SP, #+0]
+   \   0000000C   0x2340             MOVS     R3,#+64
+   \   0000000E   0x2200             MOVS     R2,#+0
+   \   00000010   0x2103             MOVS     R1,#+3
+   \   00000012   0x.... 0x....      BL       emberAfWriteAttribute
+   \   00000016   0x0004             MOVS     R4,R0
+    113          #if defined(EMBER_AF_PRINT_ENABLE) && defined(EMBER_AF_PRINT_IDENTIFY_CLUSTER)
+    114            if (status != EMBER_ZCL_STATUS_SUCCESS) {
+   \   00000018   0xD004             BEQ.N    ??CrossCallReturnLabel_0
+    115              emberAfIdentifyClusterPrintln("ERR: writing identify time %x", status);
+   \   0000001A   0x4622             MOV      R2,R4
+   \   0000001C   0x.... 0x....      ADR.W    R1,`?<Constant "ERR: writing identify...">`
+   \   00000020   0x.... 0x....      BL       ?Subroutine1
+    116            }
+    117          #endif //defined(EMBER_AF_PRINT_ENABLE) && defined(EMBER_AF_PRINT_IDENTIFY_CLUSTER)
+    118            return status;
+   \                     ??CrossCallReturnLabel_0:
+   \   00000024                      REQUIRE ?Subroutine0
+   \   00000024                      ;; // Fall through to label ?Subroutine0
+    119          }
+    120          
+
+   \                                 In section .text, align 2, keep-with-next
+    121          static EmberStatus scheduleIdentifyTick(int8u endpoint)
+    122          {
+   \                     scheduleIdentifyTick:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+    123            EmberAfStatus status;
+    124            EmAfIdentifyState *state = getIdentifyState(endpoint);
+   \   00000004   0x2103             MOVS     R1,#+3
+   \   00000006   0x.... 0x....      BL       emberAfFindClusterServerEndpointIndex
+   \   0000000A   0x28FF             CMP      R0,#+255
+   \   0000000C   0xBF0E             ITEE     EQ 
+   \   0000000E   0x2500             MOVEQ    R5,#+0
+   \   00000010   0x....             LDRNE.N  R1,??DataTable7_2
+   \   00000012   0xEB01 0x0580      ADDNE    R5,R1,R0, LSL #+2
+    125            int16u identifyTime;
+    126          
+    127            if(state == NULL) {
+   \   00000016   0xB90D             CBNZ.N   R5,??scheduleIdentifyTick_0
+    128              return EMBER_BAD_ARGUMENT;
+   \   00000018   0x2002             MOVS     R0,#+2
+   \   0000001A   0xBD32             POP      {R1,R4,R5,PC}
+    129            }
+    130          
+    131            status = readIdentifyTime(endpoint, &identifyTime);
+    132            if(status == EMBER_ZCL_STATUS_SUCCESS) {
+   \                     ??scheduleIdentifyTick_0:
+   \   0000001C   0xA900             ADD      R1,SP,#+0
+   \   0000001E   0x4620             MOV      R0,R4
+   \   00000020   0x.... 0x....      BL       readIdentifyTime
+   \   00000024   0xB9A8             CBNZ.N   R0,??scheduleIdentifyTick_1
+    133              if (!state->identifying) {
+   \   00000026   0x7828             LDRB     R0,[R5, #+0]
+   \   00000028   0xB948             CBNZ.N   R0,??scheduleIdentifyTick_2
+    134                state->identifying = TRUE;
+   \   0000002A   0x2001             MOVS     R0,#+1
+   \   0000002C   0x7028             STRB     R0,[R5, #+0]
+    135                state->identifyTime = identifyTime;
+   \   0000002E   0xF8BD 0x0000      LDRH     R0,[SP, #+0]
+   \   00000032   0x8068             STRH     R0,[R5, #+2]
+    136                emberAfPluginIdentifyStartFeedbackCallback(endpoint, 
+    137                                                           identifyTime);
+   \   00000034   0xF8BD 0x1000      LDRH     R1,[SP, #+0]
+   \   00000038   0x4620             MOV      R0,R4
+   \   0000003A   0x.... 0x....      BL       emberAfPluginIdentifyStartFeedbackCallback
+    138              }
+    139              if (identifyTime > 0) {
+   \                     ??scheduleIdentifyTick_2:
+   \   0000003E   0xF8BD 0x0000      LDRH     R0,[SP, #+0]
+   \   00000042   0xB130             CBZ.N    R0,??scheduleIdentifyTick_1
+    140                return emberAfScheduleServerTick(endpoint,
+    141                                                 ZCL_IDENTIFY_CLUSTER_ID,
+    142                                                 MILLISECOND_TICKS_PER_SECOND);
+   \   00000044   0xF44F 0x6280      MOV      R2,#+1024
+   \   00000048   0x2103             MOVS     R1,#+3
+   \   0000004A   0x4620             MOV      R0,R4
+   \   0000004C   0x.... 0x....      BL       emberAfScheduleServerTick
+   \   00000050   0xBD32             POP      {R1,R4,R5,PC}
+    143              }
+    144            }
+    145          
+    146            state->identifying = FALSE;
+   \                     ??scheduleIdentifyTick_1:
+   \   00000052   0x2000             MOVS     R0,#+0
+   \   00000054   0x7028             STRB     R0,[R5, #+0]
+    147            emberAfPluginIdentifyStopFeedbackCallback(endpoint);
+   \   00000056   0x4620             MOV      R0,R4
+   \   00000058   0x.... 0x....      BL       emberAfPluginIdentifyStopFeedbackCallback
+    148            return emberAfDeactivateServerTick(endpoint, ZCL_IDENTIFY_CLUSTER_ID);
+   \   0000005C   0x2103             MOVS     R1,#+3
+   \   0000005E   0x4620             MOV      R0,R4
+   \   00000060   0x.... 0x....      BL       emberAfDeactivateServerTick
+   \   00000064   0xBD32             POP      {R1,R4,R5,PC}    ;; return
+    149          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7:
+   \   00000000   0x76 0x00          DC8      "v",0x0,0x0
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_1:
+   \   00000000   0x........         DC32     emAfCurrentCommand
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_2:
+   \   00000000   0x........         DC32     stateTable
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "RX identify:IDENTIFY ...">`:
+   \   00000000   0x52 0x58          DC8 "RX identify:IDENTIFY 0x%2x"
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \              0x79 0x3A    
+   \              0x49 0x44    
+   \              0x45 0x4E    
+   \              0x54 0x49    
+   \              0x46 0x59    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x32 0x78    
+   \              0x00         
+   \   0000001B   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "RX identify:QUERY">`:
+   \   00000000   0x52 0x58          DC8 "RX identify:QUERY"
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \              0x79 0x3A    
+   \              0x51 0x55    
+   \              0x45 0x52    
+   \              0x59 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "ERR: reading identify...">`:
+   \   00000000   0x45 0x52          DC8 "ERR: reading identify time %x"
+   \              0x52 0x3A    
+   \              0x20 0x72    
+   \              0x65 0x61    
+   \              0x64 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \              0x79 0x20    
+   \              0x74 0x69    
+   \              0x6D 0x65    
+   \              0x20 0x25    
+   \              0x78 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "ERR: writing identify...">`:
+   \   00000000   0x45 0x52          DC8 "ERR: writing identify time %x"
+   \              0x52 0x3A    
+   \              0x20 0x77    
+   \              0x72 0x69    
+   \              0x74 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x69    
+   \              0x64 0x65    
+   \              0x6E 0x74    
+   \              0x69 0x66    
+   \              0x79 0x20    
+   \              0x74 0x69    
+   \              0x6D 0x65    
+   \              0x20 0x25    
+   \              0x78 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 2, keep-with-next
+   \                     `?<Constant "v">`:
+   \   00000000   0x76 0x00          DC8 "v"
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emberAfIdentifyClusterIdentifyCallback
+              8 -> emberAfPrintln
+              8 -> emberAfSendImmediateDefaultResponse
+              8 -> writeIdentifyTime
+       16  emberAfIdentifyClusterIdentifyQueryCallback
+             16 -> emberAfFillExternalBuffer
+             16 -> emberAfPrintln
+             16 -> emberAfSendImmediateDefaultResponse
+             16 -> emberAfSendResponse
+             16 -> readIdentifyTime
+        0  emberAfIdentifyClusterServerAttributeChangedCallback
+              0 -> scheduleIdentifyTick
+        0  emberAfIdentifyClusterServerInitCallback
+              0 -> scheduleIdentifyTick
+       16  emberAfIdentifyClusterServerTickCallback
+             16 -> readIdentifyTime
+             16 -> writeIdentifyTime
+       24  readIdentifyTime
+             24 -> emberAfPrintln
+             24 -> emberAfReadAttribute
+       16  scheduleIdentifyTick
+             16 -> emberAfDeactivateServerTick
+             16 -> emberAfFindClusterServerEndpointIndex
+             16 -> emberAfPluginIdentifyStartFeedbackCallback
+             16 -> emberAfPluginIdentifyStopFeedbackCallback
+             16 -> emberAfScheduleServerTick
+             16 -> readIdentifyTime
+       24  writeIdentifyTime
+             24 -> emberAfPrintln
+             24 -> emberAfWriteAttribute
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      32  ?<Constant "ERR: reading identify...">
+      32  ?<Constant "ERR: writing identify...">
+      28  ?<Constant "RX identify:IDENTIFY ...">
+      20  ?<Constant "RX identify:QUERY">
+       2  ?<Constant "v">
+       4  ??DataTable7
+       4  ??DataTable7_1
+       4  ??DataTable7_2
+       6  ?Subroutine0
+       8  ?Subroutine1
+      10  ?Subroutine2
+      32  emberAfIdentifyClusterIdentifyCallback
+      62  emberAfIdentifyClusterIdentifyQueryCallback
+      10  emberAfIdentifyClusterServerAttributeChangedCallback
+       2  emberAfIdentifyClusterServerInitCallback
+      32  emberAfIdentifyClusterServerTickCallback
+      40  readIdentifyTime
+     102  scheduleIdentifyTick
+       4  stateTable
+      36  writeIdentifyTime
+
+ 
+   4 bytes in section .bss
+   2 bytes in section .rodata
+ 464 bytes in section .text
+ 
+ 464 bytes of CODE  memory
+   2 bytes of CONST memory
+   4 bytes of DATA  memory
+
+Errors: none
+Warnings: none

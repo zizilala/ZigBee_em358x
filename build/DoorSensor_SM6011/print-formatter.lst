@@ -1,0 +1,795 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:06 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\prin #
+#                    t-formatter.c                                            #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\prin #
+#                    t-formatter.c -D "GENERATED_TOKEN_HEADER=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D        #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"print-formatter.c\"" -lC            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\ -I  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \print-formatter.lst                                     #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \print-formatter.o                                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\print-formatter.c
+      1          // ****************************************************************************
+      2          // * print-formatter.c
+      3          // *
+      4          // * Utilities for printing in common formats: buffers, EUI64s, keys
+      5          // *
+      6          // * Copyright 2007 by Ember Corporation. All rights reserved.              *80*
+      7          // *****************************************************************************
+      8          
+      9          #include "app/framework/include/af.h"
+     10          #include "app/util/serial/command-interpreter2.h"
+     11          
+     12          //------------------------------------------------------------------------------
+     13          
+
+   \                                 In section .text, align 2, keep-with-next
+     14          static void emAfPrintBuffer(int16u area,
+     15                                      const int8u *buffer,
+     16                                      int16u bufferLen,
+     17                                      PGM_P formatString)
+     18          {
+   \                     emAfPrintBuffer:
+   \   00000000   0xE92D 0x41F0      PUSH     {R4-R8,LR}
+   \   00000004   0x4604             MOV      R4,R0
+   \   00000006   0x460D             MOV      R5,R1
+   \   00000008   0x4616             MOV      R6,R2
+   \   0000000A   0x4698             MOV      R8,R3
+     19            if (emberAfPrintEnabled(area)) {
+   \   0000000C   0x.... 0x....      BL       emberAfPrintEnabled
+   \   00000010   0xB1A0             CBZ.N    R0,??emAfPrintBuffer_0
+     20              int16u index = 0;
+   \   00000012   0x2700             MOVS     R7,#+0
+   \   00000014   0xE010             B.N      ??emAfPrintBuffer_1
+     21              for (; index < bufferLen; index++) {
+     22                emberAfPrint(area, formatString, buffer[index]);
+   \                     ??emAfPrintBuffer_2:
+   \   00000016   0x5D7A             LDRB     R2,[R7, R5]
+   \   00000018   0x4641             MOV      R1,R8
+   \   0000001A   0x4620             MOV      R0,R4
+   \   0000001C   0x.... 0x....      BL       emberAfPrint
+     23                if (index % 16 == 6) {
+   \   00000020   0x10F8             ASRS     R0,R7,#+3
+   \   00000022   0xEB07 0x7010      ADD      R0,R7,R0, LSR #+28
+   \   00000026   0x1100             ASRS     R0,R0,#+4
+   \   00000028   0xEBA7 0x1000      SUB      R0,R7,R0, LSL #+4
+   \   0000002C   0x2806             CMP      R0,#+6
+   \   0000002E   0xBF04             ITT      EQ 
+   \   00000030   0x4620             MOVEQ    R0,R4
+   \   00000032   0x.... 0x....      BLEQ     emberAfFlush
+     24                  emberAfFlush(area);
+     25                }
+     26              }
+   \   00000036   0x1C7F             ADDS     R7,R7,#+1
+   \                     ??emAfPrintBuffer_1:
+   \   00000038   0x42B7             CMP      R7,R6
+   \   0000003A   0xDBEC             BLT.N    ??emAfPrintBuffer_2
+     27            }
+     28          }
+   \                     ??emAfPrintBuffer_0:
+   \   0000003C   0xE8BD 0x81F0      POP      {R4-R8,PC}       ;; return
+     29          
+
+   \                                 In section .text, align 2, keep-with-next
+     30          void emberAfPrintBuffer(int16u area, 
+     31                                  const int8u *buffer, 
+     32                                  int16u bufferLen,
+     33                                  boolean withSpace) 
+     34          {
+     35            emAfPrintBuffer(area, buffer, bufferLen, (withSpace ? "%x " : "%x"));
+   \                     emberAfPrintBuffer:
+   \   00000000   0x2B00             CMP      R3,#+0
+   \   00000002   0xBF14             ITE      NE 
+   \   00000004   0x....             ADRNE.N  R3,??DataTable20  ;; "%x "
+   \   00000006   0x....             ADREQ.N  R3,??DataTable20_1  ;; 0x25, 0x78, 0x00, 0x00
+   \   00000008   0x....             B.N      emAfPrintBuffer
+     36          }
+     37          
+
+   \                                 In section .text, align 2, keep-with-next
+     38          void emberAfPrintString(int16u area, const int8u *buffer) {
+   \                     emberAfPrintString:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+   \   00000004   0x460D             MOV      R5,R1
+     39            emAfPrintBuffer(area, buffer + 1, emberAfStringLength(buffer), "%c");
+   \   00000006   0x4628             MOV      R0,R5
+   \   00000008   0x.... 0x....      BL       emberAfStringLength
+   \   0000000C   0x....             ADR.N    R3,??DataTable20_2  ;; 0x25, 0x63, 0x00, 0x00
+   \   0000000E   0x4602             MOV      R2,R0
+   \   00000010   0x1C69             ADDS     R1,R5,#+1
+   \   00000012   0x....             B.N      ?Subroutine0
+     40          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x4620             MOV      R0,R4
+   \   00000002   0xB001             ADD      SP,SP,#+4
+   \   00000004   0xE8BD 0x4030      POP      {R4,R5,LR}
+   \   00000008   0x....             B.N      emAfPrintBuffer
+     41          
+
+   \                                 In section .text, align 2, keep-with-next
+     42          void emberAfPrintLongString(int16u area, const int8u *buffer) {
+   \                     emberAfPrintLongString:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x4604             MOV      R4,R0
+   \   00000004   0x460D             MOV      R5,R1
+     43            emAfPrintBuffer(area, buffer + 2, emberAfLongStringLength(buffer), "%c");
+   \   00000006   0x4628             MOV      R0,R5
+   \   00000008   0x.... 0x....      BL       emberAfLongStringLength
+   \   0000000C   0x....             ADR.N    R3,??DataTable20_2  ;; 0x25, 0x63, 0x00, 0x00
+   \   0000000E   0x4602             MOV      R2,R0
+   \   00000010   0x1CA9             ADDS     R1,R5,#+2
+   \   00000012                      REQUIRE ?Subroutine0
+   \   00000012                      ;; // Fall through to label ?Subroutine0
+     44          }
+     45          
+
+   \                                 In section .text, align 2, keep-with-next
+     46          void emberAfPrintLittleEndianEui64(const EmberEUI64 eui64)
+     47          {
+   \                     emberAfPrintLittleEndianEui64:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB087             SUB      SP,SP,#+28
+     48            emberAfPrint(emberAfPrintActiveArea,
+     49                         "(%c)%X%X%X%X%X%X%X%X",
+     50                         '<',
+     51                         eui64[0], 
+     52                         eui64[1], 
+     53                         eui64[2], 
+     54                         eui64[3],
+     55                         eui64[4], 
+     56                         eui64[5], 
+     57                         eui64[6], 
+     58                         eui64[7]);
+   \   00000004   0x79C1             LDRB     R1,[R0, #+7]
+   \   00000006   0x9106             STR      R1,[SP, #+24]
+   \   00000008   0x7981             LDRB     R1,[R0, #+6]
+   \   0000000A   0x9105             STR      R1,[SP, #+20]
+   \   0000000C   0x7941             LDRB     R1,[R0, #+5]
+   \   0000000E   0x9104             STR      R1,[SP, #+16]
+   \   00000010   0x7901             LDRB     R1,[R0, #+4]
+   \   00000012   0x9103             STR      R1,[SP, #+12]
+   \   00000014   0x78C1             LDRB     R1,[R0, #+3]
+   \   00000016   0x9102             STR      R1,[SP, #+8]
+   \   00000018   0x7881             LDRB     R1,[R0, #+2]
+   \   0000001A   0x9101             STR      R1,[SP, #+4]
+   \   0000001C   0x7841             LDRB     R1,[R0, #+1]
+   \   0000001E   0x9100             STR      R1,[SP, #+0]
+   \   00000020   0x7803             LDRB     R3,[R0, #+0]
+   \   00000022   0x223C             MOVS     R2,#+60
+   \   00000024   0x....             B.N      ?Subroutine1
+     59          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine1:
+   \   00000000   0x.... 0x....      ADR.W    R1,`?<Constant "(%c)%X%X%X%X%X%X%X%X">`
+   \   00000004   0x.... 0x....      BL       ?Subroutine3
+   \                     ??CrossCallReturnLabel_3:
+   \   00000008   0x.... 0x....      BL       emberAfPrint
+   \   0000000C   0xB007             ADD      SP,SP,#+28
+   \   0000000E   0xBD00             POP      {PC}             ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine3:
+   \   00000000   0x....             LDR.N    R0,??DataTable20_10
+   \   00000002   0x8800             LDRH     R0,[R0, #+0]
+   \   00000004   0x4770             BX       LR
+     60          
+
+   \                                 In section .text, align 2, keep-with-next
+     61          void emberAfPrintBigEndianEui64(const EmberEUI64 eui64)
+     62          {
+   \                     emberAfPrintBigEndianEui64:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB087             SUB      SP,SP,#+28
+     63            emberAfPrint(emberAfPrintActiveArea,
+     64                         "(%c)%X%X%X%X%X%X%X%X",
+     65                         '>',
+     66                         eui64[7], 
+     67                         eui64[6], 
+     68                         eui64[5], 
+     69                         eui64[4],
+     70                         eui64[3], 
+     71                         eui64[2], 
+     72                         eui64[1], 
+     73                         eui64[0]);
+   \   00000004   0x7801             LDRB     R1,[R0, #+0]
+   \   00000006   0x9106             STR      R1,[SP, #+24]
+   \   00000008   0x7841             LDRB     R1,[R0, #+1]
+   \   0000000A   0x9105             STR      R1,[SP, #+20]
+   \   0000000C   0x7881             LDRB     R1,[R0, #+2]
+   \   0000000E   0x9104             STR      R1,[SP, #+16]
+   \   00000010   0x78C1             LDRB     R1,[R0, #+3]
+   \   00000012   0x9103             STR      R1,[SP, #+12]
+   \   00000014   0x7901             LDRB     R1,[R0, #+4]
+   \   00000016   0x9102             STR      R1,[SP, #+8]
+   \   00000018   0x7941             LDRB     R1,[R0, #+5]
+   \   0000001A   0x9101             STR      R1,[SP, #+4]
+   \   0000001C   0x7981             LDRB     R1,[R0, #+6]
+   \   0000001E   0x9100             STR      R1,[SP, #+0]
+   \   00000020   0x79C3             LDRB     R3,[R0, #+7]
+   \   00000022   0x223E             MOVS     R2,#+62
+   \   00000024                      REQUIRE ?Subroutine1
+   \   00000024                      ;; // Fall through to label ?Subroutine1
+     74          }
+     75          
+
+   \                                 In section .text, align 2, keep-with-next
+     76          void emberAfPrintZigbeeKey(const int8u *key)
+     77          {
+     78            // Zigbee Keys are 16 bytes long
+     79            emberAfPrint8ByteBlocks(2, key, FALSE);
+   \                     printZigbeeKey:
+   \   00000000   0x2200             MOVS     R2,#+0
+   \   00000002   0x4601             MOV      R1,R0
+   \   00000004   0x2002             MOVS     R0,#+2
+   \   00000006   0x....             B.N      emberAfPrint8ByteBlocks
+     80          }
+     81          
+
+   \                                 In section .text, align 2, keep-with-next
+     82          void emberAfPrintCert(const int8u *cert)
+     83          {
+     84            // Certificates are 48 bytes long
+     85            emberAfPrint8ByteBlocks(6, cert, TRUE);
+   \                     printCert:
+   \   00000000   0x2201             MOVS     R2,#+1
+   \   00000002   0x4601             MOV      R1,R0
+   \   00000004   0x2006             MOVS     R0,#+6
+   \   00000006   0x....             B.N      emberAfPrint8ByteBlocks
+     86          }
+     87          
+
+   \                                 In section .text, align 2, keep-with-next
+     88          void emberAfPrintKey(boolean publicKey, const int8u *key)
+     89          {
+   \                     printKey:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0x4604             MOV      R4,R0
+   \   00000004   0x460D             MOV      R5,R1
+     90            // ECC Public Keys are 22 bytes
+     91            // ECC Private Keys are 21 bytes
+     92          
+     93            emberAfPrintZigbeeKey(key);
+   \   00000006   0x4628             MOV      R0,R5
+   \   00000008   0x.... 0x....      BL       printZigbeeKey
+     94            emberAfPrintBuffer(emberAfPrintActiveArea, key + 16, 5, TRUE);
+   \   0000000C   0x....             LDR.N    R6,??DataTable20_10
+   \   0000000E   0x2301             MOVS     R3,#+1
+   \   00000010   0x2205             MOVS     R2,#+5
+   \   00000012   0xF105 0x0110      ADD      R1,R5,#+16
+   \   00000016   0x8830             LDRH     R0,[R6, #+0]
+   \   00000018   0x.... 0x....      BL       emberAfPrintBuffer
+     95            emberAfPrintln(emberAfPrintActiveArea, (publicKey ? "%X" : ""), key[21]);
+   \   0000001C   0x2C00             CMP      R4,#+0
+   \   0000001E   0xBF14             ITE      NE 
+   \   00000020   0x....             ADRNE.N  R1,??DataTable20_3  ;; 0x25, 0x58, 0x00, 0x00
+   \   00000022   0x....             ADREQ.N  R1,??DataTable20_4  ;; ""
+   \   00000024   0x7D6A             LDRB     R2,[R5, #+21]
+   \   00000026   0x....             B.N      ?Subroutine2
+     96            emberAfFlush(emberAfPrintActiveArea);
+     97          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine2:
+   \   00000000   0x8830             LDRH     R0,[R6, #+0]
+   \   00000002   0x.... 0x....      BL       emberAfPrintln
+   \   00000006   0x8830             LDRH     R0,[R6, #+0]
+   \   00000008   0xE8BD 0x4070      POP      {R4-R6,LR}
+   \   0000000C   0x.... 0x....      B.W      emberAfFlush
+     98          
+
+   \                                 In section .text, align 2, keep-with-next
+     99          void emberAfPrintKey283k1(boolean publicKey, const int8u *key)
+    100          {
+   \                     emberAfPrintKey283k1:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0x4604             MOV      R4,R0
+   \   00000004   0x460D             MOV      R5,R1
+    101            // ECC Public 283k1 Keys are 37 bytes
+    102            // ECC Private 283k1 Keys are 36 bytes
+    103            emberAfPrint8ByteBlocks(4, key, TRUE);
+   \   00000006   0x2201             MOVS     R2,#+1
+   \   00000008   0x2004             MOVS     R0,#+4
+   \   0000000A   0x.... 0x....      BL       emberAfPrint8ByteBlocks
+    104            emberAfPrintBuffer(emberAfPrintActiveArea, key + 32, 4, TRUE);
+   \   0000000E   0x....             LDR.N    R6,??DataTable20_10
+   \   00000010   0x2301             MOVS     R3,#+1
+   \   00000012   0x2204             MOVS     R2,#+4
+   \   00000014   0xF105 0x0120      ADD      R1,R5,#+32
+   \   00000018   0x8830             LDRH     R0,[R6, #+0]
+   \   0000001A   0x.... 0x....      BL       emberAfPrintBuffer
+    105            emberAfPrintln(emberAfPrintActiveArea, (publicKey ? "%X" : ""),key[36]);
+   \   0000001E   0x2C00             CMP      R4,#+0
+   \   00000020   0xBF14             ITE      NE 
+   \   00000022   0x....             ADRNE.N  R1,??DataTable20_3  ;; 0x25, 0x58, 0x00, 0x00
+   \   00000024   0x....             ADREQ.N  R1,??DataTable20_4  ;; ""
+   \   00000026   0xF895 0x2024      LDRB     R2,[R5, #+36]
+   \   0000002A                      REQUIRE ?Subroutine2
+   \   0000002A                      ;; // Fall through to label ?Subroutine2
+    106            emberAfFlush(emberAfPrintActiveArea);
+    107          }
+    108          
+
+   \                                 In section .text, align 2, keep-with-next
+    109          void emberAfPrintCert283k1(const int8u *cert)
+    110          {
+   \                     emberAfPrintCert283k1:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+    111            // ECC 283k1 certificates are 74 bytes long
+    112            emberAfPrint8ByteBlocks(9, cert, TRUE);
+   \   00000004   0x2201             MOVS     R2,#+1
+   \   00000006   0x4621             MOV      R1,R4
+   \   00000008   0x2009             MOVS     R0,#+9
+   \   0000000A   0x.... 0x....      BL       emberAfPrint8ByteBlocks
+    113            emberAfPrintln(emberAfPrintActiveArea,"%X %X",cert[72],cert[73]);
+   \   0000000E   0xF894 0x3049      LDRB     R3,[R4, #+73]
+   \   00000012   0xF894 0x2048      LDRB     R2,[R4, #+72]
+   \   00000016   0x.... 0x....      ADR.W    R1,`?<Constant "%X %X">`
+   \   0000001A   0x.... 0x....      BL       ?Subroutine3
+   \                     ??CrossCallReturnLabel_0:
+   \   0000001E   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000022   0x.... 0x....      B.W      emberAfPrintln
+    114          }
+    115          
+
+   \                                 In section .text, align 2, keep-with-next
+    116          void emberAfPrintIeeeLine(const EmberEUI64 ieee)
+    117          {
+   \                     printIeeeLine:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    118            emberAfPrintBigEndianEui64(ieee);
+   \   00000002   0x.... 0x....      BL       emberAfPrintBigEndianEui64
+    119            emberAfPrintln(emberAfPrintActiveArea, "");
+   \   00000006   0x....             ADR.N    R1,??DataTable20_4  ;; ""
+   \   00000008   0x.... 0x....      BL       ?Subroutine3
+   \                     ??CrossCallReturnLabel_1:
+   \   0000000C   0xE8BD 0x4004      POP      {R2,LR}
+   \   00000010   0x.... 0x....      B.W      emberAfPrintln
+    120          }
+    121          
+
+   \                                 In section .text, align 2, keep-with-next
+    122          void emberAfPrintTextLine(PGM_P text)
+    123          {
+    124            emberAfPrintln(emberAfPrintActiveArea, "%p", text);
+   \                     printTextLine:
+   \   00000000   0x4602             MOV      R2,R0
+   \   00000002   0x....             ADR.N    R1,??DataTable20_5  ;; 0x25, 0x70, 0x00, 0x00
+   \   00000004   0x....             LDR.N    R0,??DataTable20_10
+   \   00000006   0x8800             LDRH     R0,[R0, #+0]
+   \   00000008   0x.... 0x....      B.W      emberAfPrintln
+    125          }
+    126          
+
+   \                                 In section .text, align 2, keep-with-next
+    127          void emberAfPrint8ByteBlocks(int8u numBlocks,
+    128                                       const int8u *block,
+    129                                       boolean crBetweenBlocks)
+    130          {
+   \                     emberAfPrint8ByteBlocks:
+   \   00000000   0xE92D 0x4FF8      PUSH     {R3-R11,LR}
+   \   00000004   0x468B             MOV      R11,R1
+   \   00000006   0x4616             MOV      R6,R2
+    131            int8u i;
+    132            for (i = 0; i < numBlocks; i++) {
+   \   00000008   0x2500             MOVS     R5,#+0
+   \   0000000A   0x4682             MOV      R10,R0
+   \   0000000C   0x....             ADR.N    R7,??DataTable20_6  ;; " %p"
+   \   0000000E   0x.... 0x....      ADR.W    R8,??DataTable20_7  ;; 0x0D, 0x0A, 0x00, 0x00
+   \   00000012   0x.... 0x....      ADR.W    R9,??DataTable20_4  ;; ""
+   \   00000016   0x....             LDR.N    R4,??DataTable20_10
+   \   00000018   0xE008             B.N      ??emberAfPrint8ByteBlocks_0
+    133              emberAfPrintBuffer(emberAfPrintActiveArea, block + 8 * i, 8, TRUE);
+    134              // By moving the '%p' to a separate function call, we can
+    135              // save CONST space.  The above string is duplicated elsewhere in the
+    136              // code and therefore will be deadstripped.
+    137              emberAfPrint(emberAfPrintActiveArea,
+    138                           " %p",
+    139                           (crBetweenBlocks || ((i + 1) == numBlocks) ? "\r\n" : ""));
+   \                     ??emberAfPrint8ByteBlocks_1:
+   \   0000001A   0x464A             MOV      R2,R9
+   \                     ??emberAfPrint8ByteBlocks_2:
+   \   0000001C   0x4639             MOV      R1,R7
+   \   0000001E   0x8820             LDRH     R0,[R4, #+0]
+   \   00000020   0x.... 0x....      BL       emberAfPrint
+    140              emberAfFlush(emberAfPrintActiveArea);
+   \   00000024   0x8820             LDRH     R0,[R4, #+0]
+   \   00000026   0x.... 0x....      BL       emberAfFlush
+   \   0000002A   0x1C6D             ADDS     R5,R5,#+1
+   \                     ??emberAfPrint8ByteBlocks_0:
+   \   0000002C   0x4555             CMP      R5,R10
+   \   0000002E   0xDA0C             BGE.N    ??emberAfPrint8ByteBlocks_3
+   \   00000030   0x2301             MOVS     R3,#+1
+   \   00000032   0x2208             MOVS     R2,#+8
+   \   00000034   0xEB0B 0x01C5      ADD      R1,R11,R5, LSL #+3
+   \   00000038   0x8820             LDRH     R0,[R4, #+0]
+   \   0000003A   0x.... 0x....      BL       emberAfPrintBuffer
+   \   0000003E   0xB916             CBNZ.N   R6,??emberAfPrint8ByteBlocks_4
+   \   00000040   0x1C68             ADDS     R0,R5,#+1
+   \   00000042   0x4550             CMP      R0,R10
+   \   00000044   0xD1E9             BNE.N    ??emberAfPrint8ByteBlocks_1
+   \                     ??emberAfPrint8ByteBlocks_4:
+   \   00000046   0x4642             MOV      R2,R8
+   \   00000048   0xE7E8             B.N      ??emberAfPrint8ByteBlocks_2
+    141            }
+    142          }
+   \                     ??emberAfPrint8ByteBlocks_3:
+   \   0000004A   0xE8BD 0x8FF1      POP      {R0,R4-R11,PC}   ;; return
+    143          
+
+   \                                 In section .text, align 2, keep-with-next
+    144          void emberAfPrintIssuer(const int8u* issuer)
+    145          {
+   \                     emberAfPrintIssuer:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+    146            // The issuer field in the certificate is in big-endian form.
+    147            emberAfPrint(emberAfPrintActiveArea, "(>) ");
+   \   00000004   0x.... 0x....      ADR.W    R1,`?<Constant "(>) ">`
+   \   00000008   0x.... 0x....      BL       ?Subroutine3
+   \                     ??CrossCallReturnLabel_2:
+   \   0000000C   0x.... 0x....      BL       emberAfPrint
+    148            emberAfPrint8ByteBlocks(1, issuer, TRUE);
+   \   00000010   0x2201             MOVS     R2,#+1
+   \   00000012   0x4621             MOV      R1,R4
+   \   00000014   0x2001             MOVS     R0,#+1
+   \   00000016   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000001A   0x....             B.N      emberAfPrint8ByteBlocks
+    149          }
+    150          
+
+   \                                 In section .text, align 2, keep-with-next
+    151          void emberAfPrintChannelListFromMask(int32u channelMask)
+    152          {
+   \                     emberAfPrintChannelListFromMask:
+   \   00000000   0xE92D 0x41F0      PUSH     {R4-R8,LR}
+   \   00000004   0x4604             MOV      R4,R0
+    153            if (emberAfPrintEnabled(emberAfPrintActiveArea)) {
+   \   00000006   0x....             LDR.N    R5,??DataTable20_10
+   \   00000008   0x8828             LDRH     R0,[R5, #+0]
+   \   0000000A   0x.... 0x....      BL       emberAfPrintEnabled
+   \   0000000E   0xB1C8             CBZ.N    R0,??emberAfPrintChannelListFromMask_0
+    154              int8u i;
+    155              boolean firstPrint = TRUE;
+   \   00000010   0x2001             MOVS     R0,#+1
+    156              channelMask >>= EMBER_MIN_802_15_4_CHANNEL_NUMBER;
+   \   00000012   0x0AE4             LSRS     R4,R4,#+11
+    157              for (i = EMBER_MIN_802_15_4_CHANNEL_NUMBER;
+   \   00000014   0x260B             MOVS     R6,#+11
+   \   00000016   0x....             ADR.N    R7,??DataTable20_8  ;; 0x25, 0x64, 0x00, 0x00
+   \   00000018   0x.... 0x....      ADR.W    R8,??DataTable20_9  ;; 0x2C, 0x20, 0x00, 0x00
+    158                   i <= EMBER_MAX_802_15_4_CHANNEL_NUMBER;
+    159                   i++) {
+    160                if (channelMask & 0x01UL) {
+   \                     ??emberAfPrintChannelListFromMask_1:
+   \   0000001C   0x07E1             LSLS     R1,R4,#+31
+   \   0000001E   0xD50D             BPL.N    ??emberAfPrintChannelListFromMask_2
+    161                  if (!firstPrint) {
+   \   00000020   0xB918             CBNZ.N   R0,??emberAfPrintChannelListFromMask_3
+    162                    emberAfPrint(emberAfPrintActiveArea, ", ");
+   \   00000022   0x4641             MOV      R1,R8
+   \   00000024   0x8828             LDRH     R0,[R5, #+0]
+   \   00000026   0x.... 0x....      BL       emberAfPrint
+    163                  }
+    164                  emberAfPrint(emberAfPrintActiveArea, "%d", i);
+   \                     ??emberAfPrintChannelListFromMask_3:
+   \   0000002A   0x4632             MOV      R2,R6
+   \   0000002C   0x4639             MOV      R1,R7
+   \   0000002E   0x8828             LDRH     R0,[R5, #+0]
+   \   00000030   0x.... 0x....      BL       emberAfPrint
+    165                  emberAfFlush(emberAfPrintActiveArea);
+   \   00000034   0x8828             LDRH     R0,[R5, #+0]
+   \   00000036   0x.... 0x....      BL       emberAfFlush
+    166                  firstPrint = FALSE;
+   \   0000003A   0x2000             MOVS     R0,#+0
+    167                }
+    168                channelMask >>= 1;
+   \                     ??emberAfPrintChannelListFromMask_2:
+   \   0000003C   0x0864             LSRS     R4,R4,#+1
+    169              }
+   \   0000003E   0x1C76             ADDS     R6,R6,#+1
+   \   00000040   0x2E1B             CMP      R6,#+27
+   \   00000042   0xD3EB             BCC.N    ??emberAfPrintChannelListFromMask_1
+    170            }
+    171          }
+   \                     ??emberAfPrintChannelListFromMask_0:
+   \   00000044   0xE8BD 0x81F0      POP      {R4-R8,PC}       ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20:
+   \   00000000   0x25 0x78          DC8      "%x "
+   \              0x20 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_1:
+   \   00000000   0x25 0x78          DC8      0x25, 0x78, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_2:
+   \   00000000   0x25 0x63          DC8      0x25, 0x63, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_3:
+   \   00000000   0x25 0x58          DC8      0x25, 0x58, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_4:
+   \   00000000   0x00 0x00          DC8      "",0x0,0x0,0x0
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_5:
+   \   00000000   0x25 0x70          DC8      0x25, 0x70, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_6:
+   \   00000000   0x20 0x25          DC8      " %p"
+   \              0x70 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_7:
+   \   00000000   0x0D 0x0A          DC8      0x0D, 0x0A, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_8:
+   \   00000000   0x25 0x64          DC8      0x25, 0x64, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_9:
+   \   00000000   0x2C 0x20          DC8      0x2C, 0x20, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable20_10:
+   \   00000000   0x........         DC32     emberAfPrintActiveArea
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "%x ">`:
+   \   00000000   0x25 0x78          DC8 "%x "
+   \              0x20 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "%x">`:
+   \   00000000   0x25 0x78          DC8 "%x"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "%c">`:
+   \   00000000   0x25 0x63          DC8 "%c"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "%X">`:
+   \   00000000   0x25 0x58          DC8 "%X"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 1, keep-with-next
+   \                     `?<Constant "">`:
+   \   00000000   0x00               DC8 ""
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "%p">`:
+   \   00000000   0x25 0x70          DC8 "%p"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant " %p">`:
+   \   00000000   0x20 0x25          DC8 " %p"
+   \              0x70 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "(%c)%X%X%X%X%X%X%X%X">`:
+   \   00000000   0x28 0x25          DC8 "(%c)%X%X%X%X%X%X%X%X"
+   \              0x63 0x29    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x25 0x58    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%X %X">`:
+   \   00000000   0x25 0x58          DC8 "%X %X"
+   \              0x20 0x25    
+   \              0x58 0x00    
+   \   00000006   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "(>) ">`:
+   \   00000000   0x28 0x3E          DC8 "(>) "
+   \              0x29 0x20    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "\\r\\n">`:
+   \   00000000   0x0D 0x0A          DC8 "\015\012"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant ", ">`:
+   \   00000000   0x2C 0x20          DC8 ", "
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "%d">`:
+   \   00000000   0x25 0x64          DC8 "%d"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       24  emAfPrintBuffer
+             24 -> emberAfFlush
+             24 -> emberAfPrint
+             24 -> emberAfPrintEnabled
+       40  emberAfPrint8ByteBlocks
+             40 -> emberAfFlush
+             40 -> emberAfPrint
+             40 -> emberAfPrintBuffer
+       32  emberAfPrintBigEndianEui64
+             32 -> emberAfPrint
+        0  emberAfPrintBuffer
+              0 -> emAfPrintBuffer
+        8  emberAfPrintCert283k1
+              8 -> emberAfPrint8ByteBlocks
+              0 -> emberAfPrintln
+       24  emberAfPrintChannelListFromMask
+             24 -> emberAfFlush
+             24 -> emberAfPrint
+             24 -> emberAfPrintEnabled
+        8  emberAfPrintIssuer
+              8 -> emberAfPrint
+              0 -> emberAfPrint8ByteBlocks
+       16  emberAfPrintKey283k1
+              0 -> emberAfFlush
+             16 -> emberAfPrint8ByteBlocks
+             16 -> emberAfPrintBuffer
+             16 -> emberAfPrintln
+       32  emberAfPrintLittleEndianEui64
+             32 -> emberAfPrint
+       16  emberAfPrintLongString
+              0 -> emAfPrintBuffer
+             16 -> emberAfLongStringLength
+       16  emberAfPrintString
+              0 -> emAfPrintBuffer
+             16 -> emberAfStringLength
+        0  printCert
+              0 -> emberAfPrint8ByteBlocks
+        8  printIeeeLine
+              8 -> emberAfPrintBigEndianEui64
+              0 -> emberAfPrintln
+       16  printKey
+              0 -> emberAfFlush
+             16 -> emberAfPrintBuffer
+             16 -> emberAfPrintln
+             16 -> printZigbeeKey
+        0  printTextLine
+              0 -> emberAfPrintln
+        0  printZigbeeKey
+              0 -> emberAfPrint8ByteBlocks
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ?<Constant " %p">
+       1  ?<Constant "">
+       8  ?<Constant "%X %X">
+       4  ?<Constant "%X">
+       4  ?<Constant "%c">
+       4  ?<Constant "%d">
+       4  ?<Constant "%p">
+       4  ?<Constant "%x ">
+       4  ?<Constant "%x">
+      24  ?<Constant "(%c)%X%X%X%X%X%X%X%X">
+       8  ?<Constant "(>) ">
+       4  ?<Constant ", ">
+       4  ?<Constant "\r\n">
+       4  ??DataTable20
+       4  ??DataTable20_1
+       4  ??DataTable20_10
+       4  ??DataTable20_2
+       4  ??DataTable20_3
+       4  ??DataTable20_4
+       4  ??DataTable20_5
+       4  ??DataTable20_6
+       4  ??DataTable20_7
+       4  ??DataTable20_8
+       4  ??DataTable20_9
+      10  ?Subroutine0
+      16  ?Subroutine1
+      16  ?Subroutine2
+       6  ?Subroutine3
+      64  emAfPrintBuffer
+      78  emberAfPrint8ByteBlocks
+      36  emberAfPrintBigEndianEui64
+      10  emberAfPrintBuffer
+      38  emberAfPrintCert283k1
+      72  emberAfPrintChannelListFromMask
+      28  emberAfPrintIssuer
+      42  emberAfPrintKey283k1
+      38  emberAfPrintLittleEndianEui64
+      18  emberAfPrintLongString
+      20  emberAfPrintString
+       8  printCert
+      20  printIeeeLine
+      40  printKey
+      12  printTextLine
+       8  printZigbeeKey
+
+ 
+  37 bytes in section .rodata
+ 664 bytes in section .text
+ 
+ 664 bytes of CODE  memory
+  37 bytes of CONST memory
+
+Errors: none
+Warnings: none

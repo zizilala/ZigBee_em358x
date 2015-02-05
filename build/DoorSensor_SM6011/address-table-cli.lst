@@ -1,0 +1,329 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:39 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\address-table-cli.c                          #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\address-table-cli.c -D                       #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"address-table-cli.c\"" -lC          #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ad #
+#                    dress-table\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\bui #
+#                    lder\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\app\builder\DoorSensor_SM6011\..\..\..\ -I           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \address-table-cli.lst                                   #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \address-table-cli.o                                     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\address-table\address-table-cli.c
+      1          // *****************************************************************************
+      2          // * address-table-cli.c
+      3          // *
+      4          // * This code provides support for managing the address table.
+      5          // *
+      6          // * Copyright 2012 by Ember Corporation. All rights reserved.              *80*
+      7          // *****************************************************************************
+      8          
+      9          #include "app/framework/include/af.h"
+     10          #include "app/util/serial/command-interpreter2.h"
+     11          
+     12          #include "address-table-management.h"
+     13          
+     14          void emberAfPluginAddressTableAddCommand(void);
+     15          void emberAfPluginAddressTableRemoveCommand(void);
+     16          void emberAfPluginAddressTableLookupCommand(void);
+     17          
+     18          #if !defined(EMBER_AF_GENERATE_CLI)
+     19          EmberCommandEntry emberAfPluginAddressTableCommands[] = {
+     20            emberCommandEntryAction("add", emberAfPluginAddressTableAddCommand,  "b", "Add an entry to the address table."),
+     21            emberCommandEntryAction("remove", emberAfPluginAddressTableRemoveCommand,  "b", "Remove an entry from the address table."),
+     22            emberCommandEntryAction("lookup", emberAfPluginAddressTableLookupCommand,  "b", "Search for an entry in the address table."),
+     23            emberCommandEntryTerminator(),
+     24          };
+     25          #endif // EMBER_AF_GENERATE_CLI
+     26          
+
+   \                                 In section .text, align 2, keep-with-next
+     27          void emberAfPluginAddressTableAddCommand(void)
+     28          {
+   \                     emberAfPluginAddressTableAddCommand:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+     29            int8u index;
+     30            EmberEUI64 entry;
+     31            emberCopyEui64Argument(0, entry);
+   \   00000004   0x.... 0x....      BL       ?Subroutine2
+     32          
+     33            index = emberAfPluginAddressTableAddEntry(entry);
+   \                     ??CrossCallReturnLabel_2:
+   \   00000008   0xA800             ADD      R0,SP,#+0
+   \   0000000A   0x.... 0x....      BL       emberAfPluginAddressTableAddEntry
+   \   0000000E   0x4602             MOV      R2,R0
+     34          
+     35            if (index == EMBER_NULL_ADDRESS_TABLE_INDEX) {
+   \   00000010   0x2AFF             CMP      R2,#+255
+   \   00000012   0xD102             BNE.N    ??emberAfPluginAddressTableAddCommand_0
+     36              emberAfCorePrintln("Table full, entry not added");
+   \   00000014   0x.... 0x....      ADR.W    R1,`?<Constant "Table full, entry not...">`
+   \   00000018   0x....             B.N      ?Subroutine1
+     37            } else {
+     38              emberAfCorePrintln("Entry added at position 0x%x", index);
+   \                     ??emberAfPluginAddressTableAddCommand_0:
+   \   0000001A   0x.... 0x....      ADR.W    R1,`?<Constant "Entry added at positi...">`
+   \   0000001E   0x....             B.N      ?Subroutine0
+     39            }
+     40          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine1:
+   \   00000000   0x2001             MOVS     R0,#+1
+   \   00000002   0x.... 0x....      BL       emberAfPrintln
+   \   00000006   0xBD07             POP      {R0-R2,PC}
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine2:
+   \   00000000   0x2301             MOVS     R3,#+1
+   \   00000002   0x2208             MOVS     R2,#+8
+   \   00000004   0xA900             ADD      R1,SP,#+0
+   \   00000006   0x2000             MOVS     R0,#+0
+   \   00000008   0x.... 0x....      B.W      emberCopyStringArgument
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x2001             MOVS     R0,#+1
+   \   00000002   0x.... 0x....      BL       emberAfPrintln
+   \   00000006   0xBD07             POP      {R0-R2,PC}       ;; return
+     41          
+
+   \                                 In section .text, align 2, keep-with-next
+     42          void emberAfPluginAddressTableRemoveCommand(void)
+     43          {
+   \                     emberAfPluginAddressTableRemoveCommand:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+     44            EmberStatus status;
+     45            EmberEUI64 entry;
+     46            emberCopyEui64Argument(0, entry);
+   \   00000004   0x.... 0x....      BL       ?Subroutine2
+     47          
+     48            status = emberAfPluginAddressTableRemoveEntry(entry);
+     49          
+     50            if (status == EMBER_SUCCESS) {
+   \                     ??CrossCallReturnLabel_1:
+   \   00000008   0xA800             ADD      R0,SP,#+0
+   \   0000000A   0x.... 0x....      BL       emberAfPluginAddressTableRemoveEntry
+   \   0000000E   0x2800             CMP      R0,#+0
+   \   00000010   0xBF0C             ITE      EQ 
+   \   00000012   0x.... 0x....      ADREQ.W  R1,`?<Constant "Entry removed">`
+   \   00000016   0x.... 0x....      ADRNE.W  R1,`?<Constant "Entry removal failed">`
+     51              emberAfCorePrintln("Entry removed");
+     52            } else {
+     53              emberAfCorePrintln("Entry removal failed");
+   \   0000001A                      REQUIRE ?Subroutine1
+   \   0000001A                      ;; // Fall through to label ?Subroutine1
+     54            }
+     55          }
+     56          
+
+   \                                 In section .text, align 2, keep-with-next
+     57          void emberAfPluginAddressTableLookupCommand(void)
+     58          {
+   \                     emberAfPluginAddressTableLookupCommand:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+     59            int8u index;
+     60            EmberEUI64 entry;
+     61            emberCopyEui64Argument(0, entry);
+   \   00000004   0x.... 0x....      BL       ?Subroutine2
+     62            index = emberAfPluginAddressTableLookupByEui64(entry);
+   \                     ??CrossCallReturnLabel_0:
+   \   00000008   0xA800             ADD      R0,SP,#+0
+   \   0000000A   0x.... 0x....      BL       emberAfPluginAddressTableLookupByEui64
+   \   0000000E   0x4602             MOV      R2,R0
+     63          
+     64            if (index == EMBER_NULL_ADDRESS_TABLE_INDEX)
+   \   00000010   0x2AFF             CMP      R2,#+255
+   \   00000012   0xD102             BNE.N    ??emberAfPluginAddressTableLookupCommand_0
+     65              emberAfCorePrintln("Entry not found");
+   \   00000014   0x.... 0x....      ADR.W    R1,`?<Constant "Entry not found">`
+   \   00000018   0x....             B.N      ?Subroutine1
+     66            else
+     67              emberAfCorePrintln("Found entry at position 0x%x", index);
+   \                     ??emberAfPluginAddressTableLookupCommand_0:
+   \   0000001A   0x.... 0x....      ADR.W    R1,`?<Constant "Found entry at positi...">`
+   \   0000001E                      REQUIRE ?Subroutine0
+   \   0000001E                      ;; // Fall through to label ?Subroutine0
+     68          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Table full, entry not...">`:
+   \   00000000   0x54 0x61          DC8 "Table full, entry not added"
+   \              0x62 0x6C    
+   \              0x65 0x20    
+   \              0x66 0x75    
+   \              0x6C 0x6C    
+   \              0x2C 0x20    
+   \              0x65 0x6E    
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x6E 0x6F    
+   \              0x74 0x20    
+   \              0x61 0x64    
+   \              0x64 0x65    
+   \              0x64 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Entry added at positi...">`:
+   \   00000000   0x45 0x6E          DC8 "Entry added at position 0x%x"
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x61 0x64    
+   \              0x64 0x65    
+   \              0x64 0x20    
+   \              0x61 0x74    
+   \              0x20 0x70    
+   \              0x6F 0x73    
+   \              0x69 0x74    
+   \              0x69 0x6F    
+   \              0x6E 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x00         
+   \   0000001D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Entry removed">`:
+   \   00000000   0x45 0x6E          DC8 "Entry removed"
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x72 0x65    
+   \              0x6D 0x6F    
+   \              0x76 0x65    
+   \              0x64 0x00    
+   \   0000000E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Entry removal failed">`:
+   \   00000000   0x45 0x6E          DC8 "Entry removal failed"
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x72 0x65    
+   \              0x6D 0x6F    
+   \              0x76 0x61    
+   \              0x6C 0x20    
+   \              0x66 0x61    
+   \              0x69 0x6C    
+   \              0x65 0x64    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Entry not found">`:
+   \   00000000   0x45 0x6E          DC8 "Entry not found"
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x6E 0x6F    
+   \              0x74 0x20    
+   \              0x66 0x6F    
+   \              0x75 0x6E    
+   \              0x64 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Found entry at positi...">`:
+   \   00000000   0x46 0x6F          DC8 "Found entry at position 0x%x"
+   \              0x75 0x6E    
+   \              0x64 0x20    
+   \              0x65 0x6E    
+   \              0x74 0x72    
+   \              0x79 0x20    
+   \              0x61 0x74    
+   \              0x20 0x70    
+   \              0x6F 0x73    
+   \              0x69 0x74    
+   \              0x69 0x6F    
+   \              0x6E 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x00         
+   \   0000001D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+     69          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       16  emberAfPluginAddressTableAddCommand
+             16 -> emberAfPluginAddressTableAddEntry
+             16 -> emberAfPrintln
+             16 -> emberCopyStringArgument
+       16  emberAfPluginAddressTableLookupCommand
+             16 -> emberAfPluginAddressTableLookupByEui64
+             16 -> emberAfPrintln
+             16 -> emberCopyStringArgument
+       16  emberAfPluginAddressTableRemoveCommand
+             16 -> emberAfPluginAddressTableRemoveEntry
+             16 -> emberAfPrintln
+             16 -> emberCopyStringArgument
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      32  ?<Constant "Entry added at positi...">
+      16  ?<Constant "Entry not found">
+      24  ?<Constant "Entry removal failed">
+      16  ?<Constant "Entry removed">
+      32  ?<Constant "Found entry at positi...">
+      28  ?<Constant "Table full, entry not...">
+       8  ?Subroutine0
+       8  ?Subroutine1
+      12  ?Subroutine2
+      32  emberAfPluginAddressTableAddCommand
+      30  emberAfPluginAddressTableLookupCommand
+      26  emberAfPluginAddressTableRemoveCommand
+
+ 
+ 264 bytes in section .text
+ 
+ 264 bytes of CODE memory
+
+Errors: none
+Warnings: none

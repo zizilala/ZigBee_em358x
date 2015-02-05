@@ -1,0 +1,286 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:59 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    le-sleep\idle-sleep-cli.c                                #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    le-sleep\idle-sleep-cli.c -D                             #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"idle-sleep-cli.c\"" -lC             #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\id #
+#                    le-sleep\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builde #
+#                    r\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\ -I              #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \idle-sleep-cli.lst                                      #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \idle-sleep-cli.o                                        #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\idle-sleep\idle-sleep-cli.c
+      1          // Copyright 2013 Silicon Laboratories, Inc.
+      2          
+      3          #include "app/framework/include/af.h"
+      4          #include "idle-sleep.h"
+      5          
+      6          #ifndef EMBER_AF_GENERATE_CLI
+      7            #error The Idle/Sleep plugin is not compatible with the legacy CLI.
+      8          #endif
+      9          
+
+   \                                 In section .text, align 2, keep-with-next
+     10          void emberAfPluginIdleSleepStatusCommand(void)
+     11          {
+   \                     emberAfPluginIdleSleepStatusCommand:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+     12            emberAfCorePrintln("Stay awake when not joined: %p",
+     13                               (emAfStayAwakeWhenNotJoined ? "yes" : "no"));
+   \   00000002   0x....             ADR.N    R4,??DataTable7  ;; 0x6E, 0x6F, 0x00, 0x00
+   \   00000004   0x....             ADR.N    R5,??DataTable7_1  ;; "yes"
+   \   00000006   0x....             LDR.N    R0,??DataTable7_2
+   \   00000008   0x7800             LDRB     R0,[R0, #+0]
+   \   0000000A   0x2800             CMP      R0,#+0
+   \   0000000C   0xBF14             ITE      NE 
+   \   0000000E   0x462A             MOVNE    R2,R5
+   \   00000010   0x4622             MOVEQ    R2,R4
+   \   00000012   0x.... 0x....      ADR.W    R1,`?<Constant "Stay awake when not j...">`
+   \   00000016   0x2001             MOVS     R0,#+1
+   \   00000018   0x.... 0x....      BL       emberAfPrintln
+     14            emberAfCorePrintln("Forced stay awake:          %p",
+     15                               (emAfForceEndDeviceToStayAwake ? "yes" : "no"));
+   \   0000001C   0x....             LDR.N    R0,??DataTable7_3
+   \   0000001E   0x7800             LDRB     R0,[R0, #+0]
+   \   00000020   0xB100             CBZ.N    R0,??emberAfPluginIdleSleepStatusCommand_0
+   \   00000022   0x462C             MOV      R4,R5
+   \                     ??emberAfPluginIdleSleepStatusCommand_0:
+   \   00000024   0x4622             MOV      R2,R4
+   \   00000026   0x.... 0x....      ADR.W    R1,`?<Constant "Forced stay awake:   ...">`
+   \   0000002A   0x2001             MOVS     R0,#+1
+   \   0000002C   0xE8BD 0x4038      POP      {R3-R5,LR}
+   \   00000030   0x.... 0x....      B.W      emberAfPrintln
+     16          }
+     17          
+
+   \                                 In section .text, align 2, keep-with-next
+     18          void emberAfPluginIdleSleepStayAwakeCommand(void)
+     19          {
+   \                     emberAfPluginIdleSleepStayAwakeCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     20            boolean stayAwake = (boolean)emberUnsignedCommandArgument(0);
+   \   00000002   0x2000             MOVS     R0,#+0
+   \   00000004   0x.... 0x....      BL       emberUnsignedCommandArgument
+     21            if (stayAwake) {
+   \   00000008   0xB2C4             UXTB     R4,R0
+   \   0000000A   0x2C00             CMP      R4,#+0
+   \   0000000C   0xBF14             ITE      NE 
+   \   0000000E   0x.... 0x....      ADRNE.W  R1,`?<Constant "Forcing device to sta...">`
+   \   00000012   0x.... 0x....      ADREQ.W  R1,`?<Constant "Allowing device to go...">`
+     22              emberAfCorePrintln("Forcing device to stay awake");
+     23            } else {
+     24              emberAfCorePrintln("Allowing device to go to sleep");
+   \   00000016   0x2001             MOVS     R0,#+1
+   \   00000018   0x.... 0x....      BL       emberAfPrintln
+     25            }
+     26            emberAfForceEndDeviceToStayAwake(stayAwake);
+   \   0000001C   0x4620             MOV      R0,R4
+   \   0000001E   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000022   0x.... 0x....      B.W      emberAfForceEndDeviceToStayAwake
+     27          }
+     28          
+
+   \                                 In section .text, align 2, keep-with-next
+     29          void emberAfPluginIdleSleepAwakeWhenNotJoinedCommand(void)
+     30          {
+   \                     emberAfPluginIdleSleepAwakeWhenNotJoinedCommand:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     31            emAfStayAwakeWhenNotJoined = (boolean)emberUnsignedCommandArgument(0);
+   \   00000002   0x2000             MOVS     R0,#+0
+   \   00000004   0x.... 0x....      BL       emberUnsignedCommandArgument
+   \   00000008   0x....             LDR.N    R1,??DataTable7_2
+   \   0000000A   0x7008             STRB     R0,[R1, #+0]
+     32          }
+   \   0000000C   0xBD01             POP      {R0,PC}          ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7:
+   \   00000000   0x6E 0x6F          DC8      0x6E, 0x6F, 0x00, 0x00
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_1:
+   \   00000000   0x79 0x65          DC8      "yes"
+   \              0x73 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_2:
+   \   00000000   0x........         DC32     emAfStayAwakeWhenNotJoined
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_3:
+   \   00000000   0x........         DC32     emAfForceEndDeviceToStayAwake
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Stay awake when not j...">`:
+   \   00000000   0x53 0x74          DC8 "Stay awake when not joined: %p"
+   \              0x61 0x79    
+   \              0x20 0x61    
+   \              0x77 0x61    
+   \              0x6B 0x65    
+   \              0x20 0x77    
+   \              0x68 0x65    
+   \              0x6E 0x20    
+   \              0x6E 0x6F    
+   \              0x74 0x20    
+   \              0x6A 0x6F    
+   \              0x69 0x6E    
+   \              0x65 0x64    
+   \              0x3A 0x20    
+   \              0x25 0x70    
+   \              0x00         
+   \   0000001F   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Forced stay awake:   ...">`:
+   \   00000000   0x46 0x6F          DC8 "Forced stay awake:          %p"
+   \              0x72 0x63    
+   \              0x65 0x64    
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \              0x79 0x20    
+   \              0x61 0x77    
+   \              0x61 0x6B    
+   \              0x65 0x3A    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x25 0x70    
+   \              0x00         
+   \   0000001F   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Forcing device to sta...">`:
+   \   00000000   0x46 0x6F          DC8 "Forcing device to stay awake"
+   \              0x72 0x63    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x64 0x65    
+   \              0x76 0x69    
+   \              0x63 0x65    
+   \              0x20 0x74    
+   \              0x6F 0x20    
+   \              0x73 0x74    
+   \              0x61 0x79    
+   \              0x20 0x61    
+   \              0x77 0x61    
+   \              0x6B 0x65    
+   \              0x00         
+   \   0000001D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Allowing device to go...">`:
+   \   00000000   0x41 0x6C          DC8 "Allowing device to go to sleep"
+   \              0x6C 0x6F    
+   \              0x77 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x64    
+   \              0x65 0x76    
+   \              0x69 0x63    
+   \              0x65 0x20    
+   \              0x74 0x6F    
+   \              0x20 0x67    
+   \              0x6F 0x20    
+   \              0x74 0x6F    
+   \              0x20 0x73    
+   \              0x6C 0x65    
+   \              0x65 0x70    
+   \              0x00         
+   \   0000001F   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "yes">`:
+   \   00000000   0x79 0x65          DC8 "yes"
+   \              0x73 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "no">`:
+   \   00000000   0x6E 0x6F          DC8 "no"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  emberAfPluginIdleSleepAwakeWhenNotJoinedCommand
+              8 -> emberUnsignedCommandArgument
+       16  emberAfPluginIdleSleepStatusCommand
+              0 -> emberAfPrintln
+             16 -> emberAfPrintln
+        8  emberAfPluginIdleSleepStayAwakeCommand
+              0 -> emberAfForceEndDeviceToStayAwake
+              8 -> emberAfPrintln
+              8 -> emberUnsignedCommandArgument
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      32  ?<Constant "Allowing device to go...">
+      32  ?<Constant "Forced stay awake:   ...">
+      32  ?<Constant "Forcing device to sta...">
+      32  ?<Constant "Stay awake when not j...">
+       4  ?<Constant "no">
+       4  ?<Constant "yes">
+       4  ??DataTable7
+       4  ??DataTable7_1
+       4  ??DataTable7_2
+       4  ??DataTable7_3
+      14  emberAfPluginIdleSleepAwakeWhenNotJoinedCommand
+      52  emberAfPluginIdleSleepStatusCommand
+      38  emberAfPluginIdleSleepStayAwakeCommand
+
+ 
+   8 bytes in section .rodata
+ 248 bytes in section .text
+ 
+ 248 bytes of CODE  memory
+   8 bytes of CONST memory
+
+Errors: none
+Warnings: none

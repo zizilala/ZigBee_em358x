@@ -1,0 +1,126 @@
+// ****** LED blinking code
+//
+// This code provides a few APIs:
+// emberAfLedOn( time )
+//       time:  the amount of time in seconds for the LED to be on.  
+//              will stay on if the time is 0.
+// emberAfLedOff( time )
+//       time:  the amount of time in seconds for the LED to be off.  
+//              will stay on if the time is 0.
+// emberAfLedBlink( count )
+//       count:  the number of times for the LED to blink.  0 means 
+//               keep blinking until further notice.
+
+#include "app/framework/include/af.h"
+
+//EmberEventControl ledEventControl;
+EmberEventControl emberAfPluginLedBlinkLedEventFunctionEventControl;
+
+#define ledEventControl emberAfPluginLedBlinkLedEventFunctionEventControl
+#define ledEventFunction emberAfPluginLedBlinkLedEventFunctionEventHandler
+
+void ledEventFunction( void );
+
+static int8u ledEventState = 0x00;
+static int8u ledBlinkCount = 0x00;
+
+enum {
+  LED_ON           = 0x00,
+  LED_OFF          = 0x01,
+  LED_BLINKING_ON  = 0x02,
+  LED_BLINKING_OFF = 0x03,
+};
+
+static void turnLedOn( void )
+{
+  halSetLed(BOARDLED0);
+  halSetLed(BOARDLED3);
+  emberSerialPrintf(APP_SERIAL,"LED ON");
+}
+
+static void turnLedOff( void )
+{
+  halClearLed(BOARDLED0);
+  halClearLed(BOARDLED3);
+  emberSerialPrintf(APP_SERIAL,"LED OFF");
+}
+
+void emberAfLedOn( int8u time )
+{
+  turnLedOn();
+  ledEventState = LED_ON;
+
+  if(time > 0) {
+    emberEventControlSetDelayQS(ledEventControl,
+                                ((int16u) time) * 4);
+  } else {
+    emberEventControlSetInactive(ledEventControl);
+  }
+}    
+
+void emberAfLedOff( int8u time )
+{
+  turnLedOff();
+  ledEventState = LED_OFF;
+
+  if(time > 0) {
+    emberEventControlSetDelayQS(ledEventControl,
+                                ((int16u) time) * 4);
+  } else {
+    emberEventControlSetInactive(ledEventControl);
+  }
+}
+
+void emberAfLedBlink( int8u count )
+{
+  turnLedOff();
+  ledEventState = LED_BLINKING_OFF;
+  emberEventControlSetDelayMS(ledEventControl,
+                              300);
+  ledBlinkCount = count;
+}
+
+void ledEventFunction( void )
+{
+  switch(ledEventState) {
+  case LED_ON:
+    // was on.  this must be time to turn it off.
+    turnLedOff();
+    emberEventControlSetInactive(ledEventControl);
+    break;
+
+  case LED_OFF:
+    // was on.  this must be time to turn it off.
+    turnLedOn();
+    emberEventControlSetInactive(ledEventControl);
+    break;
+
+  case LED_BLINKING_ON:
+    turnLedOff();
+    if(ledBlinkCount > 0) {
+      ledBlinkCount --;
+      if (ledBlinkCount > 0) {
+        ledEventState = LED_BLINKING_OFF;
+        emberEventControlSetDelayMS(ledEventControl,
+                                    300);
+
+      } else {
+        ledEventState = LED_OFF;
+        emberEventControlSetInactive(ledEventControl);
+      } 
+    } else {
+      ledEventState = LED_BLINKING_OFF;
+      emberEventControlSetDelayMS(ledEventControl,
+                                  300);
+    }
+    break;
+  case LED_BLINKING_OFF:
+    turnLedOn();
+    ledEventState = LED_BLINKING_ON;
+    emberEventControlSetDelayMS(ledEventControl,
+                                300);
+    break;
+  default:
+    break;
+  }
+}

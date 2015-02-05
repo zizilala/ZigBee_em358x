@@ -1,0 +1,989 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:18 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ne #
+#                    twork-find\network-find.c                                #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ne #
+#                    twork-find\network-find.c -D                             #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"network-find.c\"" -lC               #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\ne #
+#                    twork-find\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\buil #
+#                    der\DoorSensor_SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \network-find.lst                                        #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \network-find.o                                          #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\network-find\network-find.c
+      1          // *****************************************************************************
+      2          // * network-find.c
+      3          // *
+      4          // * Routines for finding and joining any viable network via scanning, rather
+      5          // * than joining a specific network. 
+      6          // *
+      7          // * Copyright 2010 by Ember Corporation. All rights reserved.              *80*
+      8          // *****************************************************************************
+      9          
+     10          #include "app/framework/include/af.h"
+     11          #include "app/util/common/form-and-join.h"
+     12          
+     13          //------------------------------------------------------------------------------
+     14          // Forward Declaration
+     15          
+     16          //------------------------------------------------------------------------------
+     17          // Globals
+     18          
+     19          enum {
+     20            NETWORK_FIND_NONE,
+     21            NETWORK_FIND_FORM,
+     22            NETWORK_FIND_JOIN,
+     23            NETWORK_FIND_WAIT,
+     24          };
+     25          #if defined(EMBER_SCRIPTED_TEST)
+     26            #define HIDDEN 
+     27          #else
+     28            #define HIDDEN static
+     29          #endif
+     30          
+
+   \                                 In section .bss, align 4
+     31          HIDDEN int8u state = NETWORK_FIND_NONE;
+   \                     state:
+   \   00000000                      DS8 1
+   \   00000001                      DS8 3
+     32          
+     33          #if defined(EMBER_SCRIPTED_TEST)
+     34            #define EMBER_AF_PLUGIN_NETWORK_FIND_DURATION 5
+     35            extern int32u testFrameworkChannelMask;
+     36            #define CHANNEL_MASK testFrameworkChannelMask
+     37          
+     38          #elif defined(EMBER_AF_PLUGIN_TEST_HARNESS)
+     39            const int32u testHarnessOriginalChannelMask = EMBER_AF_PLUGIN_NETWORK_FIND_CHANNEL_MASK;
+     40            int32u testHarnessChannelMask = EMBER_AF_PLUGIN_NETWORK_FIND_CHANNEL_MASK;
+     41            #define CHANNEL_MASK testHarnessChannelMask
+     42          
+     43          #else
+     44            #define CHANNEL_MASK EMBER_AF_PLUGIN_NETWORK_FIND_CHANNEL_MASK
+     45          
+     46          #endif
+     47          
+     48          #ifdef  EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_CALLBACK
+     49            #define GET_RADIO_TX_POWER(channel) emberAfPluginNetworkFindGetRadioPowerForChannelCallback(channel)
+     50          #else
+     51            #define GET_RADIO_TX_POWER(channel) EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_POWER
+     52          #endif
+     53          
+     54          static int8u extendedPanIds[EMBER_SUPPORTED_NETWORKS][EXTENDED_PAN_ID_SIZE];
+     55          
+     56          EmberEventControl emberAfPluginNetworkFindTickEventControl;
+   \                     emberAfPluginNetworkFindTickEventControl:
+   \   00000004                      DS8 8
+
+   \                                 In section .bss, align 4
+   \                     extendedPanIds:
+   \   00000000                      DS8 8
+     57          
+     58          //------------------------------------------------------------------------------
+     59          
+
+   \                                 In section .text, align 2, keep-with-next
+     60          void emberAfPluginNetworkFindInitCallback(void)
+     61          {
+   \                     emberAfPluginNetworkFindInitCallback:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+     62            int8u extendedPanId[EXTENDED_PAN_ID_SIZE] = EMBER_AF_PLUGIN_NETWORK_FIND_EXTENDED_PAN_ID;
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x2100             MOVS     R1,#+0
+   \   00000008   0x2200             MOVS     R2,#+0
+   \   0000000A   0xC006             STM      R0!,{R1,R2}
+     63            int8u i;
+     64            for (i = 0; i < EMBER_SUPPORTED_NETWORKS; i++) {
+     65              MEMCOPY(extendedPanIds[i], extendedPanId, EXTENDED_PAN_ID_SIZE);
+   \   0000000C   0x2208             MOVS     R2,#+8
+   \   0000000E   0xA900             ADD      R1,SP,#+0
+   \   00000010   0x....             LDR.N    R0,??DataTable25_1
+   \   00000012   0x.... 0x....      BL       halCommonMemCopy
+     66            }
+     67          }
+   \   00000016   0xBD07             POP      {R0-R2,PC}       ;; return
+     68          
+
+   \                                 In section .text, align 2, keep-with-next
+     69          void emberAfUnusedPanIdFoundCallback(EmberPanId panId, int8u channel)
+     70          {
+   \                     emberAfUnusedPanIdFoundCallback:
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+   \   00000002   0xB087             SUB      SP,SP,#+28
+   \   00000004   0x4604             MOV      R4,R0
+   \   00000006   0x460D             MOV      R5,R1
+     71            EmberNetworkParameters networkParams;
+     72            EmberStatus status;
+     73          
+     74            MEMSET(&networkParams, 0, sizeof(EmberNetworkParameters));
+   \   00000008   0x2218             MOVS     R2,#+24
+   \   0000000A   0x2100             MOVS     R1,#+0
+   \   0000000C   0xA801             ADD      R0,SP,#+4
+   \   0000000E   0x.... 0x....      BL       halCommonMemSet
+     75            emberAfGetFormAndJoinExtendedPanIdCallback(networkParams.extendedPanId);
+   \   00000012   0xA801             ADD      R0,SP,#+4
+   \   00000014   0x.... 0x....      BL       emberAfGetFormAndJoinExtendedPanIdCallback
+     76            networkParams.panId = panId;
+   \   00000018   0xF8AD 0x400C      STRH     R4,[SP, #+12]
+     77            networkParams.radioChannel = channel;
+   \   0000001C   0xF88D 0x500F      STRB     R5,[SP, #+15]
+     78            networkParams.radioTxPower = GET_RADIO_TX_POWER(channel);
+   \   00000020   0x2003             MOVS     R0,#+3
+   \   00000022   0xF88D 0x000E      STRB     R0,[SP, #+14]
+     79          
+     80            status = emberAfFormNetwork(&networkParams);
+   \   00000026   0xA801             ADD      R0,SP,#+4
+   \   00000028   0x.... 0x....      BL       emberAfFormNetwork
+   \   0000002C   0x0004             MOVS     R4,R0
+     81            if (status != EMBER_SUCCESS) {
+   \   0000002E   0xD00D             BEQ.N    ??emberAfUnusedPanIdFoundCallback_0
+     82              emberAfAppPrintln("%p error 0x%x %p", "Form", 
+     83                                status,
+     84                                "aborting");
+   \   00000030   0x.... 0x....      ADR.W    R0,`?<Constant "aborting">`
+   \   00000034   0x9000             STR      R0,[SP, #+0]
+   \   00000036   0x4623             MOV      R3,R4
+   \   00000038   0x.... 0x....      ADR.W    R2,`?<Constant "Form">`
+   \   0000003C   0x.... 0x....      ADR.W    R1,`?<Constant "%p error 0x%x %p">`
+   \   00000040   0x2004             MOVS     R0,#+4
+   \   00000042   0x.... 0x....      BL       emberAfPrintln
+     85              emberAfAppFlush();
+     86              emberAfScanErrorCallback(status);
+   \   00000046   0x4620             MOV      R0,R4
+   \   00000048   0x.... 0x....      BL       emberAfScanErrorCallback
+     87            }
+     88          }
+   \                     ??emberAfUnusedPanIdFoundCallback_0:
+   \   0000004C   0xB007             ADD      SP,SP,#+28
+   \   0000004E   0xBD30             POP      {R4,R5,PC}       ;; return
+     89          
+
+   \                                 In section .text, align 2, keep-with-next
+     90          void emberAfJoinableNetworkFoundCallback(EmberZigbeeNetwork *networkFound,
+     91                                                   int8u lqi,
+     92                                                   int8s rssi)
+     93          {
+   \                     emberAfJoinableNetworkFoundCallback:
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+   \   00000002   0xB087             SUB      SP,SP,#+28
+   \   00000004   0x4604             MOV      R4,R0
+     94            EmberStatus status = EMBER_ERR_FATAL;
+   \   00000006   0x2501             MOVS     R5,#+1
+     95          
+     96            // NOTE: It's not necessary to check the networkFound->extendedPanId here
+     97            // because the form-and-join utilities ensure this handler is only called
+     98            // when the beacon in the found network has the same EPID as what we asked
+     99            // for when we initiated the scan.  If the scan was requested for the EPID of
+    100            // all zeroes, that's a special case that means any network is OK.  Either
+    101            // way we can trust that it's OK to try joining the network params found in
+    102            // the beacon.
+    103          
+    104            if (emberAfPluginNetworkFindJoinCallback(networkFound, lqi, rssi)) {
+   \   00000008   0x.... 0x....      BL       emberAfPluginNetworkFindJoinCallback
+   \   0000000C   0xB1F0             CBZ.N    R0,??emberAfJoinableNetworkFoundCallback_0
+    105              // Now construct the network parameters to join
+    106              EmberNetworkParameters networkParams;
+    107              MEMSET(&networkParams, 0, sizeof(EmberNetworkParameters));
+   \   0000000E   0x2218             MOVS     R2,#+24
+   \   00000010   0x2100             MOVS     R1,#+0
+   \   00000012   0xA800             ADD      R0,SP,#+0
+   \   00000014   0x.... 0x....      BL       halCommonMemSet
+    108              MEMCOPY(networkParams.extendedPanId,
+    109                      networkFound->extendedPanId,
+    110                      EXTENDED_PAN_ID_SIZE);
+   \   00000018   0x2208             MOVS     R2,#+8
+   \   0000001A   0x1D21             ADDS     R1,R4,#+4
+   \   0000001C   0xA800             ADD      R0,SP,#+0
+   \   0000001E   0x.... 0x....      BL       halCommonMemCopy
+    111              networkParams.panId = networkFound->panId;
+   \   00000022   0x8820             LDRH     R0,[R4, #+0]
+   \   00000024   0xF8AD 0x0008      STRH     R0,[SP, #+8]
+    112              networkParams.radioChannel = networkFound->channel;
+   \   00000028   0x78A0             LDRB     R0,[R4, #+2]
+   \   0000002A   0xF88D 0x000B      STRB     R0,[SP, #+11]
+    113              networkParams.radioTxPower = GET_RADIO_TX_POWER(networkFound->channel);
+   \   0000002E   0x2003             MOVS     R0,#+3
+   \   00000030   0xF88D 0x000A      STRB     R0,[SP, #+10]
+    114          
+    115              emberAfAppPrintln("Nwk found, ch %d, panId 0x%2X, joining",
+    116                                networkFound->channel,
+    117                                networkFound->panId);
+   \   00000034   0x8823             LDRH     R3,[R4, #+0]
+   \   00000036   0x78A2             LDRB     R2,[R4, #+2]
+   \   00000038   0x.... 0x....      ADR.W    R1,`?<Constant "Nwk found, ch %d, pan...">`
+   \   0000003C   0x2004             MOVS     R0,#+4
+   \   0000003E   0x.... 0x....      BL       emberAfPrintln
+    118          
+    119              status = emberAfJoinNetwork(&networkParams);
+   \   00000042   0xA800             ADD      R0,SP,#+0
+   \   00000044   0x.... 0x....      BL       emberAfJoinNetwork
+   \   00000048   0x0005             MOVS     R5,R0
+    120            }
+    121          
+    122            // Note that if the application wants to skip this network or if the join
+    123            // fails, we can't continue the scan from here (by calling
+    124            // emberScanForNextJoinableNetwork) because that's the function that called
+    125            // this handler in the first place, and we don't want to recurse.
+    126            if (status != EMBER_SUCCESS) {
+   \   0000004A   0xD00D             BEQ.N    ??emberAfJoinableNetworkFoundCallback_1
+    127              emberAfAppPrintln("%p error 0x%x, %p", 
+    128                                "Join", 
+    129                                status,
+    130                                "aborting");
+   \                     ??emberAfJoinableNetworkFoundCallback_0:
+   \   0000004C   0x.... 0x....      ADR.W    R0,`?<Constant "aborting">`
+   \   00000050   0x9000             STR      R0,[SP, #+0]
+   \   00000052   0x462B             MOV      R3,R5
+   \   00000054   0x.... 0x....      ADR.W    R2,`?<Constant "Join">`
+   \   00000058   0x.... 0x....      ADR.W    R1,`?<Constant "%p error 0x%x, %p">`
+   \   0000005C   0x2004             MOVS     R0,#+4
+   \   0000005E   0x.... 0x....      BL       emberAfPrintln
+    131              emberAfAppFlush();
+    132              emberEventControlSetActive(emberAfPluginNetworkFindTickEventControl);
+   \   00000062   0x....             LDR.N    R0,??DataTable25_2
+   \   00000064   0x.... 0x....      BL       emEventControlSetActive
+    133            }
+    134          }
+   \                     ??emberAfJoinableNetworkFoundCallback_1:
+   \   00000068   0xB007             ADD      SP,SP,#+28
+   \   0000006A   0xBD30             POP      {R4,R5,PC}       ;; return
+    135          
+
+   \                                 In section .text, align 2, keep-with-next
+    136          void emberAfPluginNetworkFindTickEventHandler(void)
+    137          {
+   \                     emberAfPluginNetworkFindTickEventHandler:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    138            emberEventControlSetInactive(emberAfPluginNetworkFindTickEventControl);
+   \   00000002   0x....             LDR.N    R0,??DataTable25_3
+   \   00000004   0x2100             MOVS     R1,#+0
+   \   00000006   0x7101             STRB     R1,[R0, #+4]
+    139            if (state == NETWORK_FIND_JOIN) {
+   \   00000008   0x7801             LDRB     R1,[R0, #+0]
+   \   0000000A   0x2902             CMP      R1,#+2
+   \   0000000C   0xD10A             BNE.N    ??emberAfPluginNetworkFindTickEventHandler_0
+    140              // If the tick fires while we're searching for a joinable network, it means
+    141              // we need to keep searching.  This can happen if the join fails or if the
+    142              // application decided to leave the network because it was the wrong
+    143              // network.
+    144              emberAfAppPrintln("Continue %p search", "joinable network");
+   \   0000000E   0x.... 0x....      ADR.W    R2,`?<Constant "joinable network">`
+   \   00000012   0x.... 0x....      ADR.W    R1,`?<Constant "Continue %p search">`
+   \   00000016   0x2004             MOVS     R0,#+4
+   \   00000018   0x.... 0x....      BL       emberAfPrintln
+    145              emberScanForNextJoinableNetwork();
+   \   0000001C   0xE8BD 0x4001      POP      {R0,LR}
+   \   00000020   0x.... 0x....      B.W      emberScanForNextJoinableNetwork
+    146            } else {
+    147              // In all other cases, we're done and can clean up.
+    148              state = NETWORK_FIND_NONE;
+   \                     ??emberAfPluginNetworkFindTickEventHandler_0:
+   \   00000024   0x2100             MOVS     R1,#+0
+   \   00000026   0x7001             STRB     R1,[R0, #+0]
+    149              emberAfAppPrintln("Network find complete");
+   \   00000028   0x.... 0x....      ADR.W    R1,`?<Constant "Network find complete">`
+   \   0000002C   0x.... 0x....      BL       ??Subroutine4_0
+    150              emberFormAndJoinCleanup(EMBER_SUCCESS);
+   \                     ??CrossCallReturnLabel_2:
+   \   00000030   0x2000             MOVS     R0,#+0
+   \   00000032   0x.... 0x....      BL       emberFormAndJoinCleanup
+    151              emberAfPluginNetworkFindFinishedCallback(EMBER_SUCCESS);
+   \   00000036   0x2000             MOVS     R0,#+0
+   \   00000038   0xE8BD 0x4002      POP      {R1,LR}
+   \   0000003C   0x.... 0x....      B.W      emberAfPluginNetworkFindFinishedCallback
+    152            }
+    153          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine4:
+   \   00000000   0x....             ADR.N    R1,??DataTable25  ;; ""
+   \                     ??Subroutine4_0:
+   \   00000002   0x2004             MOVS     R0,#+4
+   \   00000004   0x.... 0x....      B.W      emberAfPrintln
+    154          
+
+   \                                 In section .text, align 2, keep-with-next
+    155          void emberAfScanErrorCallback(EmberStatus status)
+    156          {
+   \                     emberAfScanErrorCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+    157            if (status == EMBER_NO_BEACONS) {
+   \   00000004   0x2CAB             CMP      R4,#+171
+   \   00000006   0xD107             BNE.N    ??emberAfScanErrorCallback_0
+    158              emberAfCorePrintln("%p and join scan done", "Form");
+   \   00000008   0x.... 0x....      ADR.W    R2,`?<Constant "Form">`
+   \   0000000C   0x.... 0x....      ADR.W    R1,`?<Constant "%p and join scan done">`
+   \   00000010   0x2001             MOVS     R0,#+1
+   \   00000012   0x.... 0x....      BL       emberAfPrintln
+   \   00000016   0xE007             B.N      ??emberAfScanErrorCallback_1
+    159            } else {
+    160              emberAfCorePrintln("%p error 0x%x", "Scan", status);
+   \                     ??emberAfScanErrorCallback_0:
+   \   00000018   0x4623             MOV      R3,R4
+   \   0000001A   0x.... 0x....      ADR.W    R2,`?<Constant "Scan">`
+   \   0000001E   0x.... 0x....      ADR.W    R1,`?<Constant "%p error 0x%x">`
+   \   00000022   0x2001             MOVS     R0,#+1
+   \   00000024   0x.... 0x....      BL       emberAfPrintln
+    161            }
+    162            emberAfCoreFlush();
+    163            state = NETWORK_FIND_NONE;
+   \                     ??emberAfScanErrorCallback_1:
+   \   00000028   0x....             LDR.N    R0,??DataTable25_3
+   \   0000002A   0x2100             MOVS     R1,#+0
+   \   0000002C   0x7001             STRB     R1,[R0, #+0]
+    164            emberAfAppPrintln("%p (scan error).",
+    165                              "Network find complete");
+   \   0000002E   0x.... 0x....      ADR.W    R2,`?<Constant "Network find complete">`
+   \   00000032   0x.... 0x....      ADR.W    R1,`?<Constant "%p (scan error).">`
+   \   00000036   0x2004             MOVS     R0,#+4
+   \   00000038   0x.... 0x....      BL       emberAfPrintln
+    166            emberAfPluginNetworkFindFinishedCallback(status);
+   \   0000003C   0x4620             MOV      R0,R4
+   \   0000003E   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000042   0x.... 0x....      B.W      emberAfPluginNetworkFindFinishedCallback
+    167          }
+    168          
+
+   \                                 In section .text, align 2, keep-with-next
+    169          EmberStatus emberAfFindUnusedPanIdAndFormCallback(void)
+    170          {
+    171            EmberStatus status = EMBER_INVALID_CALL;
+    172          #ifdef EMBER_AF_HAS_COORDINATOR_NETWORK
+    173            if (state != NETWORK_FIND_NONE) {
+    174              emberAfAppPrintln("%pForm and join ongoing", "Error: ");
+    175              return EMBER_INVALID_CALL;
+    176            }
+    177          
+    178            status = emberScanForUnusedPanId(CHANNEL_MASK,
+    179                                             EMBER_AF_PLUGIN_NETWORK_FIND_DURATION);
+    180            if (status == EMBER_SUCCESS) {
+    181              state = NETWORK_FIND_FORM;
+    182            }
+    183          #endif
+    184            return status;
+   \                     emberAfFindUnusedPanIdAndFormCallback:
+   \   00000000   0x2070             MOVS     R0,#+112
+   \   00000002   0x4770             BX       LR               ;; return
+    185          }
+    186          
+
+   \                                 In section .text, align 2, keep-with-next
+    187          EmberStatus emberAfStartSearchForJoinableNetworkCallback(void)
+    188          {
+   \                     emberAfStartSearchForJoinableNetworkCallback:
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+    189            EmberStatus status;
+    190            int8u extendedPanId[EXTENDED_PAN_ID_SIZE];
+    191          
+    192            if (state != NETWORK_FIND_NONE) {
+   \   00000004   0x....             LDR.N    R4,??DataTable25_3
+   \   00000006   0x7820             LDRB     R0,[R4, #+0]
+   \   00000008   0xB100             CBZ.N    R0,??emberAfStartSearchForJoinableNetworkCallback_0
+    193              emberAfAppPrintln("%pForm and join ongoing", "Error: ");
+   \   0000000A   0x....             B.N      ?Subroutine0
+    194              return EMBER_INVALID_CALL;
+    195            }
+    196          
+    197            emberAfAppPrint("Search for %p\nChannels: ", "joinable network");
+   \                     ??emberAfStartSearchForJoinableNetworkCallback_0:
+   \   0000000C   0x.... 0x....      BL       ?Subroutine3
+    198            emberAfAppDebugExec(emberAfPrintChannelListFromMask(CHANNEL_MASK));
+   \                     ??CrossCallReturnLabel_1:
+   \   00000010   0x....             LDR.N    R5,??DataTable25_4  ;; 0x318c800
+   \   00000012   0x2004             MOVS     R0,#+4
+   \   00000014   0x.... 0x....      BL       emberAfPrintEnabled
+   \   00000018   0xB110             CBZ.N    R0,??emberAfStartSearchForJoinableNetworkCallback_1
+   \   0000001A   0x4628             MOV      R0,R5
+   \   0000001C   0x.... 0x....      BL       emberAfPrintChannelListFromMask
+    199            emberAfAppPrintln("");
+   \                     ??emberAfStartSearchForJoinableNetworkCallback_1:
+   \   00000020   0x.... 0x....      BL       ?Subroutine4
+    200          
+    201            emberAfGetFormAndJoinExtendedPanIdCallback(extendedPanId);
+   \                     ??CrossCallReturnLabel_4:
+   \   00000024   0xA800             ADD      R0,SP,#+0
+   \   00000026   0x.... 0x....      BL       emberAfGetFormAndJoinExtendedPanIdCallback
+    202            status = emberScanForJoinableNetwork(CHANNEL_MASK, extendedPanId);
+   \   0000002A   0x....             B.N      ?Subroutine1
+    203            if (status == EMBER_SUCCESS) {
+    204              state = NETWORK_FIND_JOIN;
+    205            }
+    206            return status;
+    207          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine1:
+   \   00000000   0xA900             ADD      R1,SP,#+0
+   \   00000002   0x4628             MOV      R0,R5
+   \   00000004   0x.... 0x....      BL       emberScanForJoinableNetwork
+   \   00000008   0xB908             CBNZ.N   R0,??Subroutine1_0
+   \   0000000A   0x2102             MOVS     R1,#+2
+   \   0000000C   0x7021             STRB     R1,[R4, #+0]
+   \                     ??Subroutine1_0:
+   \   0000000E   0xBD3E             POP      {R1-R5,PC}       ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine3:
+   \   00000000   0x.... 0x....      ADR.W    R2,`?<Constant "joinable network">`
+   \   00000004   0x.... 0x....      ADR.W    R1,`?<Constant "Search for %p\\nChannels: ">`
+   \   00000008   0x2004             MOVS     R0,#+4
+   \   0000000A   0x.... 0x....      B.W      emberAfPrint
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x.... 0x....      ADR.W    R2,`?<Constant "Error: ">`
+   \   00000004   0x.... 0x....      ADR.W    R1,`?<Constant "%pForm and join ongoing">`
+   \   00000008   0x2004             MOVS     R0,#+4
+   \   0000000A   0x.... 0x....      BL       emberAfPrintln
+   \   0000000E   0x2070             MOVS     R0,#+112
+   \   00000010   0xBD3E             POP      {R1-R5,PC}
+    208          
+
+   \                                 In section .text, align 2, keep-with-next
+    209          void emberAfPluginNetworkFindStackStatusCallback(EmberStatus status)
+    210          {
+    211            int8u delayMinutes = MAX_INT8U_VALUE;
+    212            if (status == EMBER_NETWORK_UP) {
+   \                     emberAfPluginNetworkFindStackStatusCallback:
+   \   00000000   0x....             LDR.N    R2,??DataTable25_3
+   \   00000002   0x7811             LDRB     R1,[R2, #+0]
+   \   00000004   0x2890             CMP      R0,#+144
+   \   00000006   0xD109             BNE.N    ??emberAfPluginNetworkFindStackStatusCallback_0
+    213              // If we had been searching for an unused network so that we could form,
+    214              // we're done.  If we were searching for a joinable network and have
+    215              // successfully joined, we give the application some time to determine if
+    216              // this is the correct network.  If so, we'll eventually time out and clean
+    217              // up the state machine.  If not, the application will tell the stack to
+    218              // leave, we'll get an EMBER_NETWORK_DOWN, and we'll continue searching.
+    219              if (state == NETWORK_FIND_FORM) {
+   \   00000008   0x2901             CMP      R1,#+1
+   \   0000000A   0xD00B             BEQ.N    ??emberAfPluginNetworkFindStackStatusCallback_1
+    220                delayMinutes = 0;
+    221              } else if (state == NETWORK_FIND_JOIN) {
+   \   0000000C   0x2902             CMP      R1,#+2
+   \   0000000E   0xD10A             BNE.N    ??emberAfPluginNetworkFindStackStatusCallback_2
+    222                state = NETWORK_FIND_WAIT;
+   \   00000010   0x2003             MOVS     R0,#+3
+   \   00000012   0x7010             STRB     R0,[R2, #+0]
+    223                delayMinutes = EMBER_AF_PLUGIN_NETWORK_FIND_JOINABLE_SCAN_TIMEOUT_MINUTES;
+    224              }
+    225            } else if (NETWORK_FIND_JOIN <= state) {
+    226              // If we get something other than EMBER_NETWORK_UP while trying to join or
+    227              // while waiting for the application to determine if this is the right
+    228              // network, we need to continue searching for a joinable network.
+    229              state = NETWORK_FIND_JOIN;
+    230              delayMinutes = 0;
+    231            }
+    232          
+    233            if (delayMinutes == 0) {
+    234              emberAfPluginNetworkFindTickEventHandler();
+    235            } else if (delayMinutes != MAX_INT8U_VALUE) {
+    236              emberEventControlSetDelayMinutes(emberAfPluginNetworkFindTickEventControl,
+    237                                               delayMinutes);
+   \   00000014   0x2101             MOVS     R1,#+1
+   \   00000016   0x1D10             ADDS     R0,R2,#+4
+   \   00000018   0x.... 0x....      B.W      emEventControlSetDelayMinutes
+    238            }
+   \                     ??emberAfPluginNetworkFindStackStatusCallback_0:
+   \   0000001C   0x2902             CMP      R1,#+2
+   \   0000001E   0xD302             BCC.N    ??emberAfPluginNetworkFindStackStatusCallback_2
+   \   00000020   0x2002             MOVS     R0,#+2
+   \   00000022   0x7010             STRB     R0,[R2, #+0]
+   \                     ??emberAfPluginNetworkFindStackStatusCallback_1:
+   \   00000024   0x....             B.N      emberAfPluginNetworkFindTickEventHandler
+    239          }
+   \                     ??emberAfPluginNetworkFindStackStatusCallback_2:
+   \   00000026   0x4770             BX       LR               ;; return
+    240          
+
+   \                                 In section .text, align 2, keep-with-next
+    241          void emberAfGetFormAndJoinExtendedPanIdCallback(int8u *resultLocation)
+    242          {
+   \                     emberAfGetFormAndJoinExtendedPanIdCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+    243            int8u networkIndex = emberGetCurrentNetwork();
+   \   00000004   0x.... 0x....      BL       emberGetCurrentNetwork
+    244            MEMCOPY(resultLocation, extendedPanIds[networkIndex], EXTENDED_PAN_ID_SIZE);
+   \   00000008   0x2208             MOVS     R2,#+8
+   \   0000000A   0x....             LDR.N    R1,??DataTable25_1
+   \   0000000C   0xEB01 0x01C0      ADD      R1,R1,R0, LSL #+3
+   \   00000010   0x4620             MOV      R0,R4
+   \   00000012   0x....             B.N      ?Subroutine2
+    245          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine2:
+   \   00000000   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000004   0x.... 0x....      B.W      halCommonMemCopy
+    246          
+
+   \                                 In section .text, align 4, keep-with-next
+    247          void emberAfSetFormAndJoinExtendedPanIdCallback(const int8u *extendedPanId)
+    248          {
+   \                     emberAfSetFormAndJoinExtendedPanIdCallback:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x4604             MOV      R4,R0
+    249            int8u networkIndex = emberGetCurrentNetwork();
+   \   00000004   0x.... 0x....      BL       emberGetCurrentNetwork
+    250            MEMCOPY(extendedPanIds[networkIndex], extendedPanId, EXTENDED_PAN_ID_SIZE);
+   \   00000008   0x2208             MOVS     R2,#+8
+   \   0000000A   0x4621             MOV      R1,R4
+   \   0000000C   0x4B00             LDR.N    R3,??emberAfSetFormAndJoinExtendedPanIdCallback_0
+   \   0000000E   0xE001             B.N      ??emberAfSetFormAndJoinExtendedPanIdCallback_1
+   \                     ??emberAfSetFormAndJoinExtendedPanIdCallback_0:
+   \   00000010   0x........         DC32     extendedPanIds
+   \                     ??emberAfSetFormAndJoinExtendedPanIdCallback_1:
+   \   00000014   0xEB03 0x00C0      ADD      R0,R3,R0, LSL #+3
+   \   00000018                      REQUIRE ?Subroutine2
+   \   00000018                      ;; // Fall through to label ?Subroutine2
+    251          }
+    252          
+    253          // DCS code to compliantly search for all channels once we've searched on the
+    254          // preferred channels.  
+
+   \                                 In section .text, align 4, keep-with-next
+    255          EmberStatus emberAfStartSearchForJoinableNetworkAllChannels(void)
+    256          {
+   \                     emberAfStartSearchForJoinableNetworkAllChannels:
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+    257            EmberStatus status;
+    258            int8u extendedPanId[EXTENDED_PAN_ID_SIZE];
+    259          
+    260            if (state != NETWORK_FIND_NONE) {
+   \   00000004   0x4C01             LDR.N    R4,??emberAfStartSearchForJoinableNetworkAllChanne_0
+   \   00000006   0x7820             LDRB     R0,[R4, #+0]
+   \   00000008   0xB110             CBZ.N    R0,??emberAfStartSearchForJoinableNetworkAllChanne_1
+    261              emberAfAppPrintln("%pForm and join ongoing", "Error: ");
+   \   0000000A   0x....             B.N      ?Subroutine0
+   \                     ??emberAfStartSearchForJoinableNetworkAllChanne_0:
+   \   0000000C   0x........         DC32     state
+    262              return EMBER_INVALID_CALL;
+    263            }
+    264          
+    265            emberAfAppPrint("Search for %p\nChannels: ", "joinable network");
+   \                     ??emberAfStartSearchForJoinableNetworkAllChanne_1:
+   \   00000010   0x.... 0x....      BL       ?Subroutine3
+    266            emberAfAppDebugExec(emberAfPrintChannelListFromMask(EMBER_ALL_802_15_4_CHANNELS_MASK));
+   \                     ??CrossCallReturnLabel_0:
+   \   00000014   0x4D00             LDR.N    R5,??emberAfStartSearchForJoinableNetworkAllChanne_2  ;; 0x7fff800
+   \   00000016   0xE001             B.N      ??emberAfStartSearchForJoinableNetworkAllChanne_3
+   \                     ??emberAfStartSearchForJoinableNetworkAllChanne_2:
+   \   00000018   0x07FFF800         DC32     0x7fff800
+   \                     ??emberAfStartSearchForJoinableNetworkAllChanne_3:
+   \   0000001C   0x2004             MOVS     R0,#+4
+   \   0000001E   0x.... 0x....      BL       emberAfPrintEnabled
+   \   00000022   0xB110             CBZ.N    R0,??emberAfStartSearchForJoinableNetworkAllChanne_4
+   \   00000024   0x4628             MOV      R0,R5
+   \   00000026   0x.... 0x....      BL       emberAfPrintChannelListFromMask
+    267            emberAfAppPrintln("");
+   \                     ??emberAfStartSearchForJoinableNetworkAllChanne_4:
+   \   0000002A   0x.... 0x....      BL       ?Subroutine4
+    268          
+    269            emberAfGetFormAndJoinExtendedPanIdCallback(extendedPanId);
+   \                     ??CrossCallReturnLabel_3:
+   \   0000002E   0xA800             ADD      R0,SP,#+0
+   \   00000030   0x.... 0x....      BL       emberAfGetFormAndJoinExtendedPanIdCallback
+    270            status = emberScanForJoinableNetwork(EMBER_ALL_802_15_4_CHANNELS_MASK, extendedPanId);
+   \   00000034                      REQUIRE ?Subroutine1
+   \   00000034                      ;; // Fall through to label ?Subroutine1
+    271            if (status == EMBER_SUCCESS) {
+    272              state = NETWORK_FIND_JOIN;
+    273            }
+    274            return status;
+    275          }
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25:
+   \   00000000   0x00 0x00          DC8      "",0x0,0x0,0x0
+   \              0x00 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25_1:
+   \   00000000   0x........         DC32     extendedPanIds
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25_2:
+   \   00000000   0x........         DC32     state+0x4
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25_3:
+   \   00000000   0x........         DC32     state
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable25_4:
+   \   00000000   0x0318C800         DC32     0x318c800
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%p error 0x%x %p">`:
+   \   00000000   0x25 0x70          DC8 "%p error 0x%x %p"
+   \              0x20 0x65    
+   \              0x72 0x72    
+   \              0x6F 0x72    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x20    
+   \              0x25 0x70    
+   \              0x00         
+   \   00000011   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Form">`:
+   \   00000000   0x46 0x6F          DC8 "Form"
+   \              0x72 0x6D    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "aborting">`:
+   \   00000000   0x61 0x62          DC8 "aborting"
+   \              0x6F 0x72    
+   \              0x74 0x69    
+   \              0x6E 0x67    
+   \              0x00         
+   \   00000009   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Nwk found, ch %d, pan...">`:
+   \   00000000   0x4E 0x77          DC8 "Nwk found, ch %d, panId 0x%2X, joining"
+   \              0x6B 0x20    
+   \              0x66 0x6F    
+   \              0x75 0x6E    
+   \              0x64 0x2C    
+   \              0x20 0x63    
+   \              0x68 0x20    
+   \              0x25 0x64    
+   \              0x2C 0x20    
+   \              0x70 0x61    
+   \              0x6E 0x49    
+   \              0x64 0x20    
+   \              0x30 0x78    
+   \              0x25 0x32    
+   \              0x58 0x2C    
+   \              0x20 0x6A    
+   \              0x6F 0x69    
+   \              0x6E 0x69    
+   \              0x6E 0x67    
+   \              0x00         
+   \   00000027   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%p error 0x%x, %p">`:
+   \   00000000   0x25 0x70          DC8 "%p error 0x%x, %p"
+   \              0x20 0x65    
+   \              0x72 0x72    
+   \              0x6F 0x72    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x2C    
+   \              0x20 0x25    
+   \              0x70 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Join">`:
+   \   00000000   0x4A 0x6F          DC8 "Join"
+   \              0x69 0x6E    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Continue %p search">`:
+   \   00000000   0x43 0x6F          DC8 "Continue %p search"
+   \              0x6E 0x74    
+   \              0x69 0x6E    
+   \              0x75 0x65    
+   \              0x20 0x25    
+   \              0x70 0x20    
+   \              0x73 0x65    
+   \              0x61 0x72    
+   \              0x63 0x68    
+   \              0x00         
+   \   00000013   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "joinable network">`:
+   \   00000000   0x6A 0x6F          DC8 "joinable network"
+   \              0x69 0x6E    
+   \              0x61 0x62    
+   \              0x6C 0x65    
+   \              0x20 0x6E    
+   \              0x65 0x74    
+   \              0x77 0x6F    
+   \              0x72 0x6B    
+   \              0x00         
+   \   00000011   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Network find complete">`:
+   \   00000000   0x4E 0x65          DC8 "Network find complete"
+   \              0x74 0x77    
+   \              0x6F 0x72    
+   \              0x6B 0x20    
+   \              0x66 0x69    
+   \              0x6E 0x64    
+   \              0x20 0x63    
+   \              0x6F 0x6D    
+   \              0x70 0x6C    
+   \              0x65 0x74    
+   \              0x65 0x00    
+   \   00000016   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%p and join scan done">`:
+   \   00000000   0x25 0x70          DC8 "%p and join scan done"
+   \              0x20 0x61    
+   \              0x6E 0x64    
+   \              0x20 0x6A    
+   \              0x6F 0x69    
+   \              0x6E 0x20    
+   \              0x73 0x63    
+   \              0x61 0x6E    
+   \              0x20 0x64    
+   \              0x6F 0x6E    
+   \              0x65 0x00    
+   \   00000016   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%p error 0x%x">`:
+   \   00000000   0x25 0x70          DC8 "%p error 0x%x"
+   \              0x20 0x65    
+   \              0x72 0x72    
+   \              0x6F 0x72    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x00    
+   \   0000000E   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Scan">`:
+   \   00000000   0x53 0x63          DC8 "Scan"
+   \              0x61 0x6E    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%p (scan error).">`:
+   \   00000000   0x25 0x70          DC8 "%p (scan error)."
+   \              0x20 0x28    
+   \              0x73 0x63    
+   \              0x61 0x6E    
+   \              0x20 0x65    
+   \              0x72 0x72    
+   \              0x6F 0x72    
+   \              0x29 0x2E    
+   \              0x00         
+   \   00000011   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "%pForm and join ongoing">`:
+   \   00000000   0x25 0x70          DC8 "%pForm and join ongoing"
+   \              0x46 0x6F    
+   \              0x72 0x6D    
+   \              0x20 0x61    
+   \              0x6E 0x64    
+   \              0x20 0x6A    
+   \              0x6F 0x69    
+   \              0x6E 0x20    
+   \              0x6F 0x6E    
+   \              0x67 0x6F    
+   \              0x69 0x6E    
+   \              0x67 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Error: ">`:
+   \   00000000   0x45 0x72          DC8 "Error: "
+   \              0x72 0x6F    
+   \              0x72 0x3A    
+   \              0x20 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Search for %p\\nChannels: ">`:
+   \   00000000   0x53 0x65          DC8 "Search for %p\012Channels: "
+   \              0x61 0x72    
+   \              0x63 0x68    
+   \              0x20 0x66    
+   \              0x6F 0x72    
+   \              0x20 0x25    
+   \              0x70 0x0A    
+   \              0x43 0x68    
+   \              0x61 0x6E    
+   \              0x6E 0x65    
+   \              0x6C 0x73    
+   \              0x3A 0x20    
+   \              0x00         
+   \   00000019   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant {0, 0, 0, 0, 0, 0, 0, 0}>`:
+   \   00000000   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+
+   \                                 In section .rodata, align 1, keep-with-next
+   \                     `?<Constant "">`:
+   \   00000000   0x00               DC8 ""
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        0  emberAfFindUnusedPanIdAndFormCallback
+        8  emberAfGetFormAndJoinExtendedPanIdCallback
+              8 -> emberGetCurrentNetwork
+              0 -> halCommonMemCopy
+       40  emberAfJoinableNetworkFoundCallback
+             40 -> emEventControlSetActive
+             40 -> emberAfJoinNetwork
+             40 -> emberAfPluginNetworkFindJoinCallback
+             40 -> emberAfPrintln
+             40 -> halCommonMemCopy
+             40 -> halCommonMemSet
+       16  emberAfPluginNetworkFindInitCallback
+             16 -> halCommonMemCopy
+        0  emberAfPluginNetworkFindStackStatusCallback
+              0 -> emEventControlSetDelayMinutes
+              0 -> emberAfPluginNetworkFindTickEventHandler
+        8  emberAfPluginNetworkFindTickEventHandler
+              0 -> emberAfPluginNetworkFindFinishedCallback
+              8 -> emberAfPrintln
+              8 -> emberFormAndJoinCleanup
+              0 -> emberScanForNextJoinableNetwork
+        8  emberAfScanErrorCallback
+              0 -> emberAfPluginNetworkFindFinishedCallback
+              8 -> emberAfPrintln
+        8  emberAfSetFormAndJoinExtendedPanIdCallback
+              8 -> emberGetCurrentNetwork
+              0 -> halCommonMemCopy
+       24  emberAfStartSearchForJoinableNetworkAllChannels
+             24 -> emberAfGetFormAndJoinExtendedPanIdCallback
+             24 -> emberAfPrint
+             24 -> emberAfPrintChannelListFromMask
+             24 -> emberAfPrintEnabled
+             24 -> emberAfPrintln
+             24 -> emberScanForJoinableNetwork
+       24  emberAfStartSearchForJoinableNetworkCallback
+             24 -> emberAfGetFormAndJoinExtendedPanIdCallback
+             24 -> emberAfPrint
+             24 -> emberAfPrintChannelListFromMask
+             24 -> emberAfPrintEnabled
+             24 -> emberAfPrintln
+             24 -> emberScanForJoinableNetwork
+       40  emberAfUnusedPanIdFoundCallback
+             40 -> emberAfFormNetwork
+             40 -> emberAfGetFormAndJoinExtendedPanIdCallback
+             40 -> emberAfPrintln
+             40 -> emberAfScanErrorCallback
+             40 -> halCommonMemSet
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  ?<Constant "">
+      20  ?<Constant "%p (scan error).">
+      24  ?<Constant "%p and join scan done">
+      20  ?<Constant "%p error 0x%x %p">
+      16  ?<Constant "%p error 0x%x">
+      20  ?<Constant "%p error 0x%x, %p">
+      24  ?<Constant "%pForm and join ongoing">
+      20  ?<Constant "Continue %p search">
+       8  ?<Constant "Error: ">
+       8  ?<Constant "Form">
+       8  ?<Constant "Join">
+      24  ?<Constant "Network find complete">
+      40  ?<Constant "Nwk found, ch %d, pan...">
+       8  ?<Constant "Scan">
+      28  ?<Constant "Search for %p\nChannels: ">
+      12  ?<Constant "aborting">
+      20  ?<Constant "joinable network">
+       8  ?<Constant {0, 0, 0, 0, 0, 0, 0, 0}>
+       4  ??DataTable25
+       4  ??DataTable25_1
+       4  ??DataTable25_2
+       4  ??DataTable25_3
+       4  ??DataTable25_4
+      18  ?Subroutine0
+      16  ?Subroutine1
+       8  ?Subroutine2
+      14  ?Subroutine3
+       8  ?Subroutine4
+       4  emberAfFindUnusedPanIdAndFormCallback
+      20  emberAfGetFormAndJoinExtendedPanIdCallback
+     108  emberAfJoinableNetworkFoundCallback
+      24  emberAfPluginNetworkFindInitCallback
+      40  emberAfPluginNetworkFindStackStatusCallback
+      64  emberAfPluginNetworkFindTickEventHandler
+      70  emberAfScanErrorCallback
+      24  emberAfSetFormAndJoinExtendedPanIdCallback
+      52  emberAfStartSearchForJoinableNetworkAllChannels
+      44  emberAfStartSearchForJoinableNetworkCallback
+      80  emberAfUnusedPanIdFoundCallback
+       8  extendedPanIds
+      12  state
+          emberAfPluginNetworkFindTickEventControl
+
+ 
+  20 bytes in section .bss
+   9 bytes in section .rodata
+ 914 bytes in section .text
+ 
+ 914 bytes of CODE  memory
+   9 bytes of CONST memory
+  20 bytes of DATA  memory
+
+Errors: none
+Warnings: none

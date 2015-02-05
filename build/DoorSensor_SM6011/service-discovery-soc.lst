@@ -1,0 +1,158 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:15 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\serv #
+#                    ice-discovery-soc.c                                      #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\serv #
+#                    ice-discovery-soc.c -D "GENERATED_TOKEN_HEADER=\"app/bui #
+#                    lder/DoorSensor_SM6011/DoorSensor_SM6011_tokens.h\"" -D  #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"service-discovery-soc.c\"" -lC      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --diag_suppress Pa050 -o C:\Ember\EmberZNet5.3.0-GA\em #
+#                    35x\build\DoorSensor_SM6011\ --debug --endian=little     #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Normal.h" -I                   #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\ -I  #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\ #
+#                    DoorSensor_SM6011\..\..\..\ -I                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\app\framework\include\ -I                #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\stack\ -I            #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \service-discovery-soc.lst                               #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \service-discovery-soc.o                                 #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\service-discovery-soc.c
+      1          // *****************************************************************************
+      2          // * service-discovery-soc.c
+      3          // *
+      4          // * SOC specific routines for performing service discovery.
+      5          // *
+      6          // * Copyright 2010 by Ember Corporation. All rights reserved.              *80*
+      7          // *****************************************************************************
+      8          
+      9          #include "app/framework/include/af.h"
+     10          #include "app/util/zigbee-framework/zigbee-device-library.h"
+     11          
+     12          //------------------------------------------------------------------------------
+     13          
+
+   \                                 In section .text, align 2, keep-with-next
+     14          EmberStatus emAfSendMatchDescriptor(EmberNodeId target,
+     15                                              EmberAfProfileId profileId,
+     16                                              EmberAfClusterId clusterId,
+     17                                              boolean serverCluster)
+     18          {
+   \                     emAfSendMatchDescriptor:
+   \   00000000   0xE92D 0x4FF8      PUSH     {R3-R11,LR}
+   \   00000004   0x4680             MOV      R8,R0
+   \   00000006   0x468A             MOV      R10,R1
+   \   00000008   0x4691             MOV      R9,R2
+   \   0000000A   0x461D             MOV      R5,R3
+     19            EmberMessageBuffer clusterList = emberAllocateLinkedBuffers(1);
+   \   0000000C   0x2001             MOVS     R0,#+1
+   \   0000000E   0x.... 0x....      BL       emberAllocateLinkedBuffers
+   \   00000012   0x4606             MOV      R6,R0
+     20            EmberMessageBuffer inClusters = EMBER_NULL_MESSAGE_BUFFER;
+   \   00000014   0x24FF             MOVS     R4,#+255
+     21            EmberMessageBuffer outClusters = EMBER_NULL_MESSAGE_BUFFER;
+   \   00000016   0x46A3             MOV      R11,R4
+     22            EmberStatus status = EMBER_NO_BUFFERS;
+   \   00000018   0x2718             MOVS     R7,#+24
+     23          
+     24            if (clusterList != EMBER_NULL_MESSAGE_BUFFER) {
+   \   0000001A   0x2EFF             CMP      R6,#+255
+   \   0000001C   0xD018             BEQ.N    ??emAfSendMatchDescriptor_0
+     25              emberSetMessageBufferLength(clusterList, 2);
+   \   0000001E   0x2102             MOVS     R1,#+2
+   \   00000020   0x.... 0x....      BL       emberSetMessageBufferLength
+     26              emberSetLinkedBuffersLowHighInt16u(clusterList, 0, clusterId);
+   \   00000024   0x464A             MOV      R2,R9
+   \   00000026   0x2100             MOVS     R1,#+0
+   \   00000028   0x4630             MOV      R0,R6
+   \   0000002A   0x.... 0x....      BL       emberSetLinkedBuffersLowHighInt16u
+     27          
+     28              if (serverCluster) {
+   \   0000002E   0x2D00             CMP      R5,#+0
+   \   00000030   0xBF14             ITE      NE 
+   \   00000032   0x4634             MOVNE    R4,R6
+   \   00000034   0x46B3             MOVEQ    R11,R6
+     29                inClusters = clusterList;
+     30              } else {
+     31                outClusters = clusterList;
+     32              }
+     33          
+     34              status = emberMatchDescriptorsRequest(target,
+     35                                                    profileId,
+     36                                                    inClusters,
+     37                                                    outClusters,
+     38                                                    EMBER_AF_DEFAULT_APS_OPTIONS);
+   \   00000036   0xF44F 0x508A      MOV      R0,#+4416
+   \   0000003A   0x9000             STR      R0,[SP, #+0]
+   \   0000003C   0x465B             MOV      R3,R11
+   \   0000003E   0x4622             MOV      R2,R4
+   \   00000040   0x4651             MOV      R1,R10
+   \   00000042   0x4640             MOV      R0,R8
+   \   00000044   0x.... 0x....      BL       emberMatchDescriptorsRequest
+   \   00000048   0x4607             MOV      R7,R0
+     39              emberReleaseMessageBuffer(clusterList);
+   \   0000004A   0x4630             MOV      R0,R6
+   \   0000004C   0x.... 0x....      BL       emReleaseMessageBuffer
+     40            }
+     41            return status;
+   \                     ??emAfSendMatchDescriptor_0:
+   \   00000050   0x4638             MOV      R0,R7
+   \   00000052   0xE8BD 0x8FF2      POP      {R1,R4-R11,PC}   ;; return
+     42          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       40  emAfSendMatchDescriptor
+             40 -> emReleaseMessageBuffer
+             40 -> emberAllocateLinkedBuffers
+             40 -> emberMatchDescriptorsRequest
+             40 -> emberSetLinkedBuffersLowHighInt16u
+             40 -> emberSetMessageBufferLength
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      86  emAfSendMatchDescriptor
+
+ 
+ 86 bytes in section .text
+ 
+ 86 bytes of CODE memory
+
+Errors: none
+Warnings: none

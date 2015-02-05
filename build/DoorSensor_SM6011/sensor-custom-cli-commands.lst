@@ -1,0 +1,1807 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:16 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\se #
+#                    nsor-iface\sensor-custom-cli-commands.c                  #
+#    Command line =  C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\se #
+#                    nsor-iface\sensor-custom-cli-commands.c -D               #
+#                    "GENERATED_TOKEN_HEADER=\"app/builder/DoorSensor_SM6011/ #
+#                    DoorSensor_SM6011_tokens.h\"" -D                         #
+#                    "ZA_GENERATED_HEADER=\"app/builder/DoorSensor_SM6011/Doo #
+#                    rSensor_SM6011.h\"" -D LOCAL_STORAGE_BTL -D              #
+#                    "BOARD_HEADER=\"app\builder\DoorSensor_SM6011\DoorSensor #
+#                    _SM6011_board.h\"" -D "PLATFORM_HEADER=\"hal/micro/corte #
+#                    xm3/compiler/iar.h\"" -D CORTEXM3 -D                     #
+#                    CORTEXM3_EMBER_MICRO -D CORTEXM3_EM3585 -D PHY_EM3XX -D  #
+#                    "APPLICATION_TOKEN_HEADER=\"app/framework/util/tokens.h\ #
+#                    "" -D "CONFIGURATION_HEADER=\"app/framework/util/config. #
+#                    h\"" -D "ATTRIBUTE_STORAGE_CONFIGURATION=\"app/builder/D #
+#                    oorSensor_SM6011/DoorSensor_SM6011_endpoint_config.h\""  #
+#                    -D "__SOURCEFILE__=\"sensor-custom-cli-commands.c\""     #
+#                    -lC C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM #
+#                    6011\ --diag_suppress Pa050 -o                           #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \ --debug --endian=little --cpu=Cortex-M3 -e --fpu=None  #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.4\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework #
+#                    \plugin\sensor-iface\ -I C:\Ember\EmberZNet5.3.0-GA\em35 #
+#                    x\app\builder\DoorSensor_SM6011\ -I                      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app #
+#                    \builder\DoorSensor_SM6011\..\..\..\app\framework\includ #
+#                    e\ -I C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorS #
+#                    ensor_SM6011\..\..\..\ -I C:\Ember\EmberZNet5.3.0-GA\em3 #
+#                    5x\app\builder\DoorSensor_SM6011\..\..\..\stack\ -I      #
+#                    C:\Ember\EmberZNet5.3.0-GA\em35x\app\builder\DoorSensor_ #
+#                    SM6011\..\..\..\hal\ -I C:\Ember\EmberZNet5.3.0-GA\em35x #
+#                    \app\builder\DoorSensor_SM6011\..\..\..\hal\..\ -Ohz     #
+#                    --use_c++_inline                                         #
+#    List file    =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \sensor-custom-cli-commands.lst                          #
+#    Object file  =  C:\Ember\EmberZNet5.3.0-GA\em35x\build\DoorSensor_SM6011 #
+#                    \sensor-custom-cli-commands.o                            #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\plugin\sensor-iface\sensor-custom-cli-commands.c
+      1          
+      2          #include PLATFORM_HEADER
+      3          
+      4          #ifdef EZSP_HOST
+      5            // Includes needed for ember related functions for the EZSP host
+      6            #include "stack/include/error.h"
+      7            #include "stack/include/ember-types.h"
+      8            #include "app/util/ezsp/ezsp-protocol.h"
+      9            #include "app/util/ezsp/ezsp.h"
+     10            #include "app/util/ezsp/serial-interface.h"
+     11            extern int8u emberEndpointCount;
+     12          #else
+     13            #include "stack/include/ember.h"
+     14          #endif
+     15          
+     16          #include "hal/hal.h"
+     17          #include "app/util/serial/serial.h"
+     18          #include "app/util/serial/command-interpreter2.h"
+     19          #include "app/framework/include/af.h"
+     20          #include "stack/include/mfglib.h"
+     21          
+     22          #define emberAfAppPrintln(...) emberAfPrintln(EMBER_AF_PRINT_APP,  __VA_ARGS__)
+     23          
+     24          void emAfNosleepCommand(void);
+     25          
+     26          void emLedOnCommand( void );
+     27          void emLedOffCommand( void );
+     28          void emLedBlinkCommand( void );
+     29          void emLedPattern1Command( void );
+     30          void emLedPattern2Command( void );
+     31          
+     32          void custMfgLibStartCommand( void );
+     33          void custMfgLibEndCommand( void );
+     34          void custMfgLibToneCommand( void );
+     35          void custMfgLibStreamCommand( void );
+     36          void custMfgLibChannelCommand( void );
+     37          void custMfgLibPowerCommand( void );
+     38          void custMfgLibSendCommand( void );
+     39          void customProgramEuiCommand( void );
+     40          void customEnableMfgLib( void );
+     41          void customGpioSet( void );
+     42          void customGpioClear( void );
+     43          
+     44          // The table of custom commands.
+
+   \                                 In section .rodata, align 4, keep-with-next
+     45          EmberCommandEntry emberAfCustomCommands[] = {
+   \                     emberAfCustomCommands:
+   \   00000000   0x........         DC32 `?<Constant "nosleep">`, emAfNosleepCommand, `?<Constant "">`
+   \              0x........   
+   \              0x........   
+   \   0000000C   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000014   0x........         DC32 `?<Constant "ledOn">`, emLedOnCommand, `?<Constant "u">`
+   \              0x........   
+   \              0x........   
+   \   00000020   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000028   0x........         DC32 `?<Constant "ledOff">`, emLedOffCommand, `?<Constant "u">`
+   \              0x........   
+   \              0x........   
+   \   00000034   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   0000003C   0x........         DC32 `?<Constant "ledBlink">`, emLedBlinkCommand, `?<Constant "u">`
+   \              0x........   
+   \              0x........   
+   \   00000048   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000050   0x........         DC32 `?<Constant "ledPattern1">`, emLedPattern1Command
+   \              0x........   
+   \   00000058   0x........         DC32 `?<Constant "">`
+   \   0000005C   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000064   0x........         DC32 `?<Constant "ledPattern2">`, emLedPattern2Command
+   \              0x........   
+   \   0000006C   0x........         DC32 `?<Constant "">`
+   \   00000070   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000078   0x........         DC32 `?<Constant "mfgStart">`, custMfgLibStartCommand, `?<Constant "">`
+   \              0x........   
+   \              0x........   
+   \   00000084   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   0000008C   0x........         DC32 `?<Constant "mfgEnd">`, custMfgLibEndCommand, `?<Constant "">`
+   \              0x........   
+   \              0x........   
+   \   00000098   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   000000A0   0x........         DC32 `?<Constant "mfgTone">`, custMfgLibToneCommand, `?<Constant "u">`
+   \              0x........   
+   \              0x........   
+   \   000000AC   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   000000B4   0x........         DC32 `?<Constant "mfgStream">`, custMfgLibStreamCommand
+   \              0x........   
+   \   000000BC   0x........         DC32 `?<Constant "u">`
+   \   000000C0   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   000000C8   0x........         DC32 `?<Constant "mfgChannel">`, custMfgLibChannelCommand
+   \              0x........   
+   \   000000D0   0x........         DC32 `?<Constant "u">`
+   \   000000D4   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   000000DC   0x........         DC32 `?<Constant "mfgPower">`, custMfgLibPowerCommand
+   \              0x........   
+   \   000000E4   0x........         DC32 `?<Constant "sv">`
+   \   000000E8   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   000000F0   0x........         DC32 `?<Constant "mfgSend">`, custMfgLibSendCommand, `?<Constant "uv">`
+   \              0x........   
+   \              0x........   
+   \   000000FC   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000104   0x........         DC32 `?<Constant "programEui">`, customProgramEuiCommand
+   \              0x........   
+   \   0000010C   0x........         DC32 `?<Constant "b">`
+   \   00000110   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000118   0x........         DC32 `?<Constant "mfgenable">`, customEnableMfgLib, `?<Constant "u">`
+   \              0x........   
+   \              0x........   
+   \   00000124   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   0000012C   0x........         DC32 `?<Constant "gpioSet">`, customGpioSet, `?<Constant "uu">`
+   \              0x........   
+   \              0x........   
+   \   00000138   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000140   0x........         DC32 `?<Constant "gpioClear">`, customGpioClear, `?<Constant "uu">`
+   \              0x........   
+   \              0x........   
+   \   0000014C   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000154   0x00000000         DC32 0H
+   \   00000158   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+     46          { "nosleep", emAfNosleepCommand, "" },
+     47          { "ledOn", emLedOnCommand, "u" },
+     48          { "ledOff", emLedOffCommand, "u" },
+     49          { "ledBlink", emLedBlinkCommand, "u" },
+     50          { "ledPattern1", emLedPattern1Command, "" },
+     51          { "ledPattern2", emLedPattern2Command, "" },
+     52          { "mfgStart",   custMfgLibStartCommand, ""},
+     53          { "mfgEnd",     custMfgLibEndCommand, ""},
+     54          { "mfgTone",    custMfgLibToneCommand, "u"},
+     55          { "mfgStream",  custMfgLibStreamCommand, "u"},
+     56          { "mfgChannel", custMfgLibChannelCommand, "u"},
+     57          { "mfgPower",   custMfgLibPowerCommand, "sv"},
+     58          { "mfgSend",    custMfgLibSendCommand, "uv"},
+     59          { "programEui", customProgramEuiCommand, "b"},
+     60          { "mfgenable", customEnableMfgLib, "u"},
+     61          { "gpioSet", customGpioSet,"uu"},
+     62          { "gpioClear", customGpioClear,"uu"},
+     63          
+     64          { NULL }
+     65          };
+     66          
+     67          // custom example
+     68          extern boolean emAfStayAwakeWhenNotJoined;
+
+   \                                 In section .text, align 2, keep-with-next
+     69          void emAfNosleepCommand(void)
+     70          {
+   \                     emAfNosleepCommand:
+   \   00000000   0xB580             PUSH     {R7,LR}
+     71            emberAfAppPrintln("No sleep unless joined\r\n");
+   \   00000002   0x.... 0x....      ADR.W    R1,`?<Constant "No sleep unless joined\\r\\n">`
+   \   00000006   0x2004             MOVS     R0,#+4
+   \   00000008   0x.... 0x....      BL       emberAfPrintln
+     72          
+     73            emAfStayAwakeWhenNotJoined = TRUE;
+   \   0000000C   0x....             LDR.N    R0,??DataTable50
+   \   0000000E   0x2101             MOVS     R1,#+1
+   \   00000010   0x7001             STRB     R1,[R0, #+0]
+     74          }
+   \   00000012   0xBD01             POP      {R0,PC}          ;; return
+     75          
+     76          void emberAfLedOn( int8u time );
+     77          void emberAfLedOff( int8u time );
+     78          void emberAfLedBlink( int8u count );
+     79          
+     80          // custom ledOn <time>
+     81          // will turn on the LED for <time> seconds
+
+   \                                 In section .text, align 2, keep-with-next
+     82          void emLedOnCommand( void )
+     83          {
+   \                     emLedOnCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     84            int8u time = (int8u) emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+     85          
+     86            emberAfAppPrintln("ledOn %x", time);
+   \                     ??CrossCallReturnLabel_8:
+   \   00000006   0xB2C4             UXTB     R4,R0
+   \   00000008   0x4622             MOV      R2,R4
+   \   0000000A   0x.... 0x....      ADR.W    R1,`?<Constant "ledOn %x">`
+   \   0000000E   0x2004             MOVS     R0,#+4
+   \   00000010   0x.... 0x....      BL       emberAfPrintln
+     87          
+     88            emberAfLedOn( time );
+   \   00000014   0x4620             MOV      R0,R4
+   \   00000016   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000001A   0x.... 0x....      B.W      emberAfLedOn
+     89          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine2:
+   \   00000000   0x2000             MOVS     R0,#+0
+   \   00000002   0x.... 0x....      B.W      emberUnsignedCommandArgument
+     90          
+     91          // custom ledOff <time>
+     92          // will turn off the LED for <time> seconds
+
+   \                                 In section .text, align 2, keep-with-next
+     93          void emLedOffCommand( void )
+     94          {
+   \                     emLedOffCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+     95            int8u time = (int8u) emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+     96          
+     97            emberAfAppPrintln("ledOff %x", time);
+   \                     ??CrossCallReturnLabel_7:
+   \   00000006   0xB2C4             UXTB     R4,R0
+   \   00000008   0x4622             MOV      R2,R4
+   \   0000000A   0x.... 0x....      ADR.W    R1,`?<Constant "ledOff %x">`
+   \   0000000E   0x2004             MOVS     R0,#+4
+   \   00000010   0x.... 0x....      BL       emberAfPrintln
+     98          
+     99            emberAfLedOff( time );
+   \   00000014   0x4620             MOV      R0,R4
+   \   00000016   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000001A   0x.... 0x....      B.W      emberAfLedOff
+    100          }
+    101          
+    102          // custom ledBlink <count>
+    103          // will blink the LED on then off (300 mS each) for <count> times
+
+   \                                 In section .text, align 2, keep-with-next
+    104          void emLedBlinkCommand( void )
+    105          {
+   \                     emLedBlinkCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    106            int8u count = (int8u) emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+    107          
+    108            emberAfAppPrintln("ledBlink %x", count);
+   \                     ??CrossCallReturnLabel_6:
+   \   00000006   0xB2C4             UXTB     R4,R0
+   \   00000008   0x4622             MOV      R2,R4
+   \   0000000A   0x.... 0x....      ADR.W    R1,`?<Constant "ledBlink %x">`
+   \   0000000E   0x2004             MOVS     R0,#+4
+   \   00000010   0x.... 0x....      BL       emberAfPrintln
+    109          
+    110            emberAfLedBlink( count );
+   \   00000014   0x4620             MOV      R0,R4
+   \   00000016   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000001A   0x.... 0x....      B.W      emberAfLedBlink
+    111          }
+    112          
+    113          void emberAfLedBlinkPattern( int8u count, int8u length, int16u *pattern );
+    114          
+
+   \                                 In section .text, align 2, keep-with-next
+    115          void emLedPattern1Command( void )
+    116          {
+   \                     emLedPattern1Command:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+    117            int16u pattern1[] = {200, 200, 200, 1000};
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x.... 0x....      ADR.W    R1,`?<Constant {200, 200, 200, 1000}>`
+   \   0000000A   0xC90C             LDM      R1!,{R2,R3}
+   \   0000000C   0xC00C             STM      R0!,{R2,R3}
+    118            emberAfLedBlinkPattern( 10, 4, pattern1);
+   \   0000000E   0xAA00             ADD      R2,SP,#+0
+   \   00000010   0x2104             MOVS     R1,#+4
+   \   00000012   0x200A             MOVS     R0,#+10
+   \   00000014   0x.... 0x....      BL       emberAfLedBlinkPattern
+    119          }
+   \   00000018   0xBD07             POP      {R0-R2,PC}       ;; return
+    120          
+
+   \                                 In section .text, align 2, keep-with-next
+    121          void emLedPattern2Command( void )
+    122          {
+   \                     emLedPattern2Command:
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB084             SUB      SP,SP,#+16
+    123            int16u pattern2[] = {200, 200, 200, 1000, 1000};
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x.... 0x....      ADR.W    R1,`?<Constant {200, 200, 200, 1000, 1000}>`
+   \   0000000A   0xC91C             LDM      R1!,{R2-R4}
+   \   0000000C   0xC01C             STM      R0!,{R2-R4}
+    124            emberAfLedBlinkPattern( 10, 5, pattern2);
+   \   0000000E   0xAA00             ADD      R2,SP,#+0
+   \   00000010   0x2105             MOVS     R1,#+5
+   \   00000012   0x200A             MOVS     R0,#+10
+   \   00000014   0x.... 0x....      BL       emberAfLedBlinkPattern
+    125          }
+   \   00000018   0xBD1F             POP      {R0-R4,PC}       ;; return
+    126          
+    127          // *******************************************************************
+    128          // MFGLIB integration
+
+   \                                 In section .bss, align 4
+    129          boolean mfgLibRunning = FALSE;
+   \                     mfgLibRunning:
+   \   00000000                      DS8 1
+    130          boolean mfgToneTestRunning = FALSE;
+    131          boolean mfgStreamTestRunning = FALSE;
+    132          boolean stackUp = FALSE;
+    133          
+    134          // this variable keeps track of how many mfglib packets have been received 
+    135          // during a mfglib session (from mfglib start to mfglib end). This can be 
+    136          // accessed using the "info" command.
+    137          int16u  mfgTotalPacketCounter;
+    138          
+    139          // this buffer is filled with the contents to be sent using mfglibSendPacket
+    140          #pragma align sendBuff
+    141          int8u   sendBuff[128];
+    142          
+    143          
+    144          // *******************************************************************
+    145          // MFGLIB callback function:
+    146          
+    147          // mfglibRxHandler is called whenever a mfglib packet is received if
+    148          // the device has called mfglibStart and pass in the function pointer
+    149          // as the parameter.
+    150          //
+    151          // If the mfglib packets are coming in very fast, the receiving node
+    152          // should take care to not do a lot of work in mfglibRxHandler. 
+    153          //
+    154          // This example application simply keeps track of the first packet received
+    155          // and how many have been received until it sees a pause in sending.
+    156          // If it does not receive packets for two "heartbeat" periods (200 ms - see 
+    157          // the heartBeat function) it considers the stream of packets to have ended 
+    158          // and prints the results for the user by calling appMfglibSendIsComplete
+    159          //
+    160          // The following variables relate to keeping the saved packet info and keeping
+    161          // track of the state (current packets received in this group, how many
+    162          // had been received since last heartbeat call.
+    163          
+    164          // the number of packets in the current transmit group
+    165          int16u mfgCurrentPacketCounter = 0;
+    166          
+    167          // the saved information for the first packet
+    168          int8u savedPktLength = 0;
+   \                     savedPktLength:
+   \   00000001                      DS8 1
+    169          int8s savedRssi = 0;
+   \                     savedRssi:
+   \   00000002                      DS8 1
+    170          int8u savedLinkQuality = 0;
+   \                     savedLinkQuality:
+   \   00000003                      DS8 1
+    171          int8u savedPkt[128];
+    172          
+    173          // if we are in a transmit group of packets or not 
+    174          boolean inReceivedStream = FALSE;
+   \                     inReceivedStream:
+   \   00000004                      DS8 1
+   \   00000005                      DS8 1
+   \                     mfgTotalPacketCounter:
+   \   00000006                      DS8 2
+   \                     mfgCurrentPacketCounter:
+   \   00000008                      DS8 2
+   \   0000000A                      DS8 2
+   \                     savedPkt:
+   \   0000000C                      DS8 128
+
+   \                                 In section .bss, align 1
+   \                     mfgToneTestRunning:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     mfgStreamTestRunning:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     stackUp:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 4
+   \                     sendBuff:
+   \   00000000                      DS8 128
+    175          
+    176          // this keeps track of the number of packets received as of the last heartbeat
+    177          // "tick" (200 ms). If this value stays constant for two ticks, then
+    178          // appMfglibSendIsComplete is called by heartBeat.
+
+   \                                 In section .bss, align 2
+    179          int16u heartbeatLastPacketCounterValue = 0;
+   \                     heartbeatLastPacketCounterValue:
+   \   00000000                      DS8 2
+    180          
+    181          
+    182          // *****************************
+    183          // mfglibRxHandler
+    184          //
+    185          // The function is passed to mfglibStart() to report a mfglib message received.
+    186          // The first byte of the packet is the length byte.
+    187          // *****************************
+
+   \                                 In section .text, align 2, keep-with-next
+    188          void mfglibRxHandler(int8u *packet, 
+    189                                int8u linkQuality, 
+    190                                int8s rssi)
+    191          {
+   \                     mfglibRxHandler:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    192            // This increments the total packets for the whole mfglib session
+    193            // this starts when mfglibStart is called and stops when mfglibEnd
+    194            // is called.
+    195            mfgTotalPacketCounter++;
+   \   00000002   0x....             LDR.N    R3,??DataTable50_1
+   \   00000004   0x88DC             LDRH     R4,[R3, #+6]
+   \   00000006   0x1C64             ADDS     R4,R4,#+1
+   \   00000008   0x80DC             STRH     R4,[R3, #+6]
+    196          
+    197            // This keeps track of the number of packets in the current transmit group.
+    198            // This starts when a mfglib packet is received and ends when no mfglib
+    199            // packets are received for two heartBeat ticks (a tick is 200 ms)
+    200            mfgCurrentPacketCounter++;
+   \   0000000A   0x891C             LDRH     R4,[R3, #+8]
+   \   0000000C   0x1C64             ADDS     R4,R4,#+1
+   \   0000000E   0x811C             STRH     R4,[R3, #+8]
+    201          
+    202            // If this is the first packet of a transmit group then save the information
+    203            // of the current packet. Don't do this for every packet, just the first one.
+    204            if (!inReceivedStream) {
+   \   00000010   0x791C             LDRB     R4,[R3, #+4]
+   \   00000012   0xB96C             CBNZ.N   R4,??mfglibRxHandler_0
+    205              inReceivedStream = TRUE;
+   \   00000014   0x2401             MOVS     R4,#+1
+   \   00000016   0x711C             STRB     R4,[R3, #+4]
+    206              mfgCurrentPacketCounter = 1;
+   \   00000018   0x811C             STRH     R4,[R3, #+8]
+    207              savedRssi = rssi;
+   \   0000001A   0x709A             STRB     R2,[R3, #+2]
+    208              savedLinkQuality = linkQuality;
+   \   0000001C   0x70D9             STRB     R1,[R3, #+3]
+    209              savedPktLength = *packet;
+   \   0000001E   0x7802             LDRB     R2,[R0, #+0]
+   \   00000020   0x705A             STRB     R2,[R3, #+1]
+    210              MEMCOPY(savedPkt, (packet+1), savedPktLength); 
+   \   00000022   0x1C41             ADDS     R1,R0,#+1
+   \   00000024   0xF103 0x000C      ADD      R0,R3,#+12
+   \   00000028   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000002C   0x.... 0x....      B.W      halCommonMemCopy
+    211            }
+    212          }
+   \                     ??mfglibRxHandler_0:
+   \   00000030   0xBD10             POP      {R4,PC}          ;; return
+    213          
+    214          // custom mfgStart
+    215          // enables the manufacturing library capabilities
+
+   \                                 In section .text, align 2, keep-with-next
+    216          void custMfgLibStartCommand( void ) {
+   \                     custMfgLibStartCommand:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    217            EmberStatus status;
+    218          
+    219            // the number of packets in the current transmit group
+    220            mfgCurrentPacketCounter = 0;
+   \   00000002   0x....             LDR.N    R0,??DataTable50_1
+   \   00000004   0x2100             MOVS     R1,#+0
+   \   00000006   0x8101             STRH     R1,[R0, #+8]
+    221          
+    222            // the saved information for the first packet
+    223            savedPktLength = 0;
+   \   00000008   0x7041             STRB     R1,[R0, #+1]
+    224            savedRssi = 0;
+   \   0000000A   0x7081             STRB     R1,[R0, #+2]
+    225            savedLinkQuality = 0;
+   \   0000000C   0x70C1             STRB     R1,[R0, #+3]
+    226          
+    227            mfgLibRunning = TRUE;  
+   \   0000000E   0x2101             MOVS     R1,#+1
+   \   00000010   0x7001             STRB     R1,[R0, #+0]
+    228          
+    229            status = mfglibStart((*mfglibRxHandler));
+   \   00000012   0x....             LDR.N    R0,??DataTable50_2
+   \   00000014   0x.... 0x....      BL       mfglibStart
+    230            emberSerialPrintf(APP_SERIAL, "mfglib start status 0x%x\r\n\r\n",
+    231                              status);
+   \   00000018   0x4602             MOV      R2,R0
+   \   0000001A   0x.... 0x....      ADR.W    R1,`?<Constant "mfglib start status 0...">`
+   \   0000001E   0x....             B.N      ?Subroutine0
+    232          
+    233          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine0:
+   \   00000000   0x2001             MOVS     R0,#+1
+   \   00000002   0xE8BD 0x4008      POP      {R3,LR}
+   \   00000006   0x.... 0x....      B.W      emberSerialPrintf
+    234          
+    235          // custom mfgEnd
+    236          // disables the manfuacturing library capabilities.
+
+   \                                 In section .text, align 2, keep-with-next
+    237          void custMfgLibEndCommand( void ) {
+   \                     custMfgLibEndCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    238            EmberStatus status;
+    239          
+    240            status = mfglibEnd();
+   \   00000002   0x.... 0x....      BL       mfglibEnd
+   \   00000006   0x4604             MOV      R4,R0
+    241            emberSerialPrintf(APP_SERIAL, "mfglib end status 0x%x\r\n\r\n", status);
+   \   00000008   0x4622             MOV      R2,R4
+   \   0000000A   0x.... 0x....      ADR.W    R1,`?<Constant "mfglib end status 0x%...">`
+   \   0000000E   0x2001             MOVS     R0,#+1
+   \   00000010   0x.... 0x....      BL       emberSerialPrintf
+    242          
+    243            // set a flag indicating to the app that the mfg lib is not running
+    244            if (status == EMBER_SUCCESS) {
+   \   00000014   0xB914             CBNZ.N   R4,??custMfgLibEndCommand_0
+    245              mfgLibRunning = FALSE;
+   \   00000016   0x....             LDR.N    R0,??DataTable50_1
+   \   00000018   0x2100             MOVS     R1,#+0
+   \   0000001A   0x7001             STRB     R1,[R0, #+0]
+    246            }
+    247          }
+   \                     ??custMfgLibEndCommand_0:
+   \   0000001C   0xBD10             POP      {R4,PC}          ;; return
+    248          
+    249          // custom mfgTone <on>
+    250          // Enables/disables the tone transmission.  1 turns on the tone.  0 turns it off.
+
+   \                                 In section .text, align 2, keep-with-next
+    251          void custMfgLibToneCommand( void ) {
+   \                     custMfgLibToneCommand:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    252            int8u on = (int8u) emberUnsignedCommandArgument(0);
+    253            EmberStatus status;
+    254          
+    255            if(on) {
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_5:
+   \   00000006   0xB2C0             UXTB     R0,R0
+   \   00000008   0xB128             CBZ.N    R0,??custMfgLibToneCommand_0
+    256              status = mfglibStartTone();
+   \   0000000A   0x.... 0x....      BL       mfglibStartTone
+    257              emberSerialPrintf(APP_SERIAL, "start tone 0x%x\r\n\r\n", status);
+   \   0000000E   0x4602             MOV      R2,R0
+   \   00000010   0x.... 0x....      ADR.W    R1,`?<Constant "start tone 0x%x\\r\\n\\r\\n">`
+   \   00000014   0xE004             B.N      ??custMfgLibToneCommand_1
+    258            } else {
+    259              status = mfglibStopTone();
+   \                     ??custMfgLibToneCommand_0:
+   \   00000016   0x.... 0x....      BL       mfglibStopTone
+    260              emberSerialPrintf(APP_SERIAL, "stop tone 0x%x\r\n\r\n", status);
+   \   0000001A   0x4602             MOV      R2,R0
+   \   0000001C   0x.... 0x....      ADR.W    R1,`?<Constant "stop tone 0x%x\\r\\n\\r\\n">`
+    261            }
+   \                     ??custMfgLibToneCommand_1:
+   \   00000020                      REQUIRE ?Subroutine0
+   \   00000020                      ;; // Fall through to label ?Subroutine0
+    262          }
+    263          
+    264          // custom mfgStream <on>
+    265          // Enables/disables the stream trnasmission.  1 turns on the stream.  0 turns it off.
+    266          // note:  stream is a carrier modulated with random data
+
+   \                                 In section .text, align 2, keep-with-next
+    267          void custMfgLibStreamCommand( void ) {
+   \                     custMfgLibStreamCommand:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    268            int8u on = (int8u) emberUnsignedCommandArgument(0);
+    269            EmberStatus status;
+    270          
+    271            if(on) {
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_4:
+   \   00000006   0xB2C0             UXTB     R0,R0
+   \   00000008   0xB128             CBZ.N    R0,??custMfgLibStreamCommand_0
+    272              status = mfglibStartStream();
+   \   0000000A   0x.... 0x....      BL       mfglibStartStream
+    273              emberSerialPrintf(APP_SERIAL, "start stream 0x%x\r\n\r\n", status);
+   \   0000000E   0x4602             MOV      R2,R0
+   \   00000010   0x.... 0x....      ADR.W    R1,`?<Constant "start stream 0x%x\\r\\n\\r\\n">`
+   \   00000014   0xE004             B.N      ??custMfgLibStreamCommand_1
+    274            } else {
+    275              status = mfglibStopStream();
+   \                     ??custMfgLibStreamCommand_0:
+   \   00000016   0x.... 0x....      BL       mfglibStopStream
+    276              emberSerialPrintf(APP_SERIAL, "stop stream 0x%x\r\n\r\n", status);
+   \   0000001A   0x4602             MOV      R2,R0
+   \   0000001C   0x.... 0x....      ADR.W    R1,`?<Constant "stop stream 0x%x\\r\\n\\r\\n">`
+    277            }
+   \                     ??custMfgLibStreamCommand_1:
+   \   00000020   0x....             B.N      ?Subroutine0
+    278          }
+    279          
+    280          // custom mfgChannel <channel>
+    281          // Will set the radio channel to <channel>.  Channel is an integer 
+    282          // value between 11 and 26.
+
+   \                                 In section .text, align 2, keep-with-next
+    283          void custMfgLibChannelCommand( void ) {
+   \                     custMfgLibChannelCommand:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    284            int8u channel = (int8u) emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_3:
+   \   00000006   0x4604             MOV      R4,R0
+    285            EmberStatus status = mfglibSetChannel(channel);
+   \   00000008   0xB2C0             UXTB     R0,R0
+   \   0000000A   0x.... 0x....      BL       mfglibSetChannel
+    286            emberSerialPrintf(APP_SERIAL, 
+    287                             "mfg set channel to 0x%x, status 0x%x\r\n\r\n",
+    288                             channel, status);  
+   \   0000000E   0x4603             MOV      R3,R0
+   \   00000010   0xB2E2             UXTB     R2,R4
+   \   00000012   0x.... 0x....      ADR.W    R1,`?<Constant "mfg set channel to 0x...">`
+   \   00000016   0x2001             MOVS     R0,#+1
+   \   00000018   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000001C   0x.... 0x....      B.W      emberSerialPrintf
+    289          }
+    290          
+    291          // custom mfgPower <dBm> <mode>
+    292          // Will set the transmit power to <dBm>.  Mode is an integer that is one of the
+    293          // following values:
+    294          // EMBER_TX_POWER_MODE_DEFAULT = 0
+    295          // EMBER_TX_POWER_MODE_BOOST = 1
+    296          // EMBER_TX_POWER_MODE_ALTERNATE = 2
+
+   \                                 In section .text, align 2, keep-with-next
+    297          void custMfgLibPowerCommand( void ) {
+   \                     custMfgLibPowerCommand:
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+    298            int8s power = (int8s) emberSignedCommandArgument(0);
+   \   00000002   0x2000             MOVS     R0,#+0
+   \   00000004   0x.... 0x....      BL       emberSignedCommandArgument
+   \   00000008   0x.... 0x....      BL       ?Subroutine3
+    299            int16u powerMode = (int16u) emberUnsignedCommandArgument(1);
+   \                     ??CrossCallReturnLabel_12:
+   \   0000000C   0x4605             MOV      R5,R0
+    300            EmberStatus status;
+    301           
+    302            status = mfglibSetPower(powerMode, power);
+   \   0000000E   0xB261             SXTB     R1,R4
+   \   00000010   0xB280             UXTH     R0,R0
+   \   00000012   0x.... 0x....      BL       mfglibSetPower
+    303            emberSerialPrintf(APP_SERIAL, 
+    304                              "mfg set power to 0x%x, mode 0x%2x, status 0x%x\r\n\r\n", 
+    305                              power, powerMode, status); 
+   \   00000016   0x9000             STR      R0,[SP, #+0]
+   \   00000018   0xB2AB             UXTH     R3,R5
+   \   0000001A   0xB262             SXTB     R2,R4
+   \   0000001C   0x.... 0x....      ADR.W    R1,`?<Constant "mfg set power to 0x%x...">`
+   \   00000020   0x2001             MOVS     R0,#+1
+   \   00000022   0x.... 0x....      BL       emberSerialPrintf
+    306          }
+   \   00000026   0xBD31             POP      {R0,R4,R5,PC}    ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine3:
+   \   00000000   0x4604             MOV      R4,R0
+   \   00000002   0x2001             MOVS     R0,#+1
+   \   00000004   0x.... 0x....      B.W      emberUnsignedCommandArgument
+    307          
+    308          #define MFGAPP_TEST_PACKET_MAX_SIZE 0x7f
+
+   \                                 In section .data, align 4
+    309          int8u testPacket[] = { 
+   \                     testPacket:
+   \   00000000   0x01 0x02          DC8 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+   \              0x03 0x04    
+   \              0x05 0x06    
+   \              0x07 0x08    
+   \              0x09 0x0A    
+   \              0x0B 0x0C    
+   \              0x0D 0x0E    
+   \              0x0F 0x10    
+   \              0x11 0x12    
+   \              0x13         
+   \   00000013   0x14 0x15          DC8 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36
+   \              0x16 0x17    
+   \              0x18 0x19    
+   \              0x1A 0x1B    
+   \              0x1C 0x1D    
+   \              0x1E 0x1F    
+   \              0x20 0x21    
+   \              0x22 0x23    
+   \              0x24         
+   \   00000024   0x25 0x26          DC8 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
+   \              0x27 0x28    
+   \              0x29 0x2A    
+   \              0x2B 0x2C    
+   \              0x2D 0x2E    
+   \              0x2F 0x30    
+   \              0x31 0x32    
+   \              0x33 0x34    
+   \              0x35         
+   \   00000035   0x36 0x37          DC8 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70
+   \              0x38 0x39    
+   \              0x3A 0x3B    
+   \              0x3C 0x3D    
+   \              0x3E 0x3F    
+   \              0x40 0x41    
+   \              0x42 0x43    
+   \              0x44 0x45    
+   \              0x46         
+   \   00000046   0x47 0x48          DC8 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87
+   \              0x49 0x4A    
+   \              0x4B 0x4C    
+   \              0x4D 0x4E    
+   \              0x4F 0x50    
+   \              0x51 0x52    
+   \              0x53 0x54    
+   \              0x55 0x56    
+   \              0x57         
+   \   00000057   0x58 0x59          DC8 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103
+   \              0x5A 0x5B    
+   \              0x5C 0x5D    
+   \              0x5E 0x5F    
+   \              0x60 0x61    
+   \              0x62 0x63    
+   \              0x64 0x65    
+   \              0x66 0x67    
+   \   00000067   0x68 0x69          DC8 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116
+   \              0x6A 0x6B    
+   \              0x6C 0x6D    
+   \              0x6E 0x6F    
+   \              0x70 0x71    
+   \              0x72 0x73    
+   \              0x74         
+   \   00000074   0x75 0x76          DC8 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 0
+   \              0x77 0x78    
+   \              0x79 0x7A    
+   \              0x7B 0x7C    
+   \              0x7D 0x7E    
+   \              0x7F 0x00    
+    310            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+    311            0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
+    312            0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+    313            0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20,
+    314            0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+    315            0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,
+    316            0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+    317            0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40,
+    318            0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+    319            0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50,
+    320            0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
+    321            0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60,
+    322            0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+    323            0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70,
+    324            0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
+    325            0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f
+    326          };
+    327          
+    328          // utility used by msMfgCB
+
+   \                                 In section .text, align 2, keep-with-next
+    329          void fillBuffer(int8u* buff, int8u length)
+    330          {
+   \                     fillBuffer:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    331            int8u i;
+    332            // length byte does not include itself. If the user asks for 10
+    333            // bytes of packet this means 1 byte length, 7 bytes, and 2 bytes CRC
+    334            // this example will have a length byte of 9, but 10 bytes will show
+    335            // up on the receive side
+    336            buff[0] = length - 1;
+   \   00000002   0x1E4A             SUBS     R2,R1,#+1
+   \   00000004   0x7002             STRB     R2,[R0, #+0]
+    337          
+    338            for (i=1; i < length; i++) {
+   \   00000006   0x2201             MOVS     R2,#+1
+   \   00000008   0x....             LDR.N    R3,??DataTable50_3
+   \   0000000A   0xE004             B.N      ??fillBuffer_0
+    339              buff[i] = testPacket[i-1];
+   \                     ??fillBuffer_1:
+   \   0000000C   0x18D4             ADDS     R4,R2,R3
+   \   0000000E   0xF814 0x4C01      LDRB     R4,[R4, #-1]
+   \   00000012   0x5414             STRB     R4,[R2, R0]
+    340            }
+   \   00000014   0x1C52             ADDS     R2,R2,#+1
+   \                     ??fillBuffer_0:
+   \   00000016   0x428A             CMP      R2,R1
+   \   00000018   0xDBF8             BLT.N    ??fillBuffer_1
+    341          }
+   \   0000001A   0xBD10             POP      {R4,PC}          ;; return
+    342          
+    343          // custom mfgSend <count> <length>
+    344          // Will transmit a packet of <length> bytes <count> times.  Note:  the 
+    345          // packet length must be between 6 and 127 inclusive.  The command will
+    346          // set to the nearest limit if the value of <length> is beyond the valid
+    347          // range
+
+   \                                 In section .text, align 2, keep-with-next
+    348          void custMfgLibSendCommand( void ) {
+   \                     custMfgLibSendCommand:
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+    349            int16u numPacketsToSend = (int16u)emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_2:
+   \   00000006   0x.... 0x....      BL       ?Subroutine3
+    350            int8u packetLength = (int8u)emberUnsignedCommandArgument(1);
+    351            EmberStatus status;
+    352          
+    353            if(packetLength < 6) {
+   \                     ??CrossCallReturnLabel_11:
+   \   0000000A   0xB2C5             UXTB     R5,R0
+   \   0000000C   0x2D06             CMP      R5,#+6
+   \   0000000E   0xD206             BCS.N    ??custMfgLibSendCommand_0
+    354              emberSerialPrintf(APP_SERIAL, "Send:  packet length too short (using 6)\r\n");
+   \   00000010   0x.... 0x....      ADR.W    R1,`?<Constant "Send:  packet length ...">`
+   \   00000014   0x2001             MOVS     R0,#+1
+   \   00000016   0x.... 0x....      BL       emberSerialPrintf
+    355              packetLength = 6;
+   \   0000001A   0x2506             MOVS     R5,#+6
+   \   0000001C   0xE008             B.N      ??custMfgLibSendCommand_1
+    356            } else if (packetLength > MFGAPP_TEST_PACKET_MAX_SIZE)
+   \                     ??custMfgLibSendCommand_0:
+   \   0000001E   0x2D80             CMP      R5,#+128
+   \   00000020   0xD306             BCC.N    ??custMfgLibSendCommand_1
+    357            {
+    358              emberSerialPrintf(APP_SERIAL, "Send:  packet length too long (using %d)\r\n", MFGAPP_TEST_PACKET_MAX_SIZE );
+   \   00000022   0x227F             MOVS     R2,#+127
+   \   00000024   0x.... 0x....      ADR.W    R1,`?<Constant "Send:  packet length ...">_1`
+   \   00000028   0x2001             MOVS     R0,#+1
+   \   0000002A   0x.... 0x....      BL       emberSerialPrintf
+    359              packetLength = MFGAPP_TEST_PACKET_MAX_SIZE;
+   \   0000002E   0x257F             MOVS     R5,#+127
+    360            }
+    361          
+    362            if(numPacketsToSend == 0) {
+   \                     ??custMfgLibSendCommand_1:
+   \   00000030   0xB2A4             UXTH     R4,R4
+   \   00000032   0xB92C             CBNZ.N   R4,??custMfgLibSendCommand_2
+    363              emberSerialPrintf(APP_SERIAL, "Send:  too few packets (using 1)\r\n" );
+   \   00000034   0x.... 0x....      ADR.W    R1,`?<Constant "Send:  too few packet...">`
+   \   00000038   0x2001             MOVS     R0,#+1
+   \   0000003A   0x.... 0x....      BL       emberSerialPrintf
+    364              numPacketsToSend = 1;
+   \   0000003E   0x2401             MOVS     R4,#+1
+    365            }
+    366          
+    367            fillBuffer(sendBuff, packetLength);
+   \                     ??custMfgLibSendCommand_2:
+   \   00000040   0x....             LDR.N    R6,??DataTable50_4
+   \   00000042   0x4629             MOV      R1,R5
+   \   00000044   0x4630             MOV      R0,R6
+   \   00000046   0x.... 0x....      BL       fillBuffer
+    368          
+    369            // The second parameter to the mfglibSendPacket() is the 
+    370            // number of "repeats", therefore we decrement numPackets by 1.
+    371            numPacketsToSend--;
+    372          
+    373            status = mfglibSendPacket(sendBuff, numPacketsToSend);
+   \   0000004A   0x1E61             SUBS     R1,R4,#+1
+   \   0000004C   0xB289             UXTH     R1,R1
+   \   0000004E   0x4630             MOV      R0,R6
+   \   00000050   0x.... 0x....      BL       mfglibSendPacket
+    374          
+    375            // print an error on failure
+    376            if (status != EMBER_SUCCESS) {
+   \   00000054   0xB138             CBZ.N    R0,??custMfgLibSendCommand_3
+    377              emberSerialPrintf(APP_SERIAL, 
+    378                                "Send:  err 0x%x\r\n", status); 
+   \   00000056   0x4602             MOV      R2,R0
+   \   00000058   0x.... 0x....      ADR.W    R1,`?<Constant "Send:  err 0x%x\\r\\n">`
+   \   0000005C   0x2001             MOVS     R0,#+1
+   \   0000005E   0xE8BD 0x4070      POP      {R4-R6,LR}
+   \   00000062   0x.... 0x....      B.W      emberSerialPrintf
+    379            }
+    380          }
+   \                     ??custMfgLibSendCommand_3:
+   \   00000066   0xBD70             POP      {R4-R6,PC}       ;; return
+    381          
+    382          void halInternalSetMfgTokenData(int16u token, void *data, int8u len);
+    383          
+    384          // custom programEui <EUI64>
+    385          // Example:
+    386          // custom programEui { 01 02 03 04 05 06 07 08 }
+    387          // Note:  this command is OTP.  It only works once.  To re-run, you
+    388          // must erase the chip.  
+
+   \                                 In section .text, align 2, keep-with-next
+    389          void customProgramEuiCommand( void )
+    390          {
+   \                     customProgramEuiCommand:
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB083             SUB      SP,SP,#+12
+    391            EmberEUI64 eui64;
+    392          
+    393            emberAfCopyBigEndianEui64Argument(0, eui64);
+                   ^
+Warning[Pe223]: function "emberAfCopyBigEndianEui64Argument" declared
+          implicitly
+   \   00000004   0xA900             ADD      R1,SP,#+0
+   \   00000006   0x2000             MOVS     R0,#+0
+   \   00000008   0x.... 0x....      BL       emberAfCopyBigEndianEui64Argument
+    394            
+    395            // potentially verify first few bytes for OUI
+    396          
+    397            // OK, we verified the OUI.  Let's program it here.
+    398            halInternalSetMfgTokenData(TOKEN_MFG_CUSTOM_EUI_64,(int8u *) &eui64, EUI64_SIZE);
+   \   0000000C   0x2208             MOVS     R2,#+8
+   \   0000000E   0xA900             ADD      R1,SP,#+0
+   \   00000010   0x....             LDR.N    R0,??DataTable50_5
+   \   00000012   0x8800             LDRH     R0,[R0, #+0]
+   \   00000014   0x.... 0x....      BL       halInternalSetMfgTokenData
+    399          }
+   \   00000018   0xBD07             POP      {R0-R2,PC}       ;; return
+    400          
+    401          // external declarations:
+    402          void emSleepySetGpio( int8u port, int8u pin );
+    403          void emSleepyClearGpio( int8u port, int8u pin );
+    404          
+
+   \                                 In section .text, align 2, keep-with-next
+    405          void customGpioSet( void )
+    406          {
+   \                     customGpioSet:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    407            int8u port = (int8u) emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_1:
+   \   00000006   0x.... 0x....      BL       ?Subroutine3
+    408            int8u pin = (int8u) emberUnsignedCommandArgument(1);
+    409          
+    410            if(port >= 3 || pin >= 8) {
+   \                     ??CrossCallReturnLabel_10:
+   \   0000000A   0xB2E4             UXTB     R4,R4
+   \   0000000C   0x2C03             CMP      R4,#+3
+   \   0000000E   0xBF3C             ITT      CC 
+   \   00000010   0xB2C0             UXTBCC   R0,R0
+   \   00000012   0x2808             CMPCC    R0,#+8
+   \   00000014   0xD300             BCC.N    ??customGpioSet_0
+    411              emberSerialPrintf(APP_SERIAL, 
+    412                                "Invalid GPIO\r\n"); 
+   \   00000016   0x....             B.N      ?Subroutine1
+    413              return;
+    414            }
+    415          
+    416            emSleepySetGpio(port, pin);
+   \                     ??customGpioSet_0:
+   \   00000018   0x4601             MOV      R1,R0
+   \   0000001A   0x4620             MOV      R0,R4
+   \   0000001C   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000020   0x.... 0x....      B.W      emSleepySetGpio
+    417          }
+
+   \                                 In section .text, align 2, keep-with-next
+   \                     ?Subroutine1:
+   \   00000000   0x.... 0x....      ADR.W    R1,`?<Constant "Invalid GPIO\\r\\n">`
+   \   00000004   0x2001             MOVS     R0,#+1
+   \   00000006   0xE8BD 0x4010      POP      {R4,LR}
+   \   0000000A   0x.... 0x....      B.W      emberSerialPrintf
+    418          
+
+   \                                 In section .text, align 2, keep-with-next
+    419          void customGpioClear( void )
+    420          {
+   \                     customGpioClear:
+   \   00000000   0xB510             PUSH     {R4,LR}
+    421            int8u port = (int8u) emberUnsignedCommandArgument(0);
+   \   00000002   0x.... 0x....      BL       ?Subroutine2
+   \                     ??CrossCallReturnLabel_0:
+   \   00000006   0x.... 0x....      BL       ?Subroutine3
+    422            int8u pin = (int8u) emberUnsignedCommandArgument(1);
+    423            if(port >= 3 || pin >= 8) {
+   \                     ??CrossCallReturnLabel_9:
+   \   0000000A   0xB2E4             UXTB     R4,R4
+   \   0000000C   0x2C03             CMP      R4,#+3
+   \   0000000E   0xBF3C             ITT      CC 
+   \   00000010   0xB2C0             UXTBCC   R0,R0
+   \   00000012   0x2808             CMPCC    R0,#+8
+   \   00000014   0xD300             BCC.N    ??customGpioClear_0
+    424              emberSerialPrintf(APP_SERIAL, 
+    425                                "Invalid GPIO\r\n"); 
+   \   00000016   0x....             B.N      ?Subroutine1
+    426              return;
+    427            }
+    428          
+    429            emSleepyClearGpio(port, pin);
+   \                     ??customGpioClear_0:
+   \   00000018   0x4601             MOV      R1,R0
+   \   0000001A   0x4620             MOV      R0,R4
+   \   0000001C   0xE8BD 0x4010      POP      {R4,LR}
+   \   00000020   0x.... 0x....      B.W      emSleepyClearGpio
+    430          }
+    431          
+
+   \                                 In section .text, align 2, keep-with-next
+    432          void customEnableMfgLib( void )
+    433          {
+   \                     customEnableMfgLib:
+   \   00000000   0xB580             PUSH     {R7,LR}
+    434            int8u enabled = (int8u) emberSignedCommandArgument(0);
+   \   00000002   0x2000             MOVS     R0,#+0
+   \   00000004   0x.... 0x....      BL       emberSignedCommandArgument
+   \   00000008   0xF88D 0x0000      STRB     R0,[SP, #+0]
+    435          
+    436            emberSerialPrintf(APP_SERIAL,"MFG ENABLE:  %x\r\n", enabled);
+   \   0000000C   0xF89D 0x2000      LDRB     R2,[SP, #+0]
+   \   00000010   0x.... 0x....      ADR.W    R1,`?<Constant "MFG ENABLE:  %x\\r\\n">`
+   \   00000014   0x2001             MOVS     R0,#+1
+   \   00000016   0x.... 0x....      BL       emberSerialPrintf
+    437          
+    438            halCommonSetToken( TOKEN_MFG_LIB_ENABLED, &enabled );
+   \   0000001A   0x2301             MOVS     R3,#+1
+   \   0000001C   0xAA00             ADD      R2,SP,#+0
+   \   0000001E   0x217F             MOVS     R1,#+127
+   \   00000020   0x201B             MOVS     R0,#+27
+   \   00000022   0x.... 0x....      BL       halInternalSetTokenData
+    439          }
+   \   00000026   0xBD01             POP      {R0,PC}          ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable50:
+   \   00000000   0x........         DC32     emAfStayAwakeWhenNotJoined
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable50_1:
+   \   00000000   0x........         DC32     mfgLibRunning
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable50_2:
+   \   00000000   0x........         DC32     mfglibRxHandler
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable50_3:
+   \   00000000   0x........         DC32     testPacket
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable50_4:
+   \   00000000   0x........         DC32     sendBuff
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable50_5:
+   \   00000000   0x........         DC32     TOKEN_MFG_CUSTOM_EUI_64
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "No sleep unless joined\\r\\n">`:
+   \   00000000   0x4E 0x6F          DC8 "No sleep unless joined\015\012"
+   \              0x20 0x73    
+   \              0x6C 0x65    
+   \              0x65 0x70    
+   \              0x20 0x75    
+   \              0x6E 0x6C    
+   \              0x65 0x73    
+   \              0x73 0x20    
+   \              0x6A 0x6F    
+   \              0x69 0x6E    
+   \              0x65 0x64    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   00000019   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "ledOn %x">`:
+   \   00000000   0x6C 0x65          DC8 "ledOn %x"
+   \              0x64 0x4F    
+   \              0x6E 0x20    
+   \              0x25 0x78    
+   \              0x00         
+   \   00000009   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "ledOff %x">`:
+   \   00000000   0x6C 0x65          DC8 "ledOff %x"
+   \              0x64 0x4F    
+   \              0x66 0x66    
+   \              0x20 0x25    
+   \              0x78 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "ledBlink %x">`:
+   \   00000000   0x6C 0x65          DC8 "ledBlink %x"
+   \              0x64 0x42    
+   \              0x6C 0x69    
+   \              0x6E 0x6B    
+   \              0x20 0x25    
+   \              0x78 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "nosleep">`:
+   \   00000000   0x6E 0x6F          DC8 "nosleep"
+   \              0x73 0x6C    
+   \              0x65 0x65    
+   \              0x70 0x00    
+
+   \                                 In section .rodata, align 1, keep-with-next
+   \                     `?<Constant "">`:
+   \   00000000   0x00               DC8 ""
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ledOn">`:
+   \   00000000   0x6C 0x65          DC8 "ledOn"
+   \              0x64 0x4F    
+   \              0x6E 0x00    
+   \   00000006   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 2, keep-with-next
+   \                     `?<Constant "u">`:
+   \   00000000   0x75 0x00          DC8 "u"
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ledOff">`:
+   \   00000000   0x6C 0x65          DC8 "ledOff"
+   \              0x64 0x4F    
+   \              0x66 0x66    
+   \              0x00         
+   \   00000007   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ledBlink">`:
+   \   00000000   0x6C 0x65          DC8 "ledBlink"
+   \              0x64 0x42    
+   \              0x6C 0x69    
+   \              0x6E 0x6B    
+   \              0x00         
+   \   00000009   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ledPattern1">`:
+   \   00000000   0x6C 0x65          DC8 "ledPattern1"
+   \              0x64 0x50    
+   \              0x61 0x74    
+   \              0x74 0x65    
+   \              0x72 0x6E    
+   \              0x31 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "ledPattern2">`:
+   \   00000000   0x6C 0x65          DC8 "ledPattern2"
+   \              0x64 0x50    
+   \              0x61 0x74    
+   \              0x74 0x65    
+   \              0x72 0x6E    
+   \              0x32 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgStart">`:
+   \   00000000   0x6D 0x66          DC8 "mfgStart"
+   \              0x67 0x53    
+   \              0x74 0x61    
+   \              0x72 0x74    
+   \              0x00         
+   \   00000009   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgEnd">`:
+   \   00000000   0x6D 0x66          DC8 "mfgEnd"
+   \              0x67 0x45    
+   \              0x6E 0x64    
+   \              0x00         
+   \   00000007   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgTone">`:
+   \   00000000   0x6D 0x66          DC8 "mfgTone"
+   \              0x67 0x54    
+   \              0x6F 0x6E    
+   \              0x65 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgStream">`:
+   \   00000000   0x6D 0x66          DC8 "mfgStream"
+   \              0x67 0x53    
+   \              0x74 0x72    
+   \              0x65 0x61    
+   \              0x6D 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgChannel">`:
+   \   00000000   0x6D 0x66          DC8 "mfgChannel"
+   \              0x67 0x43    
+   \              0x68 0x61    
+   \              0x6E 0x6E    
+   \              0x65 0x6C    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgPower">`:
+   \   00000000   0x6D 0x66          DC8 "mfgPower"
+   \              0x67 0x50    
+   \              0x6F 0x77    
+   \              0x65 0x72    
+   \              0x00         
+   \   00000009   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "sv">`:
+   \   00000000   0x73 0x76          DC8 "sv"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgSend">`:
+   \   00000000   0x6D 0x66          DC8 "mfgSend"
+   \              0x67 0x53    
+   \              0x65 0x6E    
+   \              0x64 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "uv">`:
+   \   00000000   0x75 0x76          DC8 "uv"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "programEui">`:
+   \   00000000   0x70 0x72          DC8 "programEui"
+   \              0x6F 0x67    
+   \              0x72 0x61    
+   \              0x6D 0x45    
+   \              0x75 0x69    
+   \              0x00         
+   \   0000000B   0x00               DC8 0
+
+   \                                 In section .rodata, align 2, keep-with-next
+   \                     `?<Constant "b">`:
+   \   00000000   0x62 0x00          DC8 "b"
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "mfgenable">`:
+   \   00000000   0x6D 0x66          DC8 "mfgenable"
+   \              0x67 0x65    
+   \              0x6E 0x61    
+   \              0x62 0x6C    
+   \              0x65 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "gpioSet">`:
+   \   00000000   0x67 0x70          DC8 "gpioSet"
+   \              0x69 0x6F    
+   \              0x53 0x65    
+   \              0x74 0x00    
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "uu">`:
+   \   00000000   0x75 0x75          DC8 "uu"
+   \              0x00         
+   \   00000003   0x00               DC8 0
+
+   \                                 In section .rodata, align 4, keep-with-next
+   \                     `?<Constant "gpioClear">`:
+   \   00000000   0x67 0x70          DC8 "gpioClear"
+   \              0x69 0x6F    
+   \              0x43 0x6C    
+   \              0x65 0x61    
+   \              0x72 0x00    
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant {200, 200, 200, 1000}>`:
+   \   00000000   0x00C8 0x00C8      DC16 200, 200, 200, 1000
+   \              0x00C8 0x03E8
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant {200, 200, 200, 1000, 1000}>`:
+   \   00000000   0x00C8 0x00C8      DC16 200, 200, 200, 1000, 1000
+   \              0x00C8 0x03E8
+   \              0x03E8       
+   \   0000000A   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "mfglib start status 0...">`:
+   \   00000000   0x6D 0x66          DC8 "mfglib start status 0x%x\015\012\015\012"
+   \              0x67 0x6C    
+   \              0x69 0x62    
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \              0x72 0x74    
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \              0x74 0x75    
+   \              0x73 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x0D 0x0A    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   0000001D   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "mfglib end status 0x%...">`:
+   \   00000000   0x6D 0x66          DC8 "mfglib end status 0x%x\015\012\015\012"
+   \              0x67 0x6C    
+   \              0x69 0x62    
+   \              0x20 0x65    
+   \              0x6E 0x64    
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \              0x74 0x75    
+   \              0x73 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x0D 0x0A    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   0000001B   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "start tone 0x%x\\r\\n\\r\\n">`:
+   \   00000000   0x73 0x74          DC8 "start tone 0x%x\015\012\015\012"
+   \              0x61 0x72    
+   \              0x74 0x20    
+   \              0x74 0x6F    
+   \              0x6E 0x65    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x0D    
+   \              0x0A 0x0D    
+   \              0x0A 0x00    
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "stop tone 0x%x\\r\\n\\r\\n">`:
+   \   00000000   0x73 0x74          DC8 "stop tone 0x%x\015\012\015\012"
+   \              0x6F 0x70    
+   \              0x20 0x74    
+   \              0x6F 0x6E    
+   \              0x65 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x0D 0x0A    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   00000013   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "start stream 0x%x\\r\\n\\r\\n">`:
+   \   00000000   0x73 0x74          DC8 "start stream 0x%x\015\012\015\012"
+   \              0x61 0x72    
+   \              0x74 0x20    
+   \              0x73 0x74    
+   \              0x72 0x65    
+   \              0x61 0x6D    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x0D    
+   \              0x0A 0x0D    
+   \              0x0A 0x00    
+   \   00000016   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "stop stream 0x%x\\r\\n\\r\\n">`:
+   \   00000000   0x73 0x74          DC8 "stop stream 0x%x\015\012\015\012"
+   \              0x6F 0x70    
+   \              0x20 0x73    
+   \              0x74 0x72    
+   \              0x65 0x61    
+   \              0x6D 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x0D 0x0A    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "mfg set channel to 0x...">`:
+   \   00000000   0x6D 0x66          DC8 "mfg set channel to 0x%x, status 0x%x\015\012\015\012"
+   \              0x67 0x20    
+   \              0x73 0x65    
+   \              0x74 0x20    
+   \              0x63 0x68    
+   \              0x61 0x6E    
+   \              0x6E 0x65    
+   \              0x6C 0x20    
+   \              0x74 0x6F    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x2C    
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \              0x74 0x75    
+   \              0x73 0x20    
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x0D 0x0A    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   00000029   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "mfg set power to 0x%x...">`:
+   \   00000000   0x6D 0x66          DC8 6DH, 66H, 67H, 20H, 73H, 65H, 74H, 20H
+   \              0x67 0x20    
+   \              0x73 0x65    
+   \              0x74 0x20    
+   \   00000008   0x70 0x6F          DC8 70H, 6FH, 77H, 65H, 72H, 20H, 74H, 6FH
+   \              0x77 0x65    
+   \              0x72 0x20    
+   \              0x74 0x6F    
+   \   00000010   0x20 0x30          DC8 20H, 30H, 78H, 25H, 78H, 2CH, 20H, 6DH
+   \              0x78 0x25    
+   \              0x78 0x2C    
+   \              0x20 0x6D    
+   \   00000018   0x6F 0x64          DC8 6FH, 64H, 65H, 20H, 30H, 78H, 25H, 32H
+   \              0x65 0x20    
+   \              0x30 0x78    
+   \              0x25 0x32    
+   \   00000020   0x78 0x2C          DC8 78H, 2CH, 20H, 73H, 74H, 61H, 74H, 75H
+   \              0x20 0x73    
+   \              0x74 0x61    
+   \              0x74 0x75    
+   \   00000028   0x73 0x20          DC8 73H, 20H, 30H, 78H, 25H, 78H, 0DH, 0AH
+   \              0x30 0x78    
+   \              0x25 0x78    
+   \              0x0D 0x0A    
+   \   00000030   0x0D 0x0A          DC8 0DH, 0AH, 0
+   \              0x00         
+   \   00000033   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Send:  packet length ...">`:
+   \   00000000   0x53 0x65          DC8 "Send:  packet length too short (using 6)\015\012"
+   \              0x6E 0x64    
+   \              0x3A 0x20    
+   \              0x20 0x70    
+   \              0x61 0x63    
+   \              0x6B 0x65    
+   \              0x74 0x20    
+   \              0x6C 0x65    
+   \              0x6E 0x67    
+   \              0x74 0x68    
+   \              0x20 0x74    
+   \              0x6F 0x6F    
+   \              0x20 0x73    
+   \              0x68 0x6F    
+   \              0x72 0x74    
+   \              0x20 0x28    
+   \              0x75 0x73    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x36 0x29    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   0000002B   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Send:  packet length ...">_1`:
+   \   00000000   0x53 0x65          DC8 "Send:  packet length too long (using %d)\015\012"
+   \              0x6E 0x64    
+   \              0x3A 0x20    
+   \              0x20 0x70    
+   \              0x61 0x63    
+   \              0x6B 0x65    
+   \              0x74 0x20    
+   \              0x6C 0x65    
+   \              0x6E 0x67    
+   \              0x74 0x68    
+   \              0x20 0x74    
+   \              0x6F 0x6F    
+   \              0x20 0x6C    
+   \              0x6F 0x6E    
+   \              0x67 0x20    
+   \              0x28 0x75    
+   \              0x73 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x25    
+   \              0x64 0x29    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   0000002B   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Send:  too few packet...">`:
+   \   00000000   0x53 0x65          DC8 "Send:  too few packets (using 1)\015\012"
+   \              0x6E 0x64    
+   \              0x3A 0x20    
+   \              0x20 0x74    
+   \              0x6F 0x6F    
+   \              0x20 0x66    
+   \              0x65 0x77    
+   \              0x20 0x70    
+   \              0x61 0x63    
+   \              0x6B 0x65    
+   \              0x74 0x73    
+   \              0x20 0x28    
+   \              0x75 0x73    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x31 0x29    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   00000023   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Send:  err 0x%x\\r\\n">`:
+   \   00000000   0x53 0x65          DC8 "Send:  err 0x%x\015\012"
+   \              0x6E 0x64    
+   \              0x3A 0x20    
+   \              0x20 0x65    
+   \              0x72 0x72    
+   \              0x20 0x30    
+   \              0x78 0x25    
+   \              0x78 0x0D    
+   \              0x0A 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "Invalid GPIO\\r\\n">`:
+   \   00000000   0x49 0x6E          DC8 "Invalid GPIO\015\012"
+   \              0x76 0x61    
+   \              0x6C 0x69    
+   \              0x64 0x20    
+   \              0x47 0x50    
+   \              0x49 0x4F    
+   \              0x0D 0x0A    
+   \              0x00         
+   \   0000000F   0x00               DC8 0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     `?<Constant "MFG ENABLE:  %x\\r\\n">`:
+   \   00000000   0x4D 0x46          DC8 "MFG ENABLE:  %x\015\012"
+   \              0x47 0x20    
+   \              0x45 0x4E    
+   \              0x41 0x42    
+   \              0x4C 0x45    
+   \              0x3A 0x20    
+   \              0x20 0x25    
+   \              0x78 0x0D    
+   \              0x0A 0x00    
+   \   00000012   0x00 0x00          DC8 0, 0
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  custMfgLibChannelCommand
+              0 -> emberSerialPrintf
+              8 -> emberUnsignedCommandArgument
+              8 -> mfglibSetChannel
+        8  custMfgLibEndCommand
+              8 -> emberSerialPrintf
+              8 -> mfglibEnd
+       16  custMfgLibPowerCommand
+             16 -> emberSerialPrintf
+             16 -> emberSignedCommandArgument
+             16 -> emberUnsignedCommandArgument
+             16 -> mfglibSetPower
+       16  custMfgLibSendCommand
+              0 -> emberSerialPrintf
+             16 -> emberSerialPrintf
+             16 -> emberUnsignedCommandArgument
+             16 -> fillBuffer
+             16 -> mfglibSendPacket
+        8  custMfgLibStartCommand
+              0 -> emberSerialPrintf
+              8 -> mfglibStart
+        8  custMfgLibStreamCommand
+              0 -> emberSerialPrintf
+              8 -> emberUnsignedCommandArgument
+              8 -> mfglibStartStream
+              8 -> mfglibStopStream
+        8  custMfgLibToneCommand
+              0 -> emberSerialPrintf
+              8 -> emberUnsignedCommandArgument
+              8 -> mfglibStartTone
+              8 -> mfglibStopTone
+        8  customEnableMfgLib
+              8 -> emberSerialPrintf
+              8 -> emberSignedCommandArgument
+              8 -> halInternalSetTokenData
+        8  customGpioClear
+              0 -> emSleepyClearGpio
+              0 -> emberSerialPrintf
+              8 -> emberUnsignedCommandArgument
+        8  customGpioSet
+              0 -> emSleepySetGpio
+              0 -> emberSerialPrintf
+              8 -> emberUnsignedCommandArgument
+       16  customProgramEuiCommand
+             16 -> emberAfCopyBigEndianEui64Argument
+             16 -> halInternalSetMfgTokenData
+        8  emAfNosleepCommand
+              8 -> emberAfPrintln
+        8  emLedBlinkCommand
+              0 -> emberAfLedBlink
+              8 -> emberAfPrintln
+              8 -> emberUnsignedCommandArgument
+        8  emLedOffCommand
+              0 -> emberAfLedOff
+              8 -> emberAfPrintln
+              8 -> emberUnsignedCommandArgument
+        8  emLedOnCommand
+              0 -> emberAfLedOn
+              8 -> emberAfPrintln
+              8 -> emberUnsignedCommandArgument
+       16  emLedPattern1Command
+             16 -> emberAfLedBlinkPattern
+       24  emLedPattern2Command
+             24 -> emberAfLedBlinkPattern
+        8  fillBuffer
+        8  mfglibRxHandler
+              0 -> halCommonMemCopy
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  ?<Constant "">
+      16  ?<Constant "Invalid GPIO\r\n">
+      20  ?<Constant "MFG ENABLE:  %x\r\n">
+      28  ?<Constant "No sleep unless joined\r\n">
+      20  ?<Constant "Send:  err 0x%x\r\n">
+      44  ?<Constant "Send:  packet length ...">
+      44  ?<Constant "Send:  packet length ...">_1
+      36  ?<Constant "Send:  too few packet...">
+       2  ?<Constant "b">
+      12  ?<Constant "gpioClear">
+       8  ?<Constant "gpioSet">
+      12  ?<Constant "ledBlink %x">
+      12  ?<Constant "ledBlink">
+      12  ?<Constant "ledOff %x">
+       8  ?<Constant "ledOff">
+      12  ?<Constant "ledOn %x">
+       8  ?<Constant "ledOn">
+      12  ?<Constant "ledPattern1">
+      12  ?<Constant "ledPattern2">
+      44  ?<Constant "mfg set channel to 0x...">
+      52  ?<Constant "mfg set power to 0x%x...">
+      12  ?<Constant "mfgChannel">
+       8  ?<Constant "mfgEnd">
+      12  ?<Constant "mfgPower">
+       8  ?<Constant "mfgSend">
+      12  ?<Constant "mfgStart">
+      12  ?<Constant "mfgStream">
+       8  ?<Constant "mfgTone">
+      12  ?<Constant "mfgenable">
+      28  ?<Constant "mfglib end status 0x%...">
+      32  ?<Constant "mfglib start status 0...">
+       8  ?<Constant "nosleep">
+      12  ?<Constant "programEui">
+      24  ?<Constant "start stream 0x%x\r\n\r\n">
+      20  ?<Constant "start tone 0x%x\r\n\r\n">
+      24  ?<Constant "stop stream 0x%x\r\n\r\n">
+      20  ?<Constant "stop tone 0x%x\r\n\r\n">
+       4  ?<Constant "sv">
+       2  ?<Constant "u">
+       4  ?<Constant "uu">
+       4  ?<Constant "uv">
+      12  ?<Constant {200, 200, 200, 1000, 1000}>
+       8  ?<Constant {200, 200, 200, 1000}>
+       4  ??DataTable50
+       4  ??DataTable50_1
+       4  ??DataTable50_2
+       4  ??DataTable50_3
+       4  ??DataTable50_4
+       4  ??DataTable50_5
+      10  ?Subroutine0
+      14  ?Subroutine1
+       6  ?Subroutine2
+       8  ?Subroutine3
+      32  custMfgLibChannelCommand
+      30  custMfgLibEndCommand
+      40  custMfgLibPowerCommand
+     104  custMfgLibSendCommand
+      32  custMfgLibStartCommand
+      34  custMfgLibStreamCommand
+      32  custMfgLibToneCommand
+      40  customEnableMfgLib
+      36  customGpioClear
+      36  customGpioSet
+      26  customProgramEuiCommand
+      20  emAfNosleepCommand
+      30  emLedBlinkCommand
+      30  emLedOffCommand
+      30  emLedOnCommand
+      26  emLedPattern1Command
+      26  emLedPattern2Command
+     360  emberAfCustomCommands
+      28  fillBuffer
+       2  heartbeatLastPacketCounterValue
+     140  mfgLibRunning
+          savedPktLength
+          savedRssi
+          savedLinkQuality
+          inReceivedStream
+          mfgTotalPacketCounter
+          mfgCurrentPacketCounter
+          savedPkt
+       1  mfgStreamTestRunning
+       1  mfgToneTestRunning
+      50  mfglibRxHandler
+     128  sendBuff
+       1  stackUp
+     128  testPacket
+
+ 
+   273 bytes in section .bss
+   128 bytes in section .data
+   553 bytes in section .rodata
+ 1 252 bytes in section .text
+ 
+ 1 252 bytes of CODE  memory
+   553 bytes of CONST memory
+   401 bytes of DATA  memory
+
+Errors: none
+Warnings: 1

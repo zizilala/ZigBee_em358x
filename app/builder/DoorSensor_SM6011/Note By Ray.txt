@@ -1,0 +1,6 @@
+PM 14:23 2015/1/22		;Create a appbuilder and compiler ok			(DoorSensor_SM6011_v0_150119(HA1.2).rar)
+PM 14:26 2015/1/22		;Change HA profile 1.2.1 and compiler ok		(DoorSensor_SM6011_v1_150122(HA1.2.1).rar)
+PM 18:34 2015/1/23		;Change Sleepy Mode 1.2.1 and compiler ok		(DoorSensor_SM6011_v1_150123(HA1.2.1+Sleepy).rar)
+PM 14:07 2015/2/2		;Create new a appbuilder and compiler ok		(DoorSensor_SM6011_v0_150202.rar)
+PM 15:56 2015/2/3		;++UART1 and compiler ok						(DoorSensor_SM6011_v1_150203(UART1).rar)
+
