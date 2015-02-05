@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### ===========================================================================
 ### path: C:\Ember\EmberZNet5.3.0-GA\em35x\.gitignore
 ### 
@@ -53,3 +54,34 @@ tool/
 ### gitignore 產生器: http://www.hksilicon.com/kb/articles/540471/gitignoregitignoreio
 ### 
 ### ===========================================================================
+=======
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+>>>>>>> 7eeb747243916fc86d0b722d31d9ed55e2afcac2
