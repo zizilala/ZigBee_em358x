@@ -36,7 +36,7 @@ void halInit(void)
   
   halInternalSetRegTrim(FALSE);
   
-  GPIO_DBGCFG |= GPIO_DBGCFGRSVD;
+  GPIO_DBGCFG |= GPIO_DBGCFGRSVD;               //Reserved, Ray
   
   #ifndef DISABLE_WATCHDOG
     halInternalEnableWatchDog();
@@ -270,7 +270,7 @@ void halStackProcessBootCount(void)
 }
 
 
-PGM_P halGetResetString(void)
+PGM_P halGetResetString(void)                   //Ray
 {
   // Table used to convert from reset types to reset strings.
   #define RESET_BASE_DEF(basename, value, string)  string,

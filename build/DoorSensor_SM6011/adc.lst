@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:40 #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     06/Feb/2015  13:53:02 #
 # Copyright 1999-2012 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -280,7 +280,7 @@ C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\adc.c
     103          
 
    \                                 In section .text, align 2, keep-with-next
-    104          void halInternalInitAdc(void)
+    104          void halInternalInitAdc(void)           //Ray
     105          {
     106            // reset the state variables
     107            adcPendingRequests = 0;

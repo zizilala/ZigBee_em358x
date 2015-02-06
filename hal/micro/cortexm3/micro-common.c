@@ -213,7 +213,7 @@ void halGpioConfig(int32u io, int32u config)
 
 
 
-int16u halInternalStartSystemTimer(void)
+int16u halInternalStartSystemTimer(void)        //Ray
 {
   //Since the SleepTMR is the only timer maintained during deep sleep, it is
   //used as the System Timer (RTC).  We maintain a 32 bit hardware timer

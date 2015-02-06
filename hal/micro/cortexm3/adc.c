@@ -101,7 +101,7 @@ ADCUser startNextConversion(void)
   return i;
 }
 
-void halInternalInitAdc(void)
+void halInternalInitAdc(void)           //Ray
 {
   // reset the state variables
   adcPendingRequests = 0;

@@ -114,7 +114,7 @@ int8u serialPort = APP_SERIAL;
 void main(void)
 {
   EmberStatus status;
-  int8u reset = halGetResetInfo();
+  int8u reset = halGetResetInfo();      //Initialize after show reset status, Ray
   int16u extendedResetInfo = 0;
 
 #if defined(EM35X_SERIES)

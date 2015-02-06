@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:38:01 #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     06/Feb/2015  13:53:40 #
 # Copyright 1999-2012 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -95,7 +95,7 @@ C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\micro.c
    \   00000008   0x2000             MOVS     R0,#+0
    \   0000000A   0x.... 0x....      BL       halInternalSetRegTrim
      38            
-     39            GPIO_DBGCFG |= GPIO_DBGCFGRSVD;
+     39            GPIO_DBGCFG |= GPIO_DBGCFGRSVD;               //Reserved, Ray
    \   0000000E   0x....             LDR.N    R4,??DataTable21  ;; 0x4000bc00
    \   00000010   0x6820             LDR      R0,[R4, #+0]
    \   00000012   0xF040 0x0008      ORR      R0,R0,#0x8
@@ -670,7 +670,7 @@ C:\Ember\EmberZNet5.3.0-GA\em35x\hal\micro\cortexm3\micro.c
     272          
 
    \                                 In section .text, align 2, keep-with-next
-    273          PGM_P halGetResetString(void)
+    273          PGM_P halGetResetString(void)                   //Ray
     274          {
    \                     halGetResetString:
    \   00000000   0xB580             PUSH     {R7,LR}

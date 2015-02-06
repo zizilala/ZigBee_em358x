@@ -1301,7 +1301,7 @@ int8u gpioOutPowerDown[3] = {                                               \
 /**
  * @brief Initialize the board.  This function is called from ::halInit().
  */
-#ifndef EZSP_UART
+#ifndef EZSP_UART                           //Ray                                                      
   #define halInternalInitBoard()                                  \
           do {                                                    \
             halInternalPowerUpBoard();                            \

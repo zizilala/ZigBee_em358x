@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     04/Feb/2015  16:37:44 #
+# IAR ANSI C/C++ Compiler V6.40.2.53884/W32 for ARM     06/Feb/2015  13:53:08 #
 # Copyright 1999-2012 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -174,7 +174,7 @@ C:\Ember\EmberZNet5.3.0-GA\em35x\app\framework\util\af-main-soc.c
    \   00000000   0xB570             PUSH     {R4-R6,LR}
    \   00000002   0xB082             SUB      SP,SP,#+8
     116            EmberStatus status;
-    117            int8u reset = halGetResetInfo();
+    117            int8u reset = halGetResetInfo();      //Initialize after show reset status, Ray
    \   00000004   0x.... 0x....      BL       halGetResetInfo
    \   00000008   0x4604             MOV      R4,R0
     118            int16u extendedResetInfo = 0;
